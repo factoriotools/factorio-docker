@@ -25,7 +25,7 @@ RUN mkdir /opt && /opt/www && \
     ln -s /factorio/static /var/lib/nginx/html && \
     ln -s /factorio/web/core /etc/nginx && \
     ln -s /factorio/web/logs /var/log/nginx
-
+    
 VOLUME /factorio
 
 EXPOSE $PORT/udp 27015/tcp 80 443
