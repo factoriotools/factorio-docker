@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-glibc:alpine-3.6
 
-MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
+MAINTAINER Slaubot
 
 ENV NGINX_VERSION=1.13.3
 
