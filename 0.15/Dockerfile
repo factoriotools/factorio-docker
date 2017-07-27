@@ -139,6 +139,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
+STOPSIGNAL SIGTERM
+CMD ["nginx", "-g", "daemon off;"]
 
 RUN mkdir /opt && /opt/www && \
     apk add --update --no-cache tini pwgen && \
@@ -158,10 +160,6 @@ RUN mkdir /opt && /opt/www && \
 VOLUME /factorio
 
 EXPOSE $PORT/udp 27015/tcp 80 443
-
-STOPSIGNAL SIGTERM
-
-CMD ["nginx", "-g", "daemon off;"]
 
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/sbin/tini", "--"]
