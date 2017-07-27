@@ -28,9 +28,10 @@ RUN mkdir /opt && /opt/www && \
 
 VOLUME /factorio
 
-EXPOSE $PORT/udp 27015/tcp 80/tcp
+EXPOSE $PORT/udp 27015/tcp 80 443
 
 COPY ./docker-entrypoint.sh /
 
 ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["nginx", "-g", "daemon off;"]
 CMD ["/docker-entrypoint.sh"]
