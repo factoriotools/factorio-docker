@@ -6,7 +6,7 @@ ENV PORT=34197 \
     VERSION=0.15.31 \
     SHA1=42000f898b0eead37c8b2f28806c1393676dcb0b
 
-RUN mkdir /opt && \
+RUN mkdir /opt && /opt/www && \
     apk add --update --no-cache tini pwgen && \
     apk add --update --no-cache --virtual .build-deps curl && \
     curl -sSL https://www.factorio.com/get-download/$VERSION/headless/linux64 \
@@ -16,11 +16,19 @@ RUN mkdir /opt && \
     rm /tmp/factorio_headless_x64_$VERSION.tar.xz && \
     ln -s /factorio/saves /opt/factorio/saves && \
     ln -s /factorio/mods /opt/factorio/mods && \
-    apk del .build-deps
+    apk del .build-deps && \
+    apk add --update --no-cache nginx && \
+    adduser -D -u 1000 -g 'www' www && \
+    chown -R www:www /var/lib/nginx && \
+    chown -R www:www /opt/www && \
+    ln -s /factorio/web /opt/www && \
+    ln -s /factorio/static /var/lib/nginx/html && \
+    ln -s /factorio/web/core /etc/nginx && \
+    ln -s /factorio/web/logs /var/log/nginx
 
 VOLUME /factorio
 
-EXPOSE $PORT/udp 27015/tcp
+EXPOSE $PORT/udp 27015/tcp 80/tcp
 
 COPY ./docker-entrypoint.sh /
 
