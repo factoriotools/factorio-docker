@@ -4,7 +4,7 @@ MAINTAINER slaubot
 
 ENV PORT=34197 \
     VERSION=0.15.31 \
-    SHA1=42000f898b0eead37c8b2f28806c1393676dcb0b
+    SHA1=42000f898b0eead37c8b2f28806c1393676dcb0b \
     NGINX_VERSION 1.13.3
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
@@ -51,8 +51,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-mail_ssl_module \
 		--with-compat \
 		--with-file-aio \
-        --with-ipv6 \
-        --with-google_perftools_module \
+        	--with-ipv6 \
+        	--with-google_perftools_module \
 		--with-http_v2_module \
 	" \
 	&& addgroup -S nginx \
