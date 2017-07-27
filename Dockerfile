@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-MAINTAINER Slaubot
+MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
 
 ENV NGINX_VERSION=1.13.3
 
