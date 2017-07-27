@@ -1,6 +1,9 @@
+#FROM alpine:3.5
 FROM alpine:3.6
 
-MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
+#MAINTAINER NGINX Docker Maintainers "docker-maint@nginx.com"
+MAINTAINER Slaubot
+LABEL latest
 
 ENV NGINX_VERSION=1.13.3
 
@@ -133,8 +136,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
-#COPY nginx.conf /etc/nginx/nginx.conf
-#COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.vh.default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
