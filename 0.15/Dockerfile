@@ -4,7 +4,7 @@ MAINTAINER https://github.com/dtandersen/docker_factorio_server
 
 ENV PORT=34197 \
     VERSION=0.15.37 \
-    SHA1=F2A05EE3C0CBE1D7FE5F8928A337B7133AAA70FC
+    SHA1=f2a05ee3c0cbe1d7fe5f8928a337b7133aaa70fc
 
 RUN mkdir /opt && \
     apk add --update --no-cache tini pwgen && \
