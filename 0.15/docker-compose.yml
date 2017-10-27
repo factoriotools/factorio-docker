@@ -3,6 +3,11 @@ services:
   factorio:
     build: .
     ports:
-     - "34197:34197"
+      - "34197:34197"
     volumes:
-     - /tmp/factorio:/factorio
+      - /tmp/factorio:/factorio
+#    command:
+#      - --server-settings
+#      - /factorio/config/server-settings.json
+#      - --start-server-load-scenario
+#      - base/wave-defense

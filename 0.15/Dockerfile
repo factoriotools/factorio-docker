@@ -7,7 +7,7 @@ ENV PORT=34197 \
     SHA1=f2a05ee3c0cbe1d7fe5f8928a337b7133aaa70fc
 
 RUN mkdir /opt && \
-    apk add --update --no-cache tini pwgen && \
+    apk add --update --no-cache pwgen && \
     apk add --update --no-cache --virtual .build-deps curl && \
     curl -sSL https://www.factorio.com/get-download/$VERSION/headless/linux64 \
         -o /tmp/factorio_headless_x64_$VERSION.tar.xz && \
@@ -24,5 +24,4 @@ EXPOSE $PORT/udp 27015/tcp
 
 COPY ./docker-entrypoint.sh /
 
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -25,6 +25,7 @@ if [ ! -f $CONFIG/map-settings.json ]; then
   cp /opt/factorio/data/map-settings.example.json $CONFIG/map-settings.json
 fi
 
+# generate new map if no save exists
 if ! find -L $SAVES -iname \*.zip -mindepth 1 -print | grep -q .; then
   /opt/factorio/bin/x64/factorio \
     --create $SAVES/_autosave1.zip  \
@@ -32,12 +33,18 @@ if ! find -L $SAVES -iname \*.zip -mindepth 1 -print | grep -q .; then
     --map-settings $CONFIG/map-settings.json
 fi
 
-exec /opt/factorio/bin/x64/factorio \
-  --port $PORT \
-  --start-server-load-latest \
-  --server-settings $CONFIG/server-settings.json \
-  --server-whitelist $CONFIG/server-whitelist.json \
-  --server-banlist $CONFIG/server-banlist.json \
-  --rcon-port 27015 \
-  --rcon-password "$(cat $CONFIG/rconpw)" \
-  --server-id /factorio/config/server-id.json
+if [ $# -eq 0 ]; then
+  # run factorio with default params in no options specified
+  exec /opt/factorio/bin/x64/factorio \
+    --port $PORT \
+    --start-server-load-latest \
+    --server-settings $CONFIG/server-settings.json \
+    --server-whitelist $CONFIG/server-whitelist.json \
+    --server-banlist $CONFIG/server-banlist.json \
+    --rcon-port 27015 \
+    --rcon-password "$(cat $CONFIG/rconpw)" \
+    --server-id /factorio/config/server-id.json
+else
+  # run factorio with user specified params
+  exec /opt/factorio/bin/x64/factorio "$@"
+fi
