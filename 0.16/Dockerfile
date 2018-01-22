@@ -9,8 +9,8 @@ ARG PGID=845
 
 ENV PORT=34197 \
     RCON_PORT=27015 \
-    VERSION=0.16.16 \
-    SHA1=74c44c8c25dbf157883fe1f8bab538c61f717150
+    VERSION=0.16.17 \
+    SHA1=d1bc9d0ae4395cec66cbfa9d1845a9db4ee5741d
 
 RUN mkdir -p /opt /factorio && \
     apk add --update --no-cache pwgen && \
