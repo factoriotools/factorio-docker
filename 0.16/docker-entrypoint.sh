@@ -30,7 +30,7 @@ if [ ! -f $CONFIG/map-settings.json ]; then
 fi
 
 if find -L $SAVES -iname \*.tmp.zip -mindepth 1 -print | grep -q .; then
-  rm -f $SAVES\*.tmp.zip
+  rm -f $SAVES/\*.tmp.zip
 fi
 
 if ! find -L $SAVES -iname \*.zip -mindepth 1 -print | grep -q .; then
