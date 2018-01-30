@@ -40,6 +40,7 @@ sudo docker run -d \
   -v /opt/factorio:/factorio \
   --name factorio \
   --restart=always  \
+  --user 845:845
   dtandersen/factorio
 ```
 
@@ -50,6 +51,7 @@ For those new to Docker, here is an explanation of the options:
 * `-v` - Mount `/opt/factorio` on the local file system to `/factorio` in the container.
 * `--restart` - Restart the server if it crashes and at system start
 * `--name` - Name the container "factorio" (otherwise it has a funny random name).
+* `--user` - The uid/guid (in numerical form) on the host system to run the container as.  Defaults to uid:guid 845:845 - volumes must be owned by this user. (versions 0.16+)
 
 The `chown` command is needed because in 0.16+, we no longer run the game server as root for security reasons, but rather as a 'factorio' user with user id 845. The host must therefore allow these files to be written by that user.
 
@@ -142,7 +144,7 @@ The philosophy is to [keep it simple](http://wiki.c2.com/?KeepItSimple).
 
 ## Volumes
 
-To keep things simple, the container uses a single volume mounted at `/factorio`. This volume stores configuration, mods, and saves.
+To keep things simple, the container uses a single volume mounted at `/factorio`. This volume stores configuration, mods, and saves.  Beginning in version 0.16 volume ownership must match the --user uid:guid used to start the container, or be set to 845:845 if using default settings.  To change ownership of existing volumes execute `chown -R 845:845 /path/to/existing/volume`
 
     factorio
     |-- config
