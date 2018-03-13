@@ -1,6 +1,6 @@
 # Factorio [![](https://images.microbadger.com/badges/image/dtandersen/factorio.svg)](https://microbadger.com/images/dtandersen/factorio "Get your own image badge on microbadger.com") [![Docker Pulls](https://img.shields.io/docker/pulls/dtandersen/factorio.svg)](https://hub.docker.com/r/dtandersen/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/dtandersen/factorio.svg)](https://hub.docker.com/r/dtandersen/factorio/)
 
-* `0.16.16`, `0.16`, `latest` [(0.16/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.16/Dockerfile)
+* `0.16.30`, `0.16`, `latest` [(0.16/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.16/Dockerfile)
 * `0.15.40`, `0.15`, `stable` [(0.15/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.15/Dockerfile)
 * `0.14.23`, `0.14` [(0.14/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.14/Dockerfile)
 * `0.13.20`, `0.13`  [(0.13/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.13/Dockerfile)
@@ -112,6 +112,38 @@ To generate a new map stop the server, delete all of the saves and restart the s
 
 Copy mods into the mods folder and restart the server.
 
+
+## Scenarios
+
+If you want to launch a scenario from a clean start (not from a saved map) you'll need to start the docker image from an alternate entrypoint. To do this, use the example entrypoint file stored in the /factorio/entrypoints directory in the volume, and launch the image with the following syntax. Note that this is the normal syntax with the addition of the --entrypoint setting AND the additional argument at the end, which is the name of the Scenario in the Scenarios folder.
+
+```
+docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v /opt/factorio:/factorio \
+  --name factorio \
+  --restart=always  \
+  --entrypoint "/factorio/entrypoints/scenario.sh" \
+  dtandersen/factorio \
+  MyScenarioName
+```
+
+## Converting Scenarios to Regular Maps
+
+If you would like to export your scenario to a saved map, you can use the example entrypoint similar to the Scenario usag above. Factorio will run once, converting the Scenario to a saved Map in your saves directory. A restart of the docker image using the standard options will then load that map, just as if the scenario were just started by the Scenarios example noted above. 
+
+```
+docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v /opt/factorio:/factorio \
+  --name factorio \
+  --restart=always  \
+  --entrypoint "/factorio/entrypoints/scenario2map.sh" \
+  dtandersen/factorio
+  MyScenarioName
+```
 
 ## RCON
 
@@ -256,7 +288,9 @@ Use the `PORT` environment variable to start the server on the a different port,
 # Contributors
 
 * [dtandersen](https://github.com/dtandersen/docker_factorio_server) - Maintainer
+* [Fank](https://github.com/Fankserver/docker-factorio-watchdog) - Keeper of the Factorio watchdog that keeps the version up-to-date.
 * [Zopanix](https://github.com/zopanix/docker_factorio_server) - Originator
 * [Rfvgyhn](https://github.com/Rfvgyhn/docker-factorio) - Randomly generate RCON password
 * [gnomus](https://github.com/gnomus/docker_factorio_server) - White listing
+* [bplein](https://github.com/bplein/docker_factorio_server) - Scenario support
 * [jaredledvina](https://github.com/jaredledvina/docker_factorio_server) - Version update
