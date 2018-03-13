@@ -28,6 +28,10 @@ if [ ! -f $CONFIG/map-settings.json ]; then
   cp /opt/factorio/data/map-settings.example.json $CONFIG/map-settings.json
 fi
 
+if find -L $SAVES -iname \*.tmp.zip -mindepth 1 -print | grep -q .; then
+  rm -f $SAVES/*.tmp.zip
+fi
+
 if ! find -L $SAVES -iname \*.zip -mindepth 1 -print | grep -q .; then
   /opt/factorio/bin/x64/factorio \
     --create $SAVES/_autosave1.zip  \
