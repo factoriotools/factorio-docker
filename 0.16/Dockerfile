@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-glibc:glibc-2.25
+FROM frolvlad/alpine-glibc:alpine-3.7
 
 MAINTAINER https://github.com/dtandersen/docker_factorio_server
 
