@@ -45,4 +45,5 @@ exec /opt/factorio/bin/x64/factorio \
   --server-banlist $CONFIG/server-banlist.json \
   --rcon-port $RCON_PORT \
   --rcon-password "$(cat $CONFIG/rconpw)" \
+  --latency $LATENCY
   --server-id /factorio/config/server-id.json
