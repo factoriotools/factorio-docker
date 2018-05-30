@@ -15,8 +15,7 @@ ENV PORT=34197 \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
     SCENARIOS=/factorio/scenarios \
-    SCRIPTOUTPUT=/factorio/script-output \
-    LATENCY=6
+    SCRIPTOUTPUT=/factorio/script-output
 
 RUN mkdir -p /opt /factorio && \
     apk add --update --no-cache pwgen && \

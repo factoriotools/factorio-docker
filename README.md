@@ -39,7 +39,7 @@ sudo docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always  \
+  --restart=always \
   dtandersen/factorio
 ```
 
@@ -131,7 +131,7 @@ docker run -d \
 
 ## Converting Scenarios to Regular Maps
 
-If you would like to export your scenario to a saved map, you can use the example entrypoint similar to the Scenario usag above. Factorio will run once, converting the Scenario to a saved Map in your saves directory. A restart of the docker image using the standard options will then load that map, just as if the scenario were just started by the Scenarios example noted above. 
+If you would like to export your scenario to a saved map, you can use the example entrypoint similar to the Scenario usag above. Factorio will run once, converting the Scenario to a saved Map in your saves directory. A restart of the docker image using the standard options will then load that map, just as if the scenario were just started by the Scenarios example noted above.
 
 ```
 docker run -d \
