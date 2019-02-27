@@ -43,7 +43,7 @@ if [ "$(id -u)" = '0' ]; then
   chown -R factorio:factorio $FACTORIO_VOL
 fi
 
-exec su-exec factorio /opt/factorio/bin/x64/factorio \
+exec /opt/factorio/bin/x64/factorio \
   --port $PORT \
   --start-server-load-latest \
   --server-settings $CONFIG/server-settings.json \
