@@ -51,6 +51,8 @@ exec /opt/factorio/bin/x64/factorio \
   --rcon-port $RCON_PORT \
   --server-whitelist $CONFIG/server-whitelist.json \
   --use-server-whitelist \
+  --server-adminlist $CONFIG/server-adminlist.json \
+  --server-banlist $CONFIG/server-banlist.json \
   --rcon-password "$(cat $CONFIG/rconpw)" \
   --server-id /factorio/config/server-id.json \
   $@

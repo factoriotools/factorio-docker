@@ -164,6 +164,24 @@ Create file `config/server-whitelist.json` and add the whitelisted users.
 		"friend"
 	]
 
+## Banlisting (0.17.1+)
+
+Create file `config/server-banlist.json` and add the banlisted users.
+
+    [
+        "bad_person",
+        "other_bad_person"
+    ]
+
+## Adminlisting (0.17.1+)
+
+Create file `config/server-adminlist.json` and add the adminlisted users.
+
+    [
+        "you",
+        "friend"
+    ]
+
 # Container Details
 
 The philosophy is to [keep it simple](http://wiki.c2.com/?KeepItSimple).
@@ -182,7 +200,9 @@ To keep things simple, the container uses a single volume mounted at `/factorio`
     |   |-- map-gen-settings.json
     |   |-- rconpw
     |   |-- server-settings.json
-    |   `-- server-whitelist.json
+    |   |-- server-whitelist.json
+    |   |-- server-banlist.json
+    |   `-- server-adminlist.json
     |-- mods
     |   `-- fancymod.zip
     `-- saves
