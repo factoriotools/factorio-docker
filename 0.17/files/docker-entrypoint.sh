@@ -33,7 +33,6 @@ fi
 
 if [ ! -f $CONFIG/map-gen-settings.json ]; then
   cp /opt/factorio/data/map-gen-settings.example.json $CONFIG/map-gen-settings.json
-  echo "{}" > $CONFIG/map-gen-settings.json
 fi
 
 if [ ! -f $CONFIG/map-settings.json ]; then
