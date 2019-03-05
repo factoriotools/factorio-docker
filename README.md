@@ -148,7 +148,8 @@ docker run -d \
 
 ## RCON
 
-Set the RCON password in the `rconpw` file. A random password is generated if `rconpw` doesn't exist.
+Upon the first startup, either a random password is generated or the value of environment variable `RCON_PASSWORD` is set. 
+The RCON password can be edited in the `rconpw` file after the first startup. 
 
 To change the password, stop the server, modify `rconpw`, and restart the server.
 
@@ -184,7 +185,17 @@ Create file `config/server-adminlist.json` and add the adminlisted users.
 
 # Provisioning 
 
-## server-settings.json
+## General
+
+If any of the following files is mapped into the docker container's `/config` folder, it will be used upon the first start:
+
+* `server-settings.json`
+* `map-gen-settings.json`
+* `map-settings.json`
+
+Otherwise the default files from the headless server are used and can be edited later. 
+
+## Build in customization for server-settings.json
 
 The following environment variables can be set to provision the server-settings.json with the given configuration:
 

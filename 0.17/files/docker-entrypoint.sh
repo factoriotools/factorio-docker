@@ -12,7 +12,7 @@ mkdir -p $SCENARIOS
 mkdir -p $SCRIPTOUTPUT
 
 if [ ! -f $CONFIG/rconpw ]; then
-  if [[ -z "$RCON_PASSWORD" ]]; then
+  if [ -z "$RCON_PASSWORD" ]; then
     # Generate a new RCON password if none exists
     echo $(pwgen 15 1) > $CONFIG/rconpw
   else
@@ -22,9 +22,13 @@ fi
 
 if [ ! -f $CONFIG/server-settings.json ]; then
   # If the INSTANCE_NAME environment variable is set, we assume, that we can provision the settings from the other variables
-  if [[ -z "$INSTANCE_NAME" ]]; then
-    # Copy default settings if server-settings.json doesn't exist
-    cp /opt/factorio/data/server-settings.example.json $CONFIG/server-settings.json
+  if [ -z "$INSTANCE_NAME" ]; then
+    if [ ! -f /config/server-settings.json ]; then
+      # Copy default settings if server-settings.json doesn't exist
+      cp /opt/factorio/data/server-settings.example.json $CONFIG/server-settings.json
+    else
+      cp /config/server-settings.json $CONFIG/server-settings.json
+    fi
   else
     echo "provisioning server-settings.json from env variables"
     envsubst < /server-settings.json > $CONFIG/server-settings.json
@@ -32,12 +36,21 @@ if [ ! -f $CONFIG/server-settings.json ]; then
 fi
 
 if [ ! -f $CONFIG/map-gen-settings.json ]; then
-  cp /opt/factorio/data/map-gen-settings.example.json $CONFIG/map-gen-settings.json
-  echo "{}" > $CONFIG/map-gen-settings.json
+  if [ ! -f /config/map-gen-settings.json ]; then
+    # Copy default settings if map-gen-settings.json doesn't exist
+    cp /opt/factorio/data/map-gen-settings.example.json $CONFIG/map-gen-settings.json
+  else
+    cp /config/map-gen-settings.json $CONFIG/map-gen-settings.json
+  fi
 fi
 
 if [ ! -f $CONFIG/map-settings.json ]; then
-  cp /opt/factorio/data/map-settings.example.json $CONFIG/map-settings.json
+  if [ ! -f /config/map-settings.json ]; then
+    # Copy default settings if map-settings.json doesn't exist
+    cp /opt/factorio/data/map-settings.example.json $CONFIG/map-settings.json
+  else
+    cp /config/map-settings.json $CONFIG/map-settings.json
+  fi
 fi
 
 if find -L $SAVES -iname \*.tmp.zip -mindepth 1 -print | grep -q .; then
