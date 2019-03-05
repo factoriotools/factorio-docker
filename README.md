@@ -182,30 +182,17 @@ Create file `config/server-adminlist.json` and add the adminlisted users.
         "friend"
     ]
 
-## Customize configuration files (0.17.x+)
+# Provisioning 
 
-Out-of-the box, factorio does not support environment variables inside the configuration files. A workaround is the usage of `envsubst` which generates the configuration files dynamically during startup from environment variables set in docker-compose:
+## server-settings.json
 
-Example which replaces the server-settings.json:
+The following environment variables can be set to provision the server-settings.json with the given configuration:
 
-
-	factorio_1:
-	  image: dtanders/factorio
-	  ports:
-	    - "34197:34197/udp"
-	  volumes:
-	   - /opt/factorio:/factorio
-	   - ./server-settings.json:/server-settings.json
-	  environment:
-	    - INSTANCE_NAME=Your Instance's Name
-	    - INSTANCE_DESC=Your Instance's Description
-	  entrypoint: /bin/sh -c "mkdir -p /factorio/config && envsubst < /server-settings.json > /factorio/config/server-settings.json && exec /docker-entrypoint.sh"
-
-The `server-settings.json` file may then contain the variable references like this:
-
-	"name": "${INSTANCE_NAME}",
-	"description": "${INSTANCE_DESC}",
-
+* `INSTANCE_NAME` - Name of the instance
+* `INSTANCE_DESC` - Description of the instance
+* `FACTORIO_USER` - factorio.com username
+* `FACTORIO_TOKEN` - factorio.com token
+* `GAME_PASSWORD` - Game password (optional)
 
 # Container Details
 
