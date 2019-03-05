@@ -12,13 +12,23 @@ mkdir -p $SCENARIOS
 mkdir -p $SCRIPTOUTPUT
 
 if [ ! -f $CONFIG/rconpw ]; then
-  # Generate a new RCON password if none exists
-  echo $(pwgen 15 1) > $CONFIG/rconpw
+  if [[ -z "$RCON_PASSWORD" ]]; then
+    # Generate a new RCON password if none exists
+    echo $(pwgen 15 1) > $CONFIG/rconpw
+  else
+    echo $RCON_PASSWORD > $CONFIG/rconpw
+  fi
 fi
 
 if [ ! -f $CONFIG/server-settings.json ]; then
-  # Copy default settings if server-settings.json doesn't exist
-  cp /opt/factorio/data/server-settings.example.json $CONFIG/server-settings.json
+  # If the INSTANCE_NAME environment variable is set, we assume, that we can provision the settings from the other variables
+  if [[ -z "$INSTANCE_NAME" ]]; then
+    # Copy default settings if server-settings.json doesn't exist
+    cp /opt/factorio/data/server-settings.example.json $CONFIG/server-settings.json
+  else
+    echo "provisioning server-settings.json from env variables"
+    envsubst < /server-settings.json > $CONFIG/server-settings.json
+  fi
 fi
 
 if [ ! -f $CONFIG/map-gen-settings.json ]; then
