@@ -15,7 +15,8 @@ ENV PORT=34197 \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
     SCENARIOS=/factorio/scenarios \
-    SCRIPTOUTPUT=/factorio/script-output
+    SCRIPTOUTPUT=/factorio/script-output \
+    MAX_PLAYERS=0
 
 RUN mkdir -p /opt /factorio && \
     apk add --update --no-cache pwgen su-exec binutils gettext libintl && \

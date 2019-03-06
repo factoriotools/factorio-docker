@@ -27,7 +27,7 @@ if [ ! -f $CONFIG/server-settings.json ]; then
       # Copy default settings if server-settings.json doesn't exist
       cp /opt/factorio/data/server-settings.example.json $CONFIG/server-settings.json
     else
-      cp /config/server-settings.json $CONFIG/server-settings.json
+      envsubst < /config/server-settings.json > $CONFIG/server-settings.json
     fi
   else
     echo "provisioning server-settings.json from env variables"

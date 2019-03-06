@@ -4,7 +4,7 @@
   "tags": ["game", "tags"],
 
   "_comment_max_players": "Maximum number of players allowed, admins can join even a full server. 0 means unlimited.",
-  "max_players": 0,
+  "max_players": ${MAX_PLAYERS},
 
   "_comment_visibility": ["public: Game will be published on the official Factorio matching server",
                           "lan: Game will be broadcast on LAN"],

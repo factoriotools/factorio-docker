@@ -204,6 +204,7 @@ The following environment variables can be set to provision the server-settings.
 * `FACTORIO_USER` - factorio.com username
 * `FACTORIO_TOKEN` - factorio.com token
 * `GAME_PASSWORD` - Game password (optional)
+# `MAX_PLAYERS` - Number of max players, defaults to 0 (unlimited)
 
 # Container Details
 
