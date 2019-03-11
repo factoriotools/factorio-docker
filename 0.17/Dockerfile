@@ -13,6 +13,7 @@ ENV PORT=34197 \
     SHA1=b12e3882da950450fd5225c82b0790a1f4418946 \
     SAVES=/factorio/saves \
     CONFIG=/factorio/config \
+    PROVISION=/provisioning \
     MODS=/factorio/mods \
     SCENARIOS=/factorio/scenarios \
     SCRIPTOUTPUT=/factorio/script-output

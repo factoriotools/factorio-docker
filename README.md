@@ -206,6 +206,14 @@ The `server-settings.json` file may then contain the variable references like th
 	"name": "${INSTANCE_NAME}",
 	"description": "${INSTANCE_DESC}",
 
+## Provisioning of the container
+
+If you want to provide any of the configuration files, savegames or mods to the container, you can mount a folder in `/provisioning` which contains any of the following folders:
+
+* `saves` any savegame to be loaded during startup (the latest is automatically loaded)
+* `config` any configuration you want to provide (e.g. map-gen-settings.json)
+* `mods` any mods that should be started (zip files)
+* `scenarios` scenarios available on the server. This requires the "scenarios.sh" endpoint (see above)
 
 # Container Details
 
