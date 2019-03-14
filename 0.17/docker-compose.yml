@@ -6,6 +6,7 @@ services:
      - "34197:34197/udp"
      - "27015:27015/tcp"
     volumes:
-     - /opt/factorio:/factorio
-#    user: 845:845
-#    user: 1000:1000
+     - factorio:/factorio
+    environment:
+      - PUID=1000
+      - PGID=1000

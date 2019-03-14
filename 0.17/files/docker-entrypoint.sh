@@ -35,6 +35,9 @@ if find -L $SAVES -iname \*.tmp.zip -mindepth 1 -print | grep -q .; then
 fi
 
 if [ "$(id -u)" = '0' ]; then
+  # Update the User and Group ID based on the PUID/PGID variables
+  usermod -u $PUID factorio
+  groupmod -g $PGID factorio
   # Take ownership of factorio data if running as root
   chown -R factorio:factorio $FACTORIO_VOL
   # Make sure we own temp

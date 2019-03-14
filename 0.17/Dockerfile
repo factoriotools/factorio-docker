@@ -15,10 +15,12 @@ ENV PORT=34197 \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
     SCENARIOS=/factorio/scenarios \
-    SCRIPTOUTPUT=/factorio/script-output
+    SCRIPTOUTPUT=/factorio/script-output \
+    PUID=$PUID \
+    PGID=$PGID
 
 RUN mkdir -p /opt /factorio && \
-    apk add --update --no-cache pwgen su-exec binutils gettext libintl && \
+    apk add --update --no-cache pwgen su-exec binutils gettext libintl shadow && \
     apk add --update --no-cache --virtual .build-deps curl && \
     curl -sSL https://www.factorio.com/get-download/$VERSION/headless/linux64 \
         -o /tmp/factorio_headless_x64_$VERSION.tar.xz && \
