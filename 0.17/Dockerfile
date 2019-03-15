@@ -9,8 +9,8 @@ ARG PGID=845
 
 ENV PORT=34197 \
     RCON_PORT=27015 \
-    VERSION=0.17.12 \
-    SHA1=5088846835438ddaffdd3244b24163fb7fb5dd06 \
+    VERSION=0.17.11 \
+    SHA1=6891054a90db4b52733582d3470de92eca58c730 \
     SAVES=/factorio/saves \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
