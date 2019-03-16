@@ -11,6 +11,24 @@ mkdir -p $MODS
 mkdir -p $SCENARIOS
 mkdir -p $SCRIPTOUTPUT
 
+function update_to_latest {
+    # Update factorio headless server to 'latest' experimental
+    FILE_NAME=factorio_headless_x64_latest.tar.xz
+
+    curl -sSL https://www.factorio.com/get-download/latest/headless/linux64 -o /tmp/$FILE_NAME
+    tar xf /tmp/$FILE_NAME --directory /opt
+    rm /tmp/$FILE_NAME
+}
+
+while [ ! -z $1 ]; do
+    case "$1" in
+        -u|--update|update)
+            update_to_latest
+            ;;
+    esac
+    shift 1
+done
+
 if [ ! -f $CONFIG/rconpw ]; then
   # Generate a new RCON password if none exists
   echo $(pwgen 15 1) > $CONFIG/rconpw

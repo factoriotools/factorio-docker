@@ -18,7 +18,7 @@ ENV PORT=34197 \
     SCRIPTOUTPUT=/factorio/script-output
 
 RUN mkdir -p /opt /factorio && \
-    apk add --update --no-cache pwgen su-exec binutils gettext libintl && \
+    apk add --update --no-cache pwgen su-exec binutils gettext libintl curl && \
     apk add --update --no-cache --virtual .build-deps curl && \
     curl -sSL https://www.factorio.com/get-download/$VERSION/headless/linux64 \
         -o /tmp/factorio_headless_x64_$VERSION.tar.xz && \
