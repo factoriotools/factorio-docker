@@ -32,7 +32,7 @@ update_mod()
   MOD_INFO_URL="$MOD_BASE_URL/api/mods/$MOD_NAME"
   MOD_INFO_JSON=$(curl --silent "$MOD_INFO_URL")
   
-  MOD_INFO=$(echo "$MOD_INFO_JSON" | jq -j --arg version 0.17 ".releases|reverse|map(select(.info_json.factorio_version as \$mod_version | \$version | startswith(\$mod_version)))[0]|.file_name, \";\", .download_url, \";\", .sha1")
+  MOD_INFO=$(echo "$MOD_INFO_JSON" | jq -j --arg version $FACTORIO_VERSION ".releases|reverse|map(select(.info_json.factorio_version as \$mod_version | \$version | startswith(\$mod_version)))[0]|.file_name, \";\", .download_url, \";\", .sha1")
 
   MOD_FILENAME=$(echo "$MOD_INFO" | cut -f1 -d";")
   MOD_URL=$(echo "$MOD_INFO" | cut -f2 -d";")
