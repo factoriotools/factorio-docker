@@ -25,50 +25,62 @@ print_failure()
 
 update_mod()
 {
-  MOD_NAME=$1
+  MOD_NAME="$1"
 
-  print_step "Trying to update $MOD_NAME"
+  print_step "Checking for update of mod $MOD_NAME..."
 
   MOD_INFO_URL="$MOD_BASE_URL/api/mods/$MOD_NAME"
-  MOD_INFO_JSON=$(curl --silent $MOD_INFO_URL)
+  MOD_INFO_JSON=$(curl --silent "$MOD_INFO_URL")
   
-  MOD_INFO=$(curl --silent $MOD_INFO_URL | jq -j --arg version $FACTORIO_VERSION ".releases|reverse|map(select(.info_json.factorio_version as \$mod_version | \$version | startswith(\$mod_version)))[0]|.file_name, \" \", .download_url, \" \", .sha1")
+  MOD_INFO=$(echo "$MOD_INFO_JSON" | jq -j --arg version 0.17 ".releases|reverse|map(select(.info_json.factorio_version as \$mod_version | \$version | startswith(\$mod_version)))[0]|.file_name, \";\", .download_url, \";\", .sha1")
 
-  set -- $MOD_INFO
-  MOD_FILENAME=$1
-  MOD_URL=$2
-  MOD_SHA1=$3
+  MOD_FILENAME=$(echo "$MOD_INFO" | cut -f1 -d";")
+  MOD_URL=$(echo "$MOD_INFO" | cut -f2 -d";")
+  MOD_SHA1=$(echo "$MOD_INFO" | cut -f3 -d";")
 
   if [ -z "$MOD_URL" ]; then
     return 1
   fi
 
   if [ "$MOD_FILENAME" = "null" ]; then
-    print_failure "  Mod Not compatible with version"
+    print_failure "  Not compatible with version"
     return 1
   fi
 
-  if [ -f $MOD_DIR/$MOD_FILENAME ]; then
-    print_success "  Already up-to-date"
+  if [ -f "$MOD_DIR/$MOD_FILENAME" ]; then
+    print_success "  Already up-to-date."
     return 0
   fi
 
-  FULL_URL=$MOD_BASE_URL$MOD_URL?username=$USERNAME\&token=$TOKEN 
-  HTTP_STATUS=$(curl --silent -L -w "%{http_code}" -o $MOD_DIR/$MOD_FILENAME $FULL_URL)
+  print_step "Downloading..."
+  FULL_URL="$MOD_BASE_URL$MOD_URL?username=$USERNAME&token=$TOKEN"
+  HTTP_STATUS=$(curl --silent -L -w "%{http_code}" -o "$MOD_DIR/$MOD_FILENAME" "$FULL_URL")
+  echo $FULL_URL
 
-  set -- $(sha1sum $MOD_DIR/$MOD_FILENAME)
-  if [ $1 != $MOD_SHA1 ]; then
-    print_failure "  SHA1 mismatch"
-    rm $MOD_DIR/$MOD_FILENAME
+  if [ "$HTTP_STATUS" != "200" ]; then
+    print_failure "  Download failed: Code $HTTP_STATUS."
+    rm "$MOD_DIR/$MOD_FILENAME"
     return 1
   fi
 
-  print_success "  Downloaded $MOD_NAME"
+  if [ ! -f "$MOD_DIR/$MOD_FILENAME" ]; then
+    print_failure "  Downloaded file missing!"
+    return 1
+  fi
 
-  for file in $MOD_DIR/$MOD_NAME*.zip; do
-    if [ $file != $MOD_DIR/$MOD_FILENAME ]; then
-      print_success "  Deleting old verion: $file"
-      rm $file
+  set -- $(sha1sum "$MOD_DIR/$MOD_FILENAME")
+  if [ $1 != $MOD_SHA1 ]; then
+    print_failure "  SHA1 mismatch!"
+    rm "$MOD_DIR/$MOD_FILENAME"
+    return 1
+  fi
+
+  print_success "  Download complete."
+
+  for file in "$MOD_DIR/${MOD_NAME}_"*".zip"; do # wildcard does usually not work in quotes: https://unix.stackexchange.com/a/67761
+    if [ "$file" != "$MOD_DIR/$MOD_FILENAME" ]; then
+      print_success "  Deleting old version: $file"
+      rm "$file"
     fi
   done
 
@@ -76,12 +88,12 @@ update_mod()
 }
 
 if [ -f $MOD_DIR/mod-list.json ]; then
-  for mod in $(jq -r ".mods|map(select(.enabled))|.[].name" $MOD_DIR/mod-list.json); do
-    if [ $mod != "base" ]; then
-      update_mod $mod
-      if [ ! $? -eq 0 ]; then
-        return $?
-      fi
+  jq -r ".mods|map(select(.enabled))|.[].name" $MOD_DIR/mod-list.json | while read mod; do
+    if [ "$mod" != "base" ]; then
+      update_mod "$mod"
+      #if [ ! $? -eq 0 ]; then
+      #  return $?
+      #fi
     fi
   done
 fi
