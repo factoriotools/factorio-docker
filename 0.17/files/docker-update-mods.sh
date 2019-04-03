@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 if [ -f /run/secrets/username ]; then
   USERNAME=$(cat /run/secrets/username)
 fi
@@ -14,6 +13,5 @@ if [ -z $TOKEN ]; then
   USERNAME=$1
   TOKEN=$2
 fi
-
 
 ./update-mods.sh $VERSION $MODS $USERNAME $TOKEN
