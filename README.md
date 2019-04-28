@@ -317,6 +317,10 @@ For LAN games the VM needs an internal IP in order for clients to connect. One w
   config.vm.network "forwarded_port", guest: 34197, host: 34197
 ```
 
+## Amazon Web Services (AWS) Deployment
+
+If you're looking for a simple way to deploy this to the Amazon Web Services Cloud, check out the [Factorio Server Deployment (CloudFormation) repository](https://github.com/m-chandler/factorio-spot-pricing). This repository contains a CloudFormation template that will get you up and running in AWS in a matter of minutes. Optionally it uses Spot Pricing so the server is very cheap, and you can easily turn it off when not in use.
+
 ## Troubleshooting
 
 **My server is listed in the server browser, but nobody can connect**
