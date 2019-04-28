@@ -4,7 +4,6 @@
 * `0.16.51`, `0.16`, `stable` [(0.16/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.16/Dockerfile)
 * `0.15.40`, `0.15` [(0.15/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.15/Dockerfile)
 * `0.14.23`, `0.14` [(0.14/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.14/Dockerfile)
-* `0.13.20`, `0.13`  [(0.13/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.13/Dockerfile)
 
 *Tag descriptions*
 
@@ -132,7 +131,7 @@ docker run -d \
 
 ## Converting Scenarios to Regular Maps
 
-If you would like to export your scenario to a saved map, you can use the example entrypoint similar to the Scenario usag above. Factorio will run once, converting the Scenario to a saved Map in your saves directory. A restart of the docker image using the standard options will then load that map, just as if the scenario were just started by the Scenarios example noted above.
+If you would like to export your scenario to a saved map, you can use the example entrypoint similar to the Scenario usage above. Factorio will run once, converting the Scenario to a saved Map in your saves directory. A restart of the docker image using the standard options will then load that map, just as if the scenario were just started by the Scenarios example noted above.
 
 ```
 docker run -d \
@@ -190,7 +189,7 @@ Example which replaces the server-settings.json:
 
 
 	factorio_1:
-	  image: dtanders/factorio
+	  image: dtandersen/factorio
 	  ports:
 	    - "34197:34197/udp"
 	  volumes:
@@ -278,8 +277,8 @@ sudo docker-compose up -d
 
 ## Environment Variables
 
-* `PORT` (0.15+) - Start the server on an alterate port, .e.g. `docker run -e "PORT=34198"`.
-* `RCON_PORT` (0.16+) - Start the RCON on an alterate port, .e.g. `docker run -e "RCON_PORT=34198"`.
+* `PORT` (0.15+) - Start the server on an alternate port, .e.g. `docker run -e "PORT=34198"`.
+* `RCON_PORT` (0.16+) - Start the RCON on an alternate port, .e.g. `docker run -e "RCON_PORT=34198"`.
 
 
 ## LAN Games
