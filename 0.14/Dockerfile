@@ -5,7 +5,7 @@ LABEL maintainer="https://github.com/dtandersen/docker_factorio_server"
 ENV VERSION=0.14.23 \
     SHA1=6ef84341c6fc1cf45cfdd6acc8468aaa117b9e8a
 
-RUN mkdir /opt && \
+RUN mkdir -p /opt && \
     apk --no-cache add curl tini pwgen && \
     curl -sSL https://www.factorio.com/get-download/$VERSION/headless/linux64 \
         -o /tmp/factorio_headless_x64_$VERSION.tar.gz && \
