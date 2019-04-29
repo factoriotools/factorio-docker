@@ -40,10 +40,6 @@ if [ "$(id -u)" = '0' ]; then
   groupmod -o -g "$PGID" factorio
   # Take ownership of factorio data if running as root
   chown -R factorio:factorio $FACTORIO_VOL
-  # Make sure we own temp
-  #mkdir -p /opt/factorio/temp
-  #chown -R factorio:factorio /opt/factorio/temp
-  # Drop to the factorio user
   SU_EXEC="su-exec factorio"
 fi
 
