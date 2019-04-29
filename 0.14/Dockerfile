@@ -1,6 +1,6 @@
 FROM frolvlad/alpine-glibc:alpine-3.9
 
-MAINTAINER https://github.com/dtandersen/docker_factorio_server
+LABEL maintainer="https://github.com/dtandersen/docker_factorio_server"
 
 ENV VERSION=0.14.23 \
     SHA1=6ef84341c6fc1cf45cfdd6acc8468aaa117b9e8a
