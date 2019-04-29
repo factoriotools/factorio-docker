@@ -1,0 +1,35 @@
+dist: xenial
+sudo: required
+language: bash
+services: 
+  - docker
+addons:
+  apt:
+    packages:
+    - jq
+
+jobs:
+  include:
+    - stage: test
+      env: HADOLINT=${HOME}/hadolint
+      install: curl -sLo ${HADOLINT} $(curl -s https://api.github.com/repos/hadolint/hadolint/releases/latest?access_token=${GITHUB_TOKEN} | jq -r '.assets | .[] | select(.name=="hadolint-Linux-x86_64") | .browser_download_url')
+               && chmod 700 ${HADOLINT}
+      script:
+        - git ls-files --exclude='*Dockerfile' --ignored | xargs --max-lines=1 ${HADOLINT}
+        - bash -c 'shopt -s globstar; shellcheck **/*.sh'
+    - &build
+      stage: build
+      env: VERSION=0.17
+      script:
+        - ./build.sh $VERSION
+      after_success:
+        - if [ "$TRAVIS_BRANCH" == "master" ]; then
+            echo "$DOCKER_PASSWORD" | DOCKER login -u "$DOCKER_USERNAME" --password-stdin
+            docker push "factoriotools/docker_factorio_server:$VERSION"
+          fi
+    - <<: *build
+      env: VERSION=0.16
+    - <<: *build
+      env: VERSION=0.15
+    - <<: *build
+      env: VERSION=0.14

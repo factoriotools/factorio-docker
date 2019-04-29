@@ -1,0 +1,14 @@
+ignored:
+  # ignore apt version pinning
+  - DL3008
+  # ignore pip version pinning
+  - DL3013
+  # ignore apk version pinning
+  - DL3018
+  # ignore pipefail cause Balena/resin.io images do not work with it
+  - DL4006
+  # ignore false positive regex
+  - SC1083 
+  - SC2086 
+  # ignore as need for debug
+  - SC2005
