@@ -30,6 +30,6 @@ fi
 exec /opt/factorio/bin/x64/factorio \
   --port 34197 \
   --start-server-load-latest \
-  --server-settings $CONFIG/server-settings.json \
+  --server-settings "$CONFIG/server-settings.json" \
   --rcon-port 27015 \
   --rcon-password "$(cat "$CONFIG/rconpw")"

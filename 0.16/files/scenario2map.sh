@@ -11,7 +11,7 @@ id
 mkdir -p "$SAVES"
 mkdir -p "$CONFIG"
 mkdir -p "$MODS"
-mkdir -p "$SCENARIO"
+mkdir -p "$SCENARIOS"
 
 if [ ! -f "$CONFIG/server-settings.json" ]; then
   cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"

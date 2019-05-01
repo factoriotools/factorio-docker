@@ -11,7 +11,7 @@ id
 mkdir -p "$SAVES"
 mkdir -p "$CONFIG"
 mkdir -p "$MODS"
-mkdir -p "$SCENARIO"
+mkdir -p "$SCENARIOS"
 
 #chown -R factorio /factorio
 
