@@ -2,7 +2,7 @@
 if [ -z "$1" ]; then
   echo "No argument supplied"
 fi
-SCENARIO=$1
+SERVER_SCENARIO=$1
 
 set -euo pipefail
 
@@ -33,7 +33,7 @@ fi
 
 exec /opt/factorio/bin/x64/factorio \
   --port "$PORT" \
-  --start-server-load-scenario "$SCENARIO" \
+  --start-server-load-scenario "$SERVER_SCENARIO" \
   --server-settings "$CONFIG/server-settings.json" \
   --server-whitelist "$CONFIG/server-whitelist.json" \
   --server-banlist "$CONFIG/server-banlist.json" \
