@@ -1,6 +1,6 @@
-# Factorio [![](https://images.microbadger.com/badges/image/dtandersen/factorio.svg)](https://microbadger.com/images/dtandersen/factorio "Get your own image badge on microbadger.com") [![Docker Pulls](https://img.shields.io/docker/pulls/dtandersen/factorio.svg)](https://hub.docker.com/r/dtandersen/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/dtandersen/factorio.svg)](https://hub.docker.com/r/dtandersen/factorio/)
+# Factorio [![](https://images.microbadger.com/badges/image/factoriotools/factorio.svg)](https://microbadger.com/images/factoriotools/factorio "Get your own image badge on microbadger.com") [![Docker Pulls](https://img.shields.io/docker/pulls/factoriotools/factorio.svg)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/factoriotools/factorio.svg)](https://hub.docker.com/r/factoriotools/factorio/)
 
-* `0.17.34`, `0.17`, `latest` [(0.17/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.17/Dockerfile)
+* `0.17.35`, `0.17`, `latest` [(0.17/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.17/Dockerfile)
 * `0.16.51`, `0.16`, `stable` [(0.16/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.16/Dockerfile)
 * `0.15.40`, `0.15` [(0.15/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.15/Dockerfile)
 * `0.14.23`, `0.14` [(0.14/Dockerfile)](https://github.com/dtandersen/docker_factorio_server/blob/master/0.14/Dockerfile)
@@ -40,7 +40,7 @@ sudo docker run -d \
   -v /opt/factorio:/factorio \
   --name factorio \
   --restart=always \
-  dtandersen/factorio
+  factoriotools/factorio
 ```
 
 For those new to Docker, here is an explanation of the options:
@@ -80,7 +80,7 @@ To issue console commands to the server, start the server in interactive mode wi
 
 	docker run -d -it  \
         --name factorio \
-        dtandersen/factorio
+        factoriotools/factorio
 	docker attach factorio
 
 
@@ -94,7 +94,7 @@ Delete the container and refresh the image:
 
 	docker stop factorio
 	docker rm factorio
-	docker pull dtandersen/factorio
+	docker pull factoriotools/factorio
 
 Now run the server as before. In about a minute the new version of Factorio should be up and running, complete with saves and config!
 
@@ -125,7 +125,7 @@ docker run -d \
   --name factorio \
   --restart=always  \
   --entrypoint "/scenario.sh" \
-  dtandersen/factorio \
+  factoriotools/factorio \
   MyScenarioName
 ```
 
@@ -141,7 +141,7 @@ docker run -d \
   --name factorio \
   --restart=always  \
   --entrypoint "/scenario2map.sh" \
-  dtandersen/factorio
+  factoriotools/factorio
   MyScenarioName
 ```
 
@@ -189,7 +189,7 @@ Example which replaces the server-settings.json:
 
 
 	factorio_1:
-	  image: dtandersen/factorio
+	  image: factoriotools/factorio
 	  ports:
 	    - "34197:34197/udp"
 	  volumes:
@@ -239,11 +239,11 @@ The files in this volume should be owned by the factorio user, uid 845.
 
 [Docker Compose](https://docs.docker.com/compose/install/) is an easy way to run Docker containers.
 
-First get a [docker-compose.yml](https://github.com/dtandersen/docker_factorio_server/blob/master/0.16/docker-compose.yml) file. To get it from this repository:
+First get a [docker-compose.yml](https://github.com/dtandersen/docker_factorio_server/blob/master/0.17/docker-compose.yml) file. To get it from this repository:
 
 ```
 git clone https://github.com/dtandersen/docker_factorio_server.git
-cd docker_factorio_server/0.16
+cd docker_factorio_server/0.17
 ```
 
 Or make your own:
@@ -252,7 +252,7 @@ Or make your own:
 version: '2'
 services:
   factorio:
-    image: dtandersen/factorio
+    image: factoriotools/factorio
     ports:
      - "34197:34197/udp"
      - "27015:27015/tcp"
@@ -303,7 +303,7 @@ sudo docker run -d \
   -v /opt/factorio:/factorio \
   --name factorio \
   --restart=always  \
-  dtandersen/factorio
+  factoriotools/factorio
 ```
 
 ## Vagrant
@@ -316,6 +316,10 @@ For LAN games the VM needs an internal IP in order for clients to connect. One w
   config.vm.network "public_network"
   config.vm.network "forwarded_port", guest: 34197, host: 34197
 ```
+
+## Amazon Web Services (AWS) Deployment
+
+If you're looking for a simple way to deploy this to the Amazon Web Services Cloud, check out the [Factorio Server Deployment (CloudFormation) repository](https://github.com/m-chandler/factorio-spot-pricing). This repository contains a CloudFormation template that will get you up and running in AWS in a matter of minutes. Optionally it uses Spot Pricing so the server is very cheap, and you can easily turn it off when not in use.
 
 ## Troubleshooting
 

@@ -40,18 +40,22 @@ if [ "$(id -u)" = '0' ]; then
   groupmod -o -g "$PGID" factorio
   # Take ownership of factorio data if running as root
   chown -R factorio:factorio $FACTORIO_VOL
+  # Drop to the factorio user
   SU_EXEC="su-exec factorio"
+else
+  SU_EXEC=""
 fi
 
 if ! find -L "$SAVES" -iname \*.zip -mindepth 1 -print | grep -q .; then
   # Generate a new map if no save ZIPs exist
-  ${SU_EXEC} /opt/factorio/bin/x64/factorio \
+  $SU_EXEC /opt/factorio/bin/x64/factorio \
     --create "$SAVES/_autosave1.zip" \
     --map-gen-settings "$CONFIG/map-gen-settings.json" \
     --map-settings "$CONFIG/map-settings.json"
 fi
 
-exec "${SU_EXEC}" /opt/factorio/bin/x64/factorio \
+# shellcheck disable=SC2086
+exec $SU_EXEC /opt/factorio/bin/x64/factorio \
   --port "$PORT" \
   --start-server-load-latest \
   --server-settings "$CONFIG/server-settings.json" \

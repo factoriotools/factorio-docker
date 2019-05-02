@@ -6,7 +6,7 @@ id
 mkdir -p "$SAVES"
 mkdir -p "$CONFIG"
 mkdir -p "$MODS"
-mkdir -p "$SCENARIO"
+mkdir -p "$SCENARIOS"
 mkdir -p "$SCRIPTOUTPUT"
 
 if [ ! -f "$CONFIG/rconpw" ]; then
