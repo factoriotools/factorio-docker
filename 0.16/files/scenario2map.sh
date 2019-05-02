@@ -2,7 +2,7 @@
 if [ -z "$1" ]; then
   echo "No argument supplied"
 fi
-SERVER_SCENARIO=$1
+SCENARIO=$1
 
 set -euo pipefail
 
@@ -26,4 +26,4 @@ if [ ! -f "$CONFIG/map-settings.json" ]; then
 fi
 
 exec /opt/factorio/bin/x64/factorio \
-  --scenario2map "$SERVER_SCENARIO"
+  --scenario2map "$SCENARIO"
