@@ -21,12 +21,21 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   if [ -n "$EXTRA_TAG" ]; then
     TAG="$TAG -t $DOCKER_REPO:$EXTRA_TAG"
   fi
-
-  # shellcheck disable=SC2086
-  docker build . -t $DOCKER_REPO:$TAG
-
-  # echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  # docker push "$DOCKER_REPO:$VERSION"
 fi
 
+# shellcheck disable=SC2086
+docker build . -t $DOCKER_REPO:$TAG
+
 docker images
+
+# echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+docker push "$DOCKER_REPO:latest"
+
+if [ -n "$EXTRA_TAG" ]; then
+  docker push "$DOCKER_REPO:$EXTRA_TAG"
+fi
+
+if [ -n "$TRAVIS_TAG" ]; then
+  docker push "$DOCKER_REPO:$VERSION"
+fi
