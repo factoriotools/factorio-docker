@@ -19,17 +19,12 @@ jobs:
         - bash -c 'shopt -s globstar; shellcheck **/*.sh'
     - &build
       stage: build
-      env: VERSION=0.17
+      env: VERSION_SHORT=0.17 EXTRA_TAG=latest
       script:
-        - ./build.sh $VERSION
-      after_success:
-        - if [ "$TRAVIS_BRANCH" == "master" ]; then
-            echo "$DOCKER_PASSWORD" | DOCKER login -u "$DOCKER_USERNAME" --password-stdin
-            docker push "factoriotools/docker_factorio_server:$VERSION"
-          fi
+        - ./build.sh $VERSION_SHORT
     - <<: *build
-      env: VERSION=0.16
+      env: VERSION_SHORT=0.16 EXTRA_TAG=stable
     - <<: *build
-      env: VERSION=0.15
+      env: VERSION_SHORT=0.15
     - <<: *build
-      env: VERSION=0.14
+      env: VERSION_SHORT=0.14
