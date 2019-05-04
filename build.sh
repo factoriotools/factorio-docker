@@ -28,14 +28,15 @@ docker build . -t $DOCKER_REPO:$TAG
 
 docker images
 
-# echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+if [ "dirname $(git diff --name-only HEAD^) | head -1" == "$VERSION" ]; then
+  # echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  docker push "$DOCKER_REPO:latest"
 
-docker push "$DOCKER_REPO:latest"
+  if [ -n "$EXTRA_TAG" ]; then
+    docker push "$DOCKER_REPO:$EXTRA_TAG"
+  fi
 
-if [ -n "$EXTRA_TAG" ]; then
-  docker push "$DOCKER_REPO:$EXTRA_TAG"
-fi
-
-if [ -n "$TRAVIS_TAG" ]; then
-  docker push "$DOCKER_REPO:$VERSION"
+  if [ -n "$TRAVIS_TAG" ]; then
+    docker push "$DOCKER_REPO:$VERSION"
+  fi
 fi
