@@ -29,7 +29,7 @@ if [ ! -f "$CONFIG/map-settings.json" ]; then
   cp /opt/factorio/data/map-settings.example.json "$CONFIG/map-settings.json"
 fi
 
-INCOMPLETE_SAVES_EXIST=`find -L "$SAVES" -iname \*.tmp.zip -mindepth 1`
+INCOMPLETE_SAVES_EXIST=$(find -L "$SAVES" -iname \*.tmp.zip -mindepth 1)
 if [[ -z $INCOMPLETE_SAVES_EXIST ]]; then
   # Delete incomplete saves (such as after a forced exit)
   rm -f "$SAVES/*.tmp.zip"
@@ -47,7 +47,7 @@ else
   SU_EXEC=""
 fi
 
-SAVES_EXIST=`find -L "$SAVES" -iname \*.zip -mindepth 1`
+SAVES_EXIST=$(find -L "$SAVES" -iname \*.zip -mindepth 1)
 if [[ ! -z $SAVES_EXIST ]]; then
   # Generate a new map if no save ZIPs exist
   $SU_EXEC /opt/factorio/bin/x64/factorio \
