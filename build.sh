@@ -40,4 +40,6 @@ if [ "$(dirname "$(git diff --name-only HEAD^)" | head -1)" == "$VERSION" ]; the
     docker push "$DOCKER_REPO:$VERSION"
     docker push "$DOCKER_REPO:$VERSION_SHORT"
   fi
+
+  curl -X POST https://hooks.microbadger.com/images/factoriotools/factorio/TmmKGNp8jKcFqZvcJhTCIAJVluw=
 fi
