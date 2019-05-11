@@ -28,7 +28,7 @@ docker build . -t $DOCKER_REPO:$TAG
 
 docker images
 
-if [ "dirname $(git diff --name-only HEAD^) | head -1" == "$VERSION" ]; then
+if [ "$(dirname "$(git diff --name-only HEAD^)" | head -1)" == "$VERSION" ]; then
   # echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   docker push "$DOCKER_REPO:latest"
 
@@ -38,5 +38,6 @@ if [ "dirname $(git diff --name-only HEAD^) | head -1" == "$VERSION" ]; then
 
   if [ -n "$TRAVIS_TAG" ]; then
     docker push "$DOCKER_REPO:$VERSION"
+    docker push "$DOCKER_REPO:$VERSION_SHORT"
   fi
 fi
