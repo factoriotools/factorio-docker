@@ -32,7 +32,7 @@ fi
 NRTMPSAVES=$( find -L "$SAVES" -iname \*.tmp.zip -mindepth 1 | wc -l )
 if [ $NRTMPSAVES -gt 0 ]; then
   # Delete incomplete saves (such as after a forced exit)
-  rm -f $SAVES/*.tmp.zip
+  rm -f "$SAVES"/*.tmp.zip
 fi
 
 if [ "$(id -u)" = '0' ]; then
