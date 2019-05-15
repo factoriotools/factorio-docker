@@ -30,7 +30,7 @@ if [ ! -f "$CONFIG/map-settings.json" ]; then
 fi
 
 NRTMPSAVES=$( find -L "$SAVES" -iname \*.tmp.zip -mindepth 1 | wc -l )
-if [ $NRTMPSAVES -gt 0 ]; then
+if [ "$NRTMPSAVES" -gt 0 ]; then
   # Delete incomplete saves (such as after a forced exit)
   rm -f "$SAVES/*.tmp.zip"
 fi
@@ -48,7 +48,7 @@ else
 fi
 
 NRSAVES=$( find -L "$SAVES" -iname \*.zip -mindepth 1 | wc -l )
-if [ $NRSAVES -eq 0 ]; then
+if [ "$NRSAVES" -eq 0 ]; then
   # Generate a new map if no save ZIPs exist
   $SU_EXEC /opt/factorio/bin/x64/factorio \
     --create "$SAVES/_autosave1.zip" \
