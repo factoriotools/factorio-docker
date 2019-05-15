@@ -11,7 +11,9 @@ VERSION=$(grep -oP '[0-9]+\.[0-9]+\.[0-9]+' "$VERSION_SHORT/Dockerfile" | head -
 DOCKER_REPO=factoriotools/docker_factorio_server
 cd "$VERSION_SHORT" || exit
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
+  TAG="$TRAVIS_PULL_REQUEST_SLUG"
+else
   if [ "$TRAVIS_BRANCH" == "master" ]; then
     TAG="$VERSION -t $DOCKER_REPO:$VERSION_SHORT"
   else
