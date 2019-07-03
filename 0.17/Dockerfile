@@ -20,8 +20,7 @@ ENV PORT=34197 \
     PGID="$PGID"
 
 RUN mkdir -p /opt /factorio && \
-    apk add --update --no-cache pwgen su-exec binutils gettext libintl shadow && \
-    apk add --update --no-cache --virtual .build-deps curl && \
+    apk add --update --no-cache pwgen su-exec binutils gettext libintl shadow curl jq && \
     curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" \
         -o /tmp/factorio_headless_x64_$VERSION.tar.xz && \
     echo "$SHA1  /tmp/factorio_headless_x64_$VERSION.tar.xz" | sha1sum -c && \
@@ -32,7 +31,6 @@ RUN mkdir -p /opt /factorio && \
     ln -s "$MODS" /opt/factorio/mods && \
     ln -s "$SCENARIOS" /opt/factorio/scenarios && \
     ln -s "$SCRIPTOUTPUT" /opt/factorio/script-output && \
-    apk del .build-deps && \
     addgroup -g "$PGID" -S "$GROUP" && \
     adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" && \
     chown -R "$USER":"$GROUP" /opt/factorio /factorio

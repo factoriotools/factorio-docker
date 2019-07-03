@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 set -euo pipefail
 
 id
@@ -33,6 +33,10 @@ NRTMPSAVES=$( find -L "$SAVES" -iname \*.tmp.zip -mindepth 1 | wc -l )
 if [ "$NRTMPSAVES" -gt 0 ]; then
   # Delete incomplete saves (such as after a forced exit)
   rm -f "$SAVES"/*.tmp.zip
+fi
+
+if [[ $UPDATE_MODS_ON_START ]]; then
+  ./docker-update-mods.sh
 fi
 
 if [ "$(id -u)" = '0' ]; then
