@@ -349,3 +349,4 @@ Use the `PORT` environment variable to start the server on the a different port,
 * [gnomus](https://github.com/gnomus/docker_factorio_server) - Coded wite listing support
 * [bplein](https://github.com/bplein/docker_factorio_server) - Coded scenario support
 * [jaredledvina](https://github.com/jaredledvina/docker_factorio_server) - Contributed version updates
+* [carlbennett](https://github.com/carlbennett) - Contributed version updates and bugfixes
