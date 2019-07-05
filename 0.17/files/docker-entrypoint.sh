@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/sh -x
 set -euo pipefail
 
 id
@@ -35,7 +35,10 @@ if [ "$NRTMPSAVES" -gt 0 ]; then
   rm -f "$SAVES"/*.tmp.zip
 fi
 
-if [[ $UPDATE_MODS_ON_START ]]; then
+if [ -z ${UPDATE_MODS_ON_START+x} ]; then # check if it is not set
+  UPDATE_MODS_ON_START=0 # if not set, set it to zero
+fi
+if [ "$UPDATE_MODS_ON_START" -gt 0 ]; then
   ./docker-update-mods.sh
 fi
 

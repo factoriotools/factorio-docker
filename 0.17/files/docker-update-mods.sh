@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -x
 
 if [[ -f /run/secrets/username ]]; then
   USERNAME=$(cat /run/secrets/username)

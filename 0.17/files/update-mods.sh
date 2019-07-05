@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -x
 
 FACTORIO_VERSION=$1
 MOD_DIR=$2
