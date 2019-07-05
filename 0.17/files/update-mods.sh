@@ -37,16 +37,16 @@ update_mod()
   MOD_URL=$(echo "$MOD_INFO" | cut -f2 -d";")
   MOD_SHA1=$(echo "$MOD_INFO" | cut -f3 -d";")
 
-  if [ -z $MOD_URL ]; then
+  if [ -z "$MOD_URL" ]; then
     return 1
   fi
 
-  if [ $MOD_FILENAME == null ]; then
+  if [ "$MOD_FILENAME" = "null" ]; then
     print_failure "  Not compatible with version"
     return 1
   fi
 
-  if [ -f $MOD_DIR/$MOD_FILENAME ]; then
+  if [ -f "$MOD_DIR/$MOD_FILENAME" ]; then
     print_success "  Already up-to-date."
     return 0
   fi
@@ -55,19 +55,19 @@ update_mod()
   FULL_URL="$MOD_BASE_URL$MOD_URL?username=$USERNAME&token=$TOKEN"
   HTTP_STATUS=$(curl --silent -L -w "%{http_code}" -o "$MOD_DIR/$MOD_FILENAME" "$FULL_URL")
 
-  if [ $HTTP_STATUS != 200 ]; then
+  if [ "$HTTP_STATUS" -ne 200 ]; then
     print_failure "  Download failed: Code $HTTP_STATUS."
     rm "$MOD_DIR/$MOD_FILENAME"
     return 1
   fi
 
-  if [ ! -f $MOD_DIR/$MOD_FILENAME ]; then
+  if [ ! -f "$MOD_DIR/$MOD_FILENAME" ]; then
     print_failure "  Downloaded file missing!"
     return 1
   fi
 
   set -- "$(sha1sum "$MOD_DIR/$MOD_FILENAME")"
-  if [ $1 != "$MOD_SHA1" ]; then
+  if [ "$1" != "$MOD_SHA1" ]; then
     print_failure "  SHA1 mismatch!"
     rm "$MOD_DIR/$MOD_FILENAME"
     return 1
@@ -76,7 +76,7 @@ update_mod()
   print_success "  Download complete."
 
   for file in "$MOD_DIR/${MOD_NAME}_"*".zip"; do # wildcard does usually not work in quotes: https://unix.stackexchange.com/a/67761
-    if [ $file != $MOD_DIR/$MOD_FILENAME ]; then
+    if [ "$file" != "$MOD_DIR/$MOD_FILENAME" ]; then
       print_success "  Deleting old version: $file"
       rm "$file"
     fi
@@ -85,9 +85,9 @@ update_mod()
   return 0
 }
 
-if [ -f $MOD_DIR/mod-list.json ]; then
+if [ -f "$MOD_DIR/mod-list.json" ]; then
   jq -r ".mods|map(select(.enabled))|.[].name" "$MOD_DIR/mod-list.json" | while read -r mod; do
-    if [ $mod != base ]; then
+    if [ "$mod" != "base" ]; then
       update_mod "$mod"
     fi
   done
