@@ -34,6 +34,7 @@ exec /opt/factorio/bin/x64/factorio \
   --start-server-load-scenario "$SERVER_SCENARIO" \
   --server-settings "$CONFIG/server-settings.json" \
   --server-whitelist "$CONFIG/server-whitelist.json" \
+  --use-server-whitelist \
   --server-banlist "$CONFIG/server-banlist.json" \
   --rcon-port "$RCON_PORT" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
