@@ -39,8 +39,6 @@ RUN set -ox pipefail \
 
 VOLUME /factorio
 
-EXPOSE $PORT/udp $RCON_PORT/tcp
-
 COPY files/ /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
