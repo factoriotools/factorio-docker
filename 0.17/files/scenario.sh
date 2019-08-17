@@ -17,7 +17,7 @@ if [[ ! -f $CONFIG/rconpw ]]; then
   pwgen 15 1 >"$CONFIG/rconpw"
 fi
 
-if [[ -f /factorio/config/server-settings.template.json ]] && [[ ! -z "${INSTANCE_NAME}" ]] && [[ ! -z "${INSTANCE_DESC}" ]]; then
+if [[ -f /factorio/config/server-settings.template.json ]] && [[ -n "${INSTANCE_NAME}" ]] && [[ -n "${INSTANCE_DESC}" ]]; then
   envsubst < /factorio/config/server-settings.template.json > /factorio/config/server-settings.json
 fi
 
