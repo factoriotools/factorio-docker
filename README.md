@@ -107,6 +107,40 @@ To load an old save stop the server and run the command `touch oldsave.zip`. Thi
 
 To generate a new map stop the server, delete all of the saves and restart the server.
 
+## Specify a save directly
+
+> New in 0.17.79-2 or later
+
+You can specify a specific save to load by configuring the server through a set of environment variables:
+
+To load an existing save set `SAVE_NAME` to the name of your existing save file located within the `saves` directory, without the `.zip` extension:
+
+```
+sudo docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v /opt/factorio:/factorio \
+  -e ENABLE_SERVER_LOAD_LATEST=false \
+  -e SAVE_NAME=replaceme \
+  --name factorio \
+  --restart=always \
+  factoriotools/factorio
+```
+
+To generate a new map set `ENABLE_GENERATE_NEW_MAP_SAVE=true` and specify `SAVE_NAME`:
+
+```
+sudo docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v /opt/factorio:/factorio \
+  -e ENABLE_SERVER_LOAD_LATEST=false \
+  -e ENABLE_GENERATE_NEW_MAP_SAVE=true \
+  -e SAVE_NAME=replaceme \
+  --name factorio \
+  --restart=always \
+  factoriotools/factorio
+```
 
 ## Mods
 
