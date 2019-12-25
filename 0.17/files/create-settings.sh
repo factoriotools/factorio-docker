@@ -14,10 +14,10 @@ updateTemplate () {
 	if [ -z "$val" ]
 	then
 		#replace the value in the template file with the default value
-		sed -i 's/$1/$2/g' $TEMPLATE_FILE
+		sed -i "s/$1/$2/g" "$TEMPLATE_FILE"
 	else
 		#Replace the value in the template file with the value in the environment Variable
-		sed -i 's/$1/$val/g' $TEMPLATE_FILE
+		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 	fi
 	
 }
@@ -32,10 +32,10 @@ updateTemplateBool (){
 	if [[ ${val} =~ ^(true)|(false)$ ]]
 	then
 		#replace the value in the template file with the argument
-		sed -i 's/$1/$val/g' $TEMPLATE_FILE
+		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 	else
 		#Replace the value in the template file with the default
-		sed -i 's/$1/$2/g' $TEMPLATE_FILE
+		sed -i "s/$1/$2/g" "$TEMPLATE_FILE"
 	fi
 }
 
@@ -49,10 +49,10 @@ updateTemplateNumber (){
 	if [[ ${val} =~ ^[0-9]+$ ]]
 	then
 		#replace the value in the template file with the argument
-		sed -i 's/$1/$val/g' $TEMPLATE_FILE
+		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 	else
 		#Replace the value in the template file with the default
-		sed -i 's/$1/$2/g' $TEMPLATE_FILE
+		sed -i "s/$1/$2/g" "$TEMPLATE_FILE"
 	fi
 }
 
@@ -66,10 +66,10 @@ updateTemplateEmptyDefault(){
 	if [ -z "$val" ]
 	then
 		#replace the value in the template file with the default value
-		sed -i 's/$1//g' $TEMPLATE_FILE
+		sed -i "s/$1//g" "$TEMPLATE_FILE"
 	else
 		#Replace the value in the template file with the value in the environment Variable
-		sed -i 's/$1/$val/g' $TEMPLATE_FILE
+		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 	fi
 }
 
@@ -98,7 +98,7 @@ serverSettings(){
 	updateTemplateEmptyDefault templateServerUsername TEMPLATE_SERVER_USERNAME
 	updateTemplateEmptyDefault templateServerPassword TEMPLATE_SERVER_PASSWORD
 	updateTemplateEmptyDefault templateServerGameToken TEMPLATE_SERVER_TOKEN
-	updateTemplate templateServerGamePassword "password" TEMPLATE_SERVER_GAME_PASSWORD
+	updateTemplateEmptyDefault templateServerGamePassword TEMPLATE_SERVER_GAME_PASSWORD
 	updateTemplateBool templateServerRequireUserVerification true TEMPLATE_SERVER_REQUIRE_USER_VERIFICATION
 	updateTemplateNumber templateServerMaxUpload 0 TEMPLATE_SERVER_MAX_UPLOAD
 	updateTemplateNumber templateServerMaxUploadSlots 5 TEMPLATE_SERVER_MAX_UPLOAD_SLOTS
