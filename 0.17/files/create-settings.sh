@@ -120,7 +120,7 @@ serverSettings(){
 	updateTemplateEmptyDefault	templateServerGameToken					TEMPLATE_SERVER_TOKEN
 	updateTemplateEmptyDefault	templateServerGamePassword				TEMPLATE_SERVER_GAME_PASSWORD
 	updateTemplateBool			templateServerRequireUserVerification	TEMPLATE_SERVER_REQUIRE_USER_VERIFICATION	true
-	updateTemplateNumber		templateServerMaxUpload					TEMPLATE_SERVER_MAX_UPLOAD					0
+	updateTemplateNumber		templateServerMaxUploadCount			TEMPLATE_SERVER_MAX_UPLOAD					0
 	updateTemplateNumber		templateServerMaxUploadSlots			TEMPLATE_SERVER_MAX_UPLOAD_SLOTS			5
 	updateTemplateNumber		templateServerMinimumLatenctInTicks		TEMPLATE_SERVER_MIN_LATENCY_TICKS			0
 	updateTemplateBool			templateServerIgnoreLimitForReturning	TEMPLATE_SERVER_IGNORE_LIMIT_FOR_RETURNING	false
@@ -132,9 +132,9 @@ serverSettings(){
 	updateTemplateBool			templateServerOnlyAdminsPause			TEMPLATE_SERVER_ADMIN_ONLY_PAUSE			true
 	updateTemplateBool			templateServerAutosaveOnlyOnServer		TEMPLATE_SERVER_SERVER_ONLY_AUTOSAVE		true
 	updateTemplateBool			templateServerNonblockingSaving			TEMPLATE_SERVER_NONBLOCKING_SAVE			false
-	updateTemplateNumber		templateServerMinSegmentSize			TEMPLATE_SERVER_MIN_SEGMENT_SIZE			25
+	updateTemplateNumber		templateServerMinSegmentSizeCount		TEMPLATE_SERVER_MIN_SEGMENT_SIZE			25
 	updateTemplateNumber		templateServerMinSegmentSizePeer		TEMPLATE_SERVER_MIN_SEGMENT_SIZE_PEER		20
-	updateTemplateNumber		templateServerMaxSegmentSize			TEMPLATE_SERVER_MAX_SEGMENT_SIZE			100
+	updateTemplateNumber		templateServerMaxSegmentSizeCount		TEMPLATE_SERVER_MAX_SEGMENT_SIZE			100
 	updateTemplateNumber		templateServerMaxSegmentSizePeer		TEMPLATE_SERVER_MAX_SEGMENT_SIZE_PEER		10
 }
 

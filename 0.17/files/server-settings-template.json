@@ -14,7 +14,7 @@
 	"token": "templateServerGameToken",
 	"game_password": "templateServerGamePassword",
 	"require_user_verification": templateServerRequireUserVerification,
-	"max_upload_in_kilobytes_per_second": templateServerMaxUpload,
+	"max_upload_in_kilobytes_per_second": templateServerMaxUploadCount,
 	"max_upload_slots": templateServerMaxUploadSlots,
 	"minimum_latency_in_ticks": templateServerMinimumLatenctInTicks,
 	"ignore_player_limit_for_returning_players": templateServerIgnoreLimitForReturning,
@@ -26,8 +26,8 @@
 	"only_admins_can_pause_the_game": templateServerOnlyAdminsPause,
 	"autosave_only_on_server": templateServerAutosaveOnlyOnServer,
 	"non_blocking_saving": templateServerNonblockingSaving,
-	"minimum_segment_size": templateServerMinSegmentSize,
+	"minimum_segment_size": templateServerMinSegmentSizeCount,
 	"minimum_segment_size_peer_count": templateServerMinSegmentSizePeer,
-	"maximum_segment_size": templateServerMaxSegmentSize,
+	"maximum_segment_size": templateServerMaxSegmentSizeCount,
 	"maximum_segment_size_peer_count": templateServerMaxSegmentSizePeer
 }
