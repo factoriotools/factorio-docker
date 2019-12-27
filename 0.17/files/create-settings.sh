@@ -107,7 +107,7 @@ mapSettings () {
 	updateTemplateNumber	templateMapPollutionExpectedMaxPerChunk		TEMPLATE_MAP_POLLUTION_EXPECTED_MAX_PER_CHUNK		150
 	updateTemplateNumber	templateMapPollutionMinToShowPerChunk		TEMPLATE_MAP_POLLUTION_MIN_TO_SHOW_PER_CHUNK		50
 	updateTemplateNumber	templateMapPollutionMinToDamageTrees		TEMPLATE_MAP_POLLUTION_MIN_TO_DAMAGE_TREES			60
-	updateTemplateNumber	templateMapPollutionMaxForrestDamage		TEMPLATE_MAP_POLLUTION_MAX_FORREST_DAMMAGE			150
+	updateTemplateNumber	templateMapPollutionMaxForestDamage			TEMPLATE_MAP_POLLUTION_MAX_FOREST_DAMMAGE			150
 	updateTemplateNumber	templateMapPollutionPerTreeDamage			TEMPLATE_MAP_POLLUTION_PER_TREE_DAMAGE				50
 	updateTemplateNumber	templateMapPollutionRestoredPerTreeDamage	TEMPLATE_MAP_POLLUTION_RESTORED_PER_TREE_DAMAGE		10
 	updateTemplateNumber	templateMapPollutionMaxToRestoreTrees		TEMPLATE_MAP_POLLUTION_MAX_TO_RESTORE_TREES			20
@@ -115,7 +115,7 @@ mapSettings () {
 	updateTemplateBool		templateMapEvolutionEnabled					TEMPLATE_MAP_EVOLUTION_ENABLED						true
 	updateTemplateNumber	templateMapEvolutionTimeFactor				TEMPLATE_MAP_EVOLUTION_TIME_FACTOR					0.000004
 	updateTemplateNumber	templateMapEvolutionDestroyFactor			TEMPLATE_MAP_EVOLUTION_DESTROY_FACTOR				0.002
-	updateTemplateNumber	templateMapEvolutionPolutionFactor			TEMPLATE_MAP_EVOLUTION_POLUTION_FACTOR				0.0000009
+	updateTemplateNumber	templateMapEvolutionPollutionFactor			TEMPLATE_MAP_EVOLUTION_POLLUTION_FACTOR				0.0000009
 	updateTemplateBool		templateMapExpansionEnabled					TEMPLATE_MAP_EXPANSION_ENABLED						true
 	updateTemplateNumber	templateMapExpansionMinBaseSpacing			TEMPLATE_MAP_EXPANSION_MIN_BASE_SPACING				3
 	updateTemplateNumber	templateMapExpansionMaxExpansionDistance	TEMPLATE_MAP_EXPANSION_MAX_EXPANSION_DISTANCE		7
