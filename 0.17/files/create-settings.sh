@@ -247,13 +247,29 @@ serverSettings(){
 
 if [[ $FORCE_GENERATE_SETTINGS_FILES ]]
 then
-	#generate new files, regardless of if a file already exists.
+
+	#backup old files using timestamp.
+	if [[ ! -f $CONFIG/server-settings.json ]]
+	then
+		mv "$CONFIG/server-settings.json" "$CONFIG/server-settings.json".`date +%Y.%m.%d.%H.%M.%S`
+	fi
+
+	if [[ ! -f $CONFIG/map-gen-settings.json ]]
+	then
+		mv "$CONFIG/map-gen-settings.json" "$CONFIG/map-gen-settings.json".`date +%Y.%m.%d.%H.%M.%S`
+	fi
+
+	if [[ ! -f $CONFIG/map-settings.json ]]
+	then
+		mv "$CONFIG/map-settings.json" "$CONFIG/map-settings.json".`date +%Y.%m.%d.%H.%M.%S`
+	fi
+
+	#generate new files.
 	serverSettings
 	mapSettings
 	mapGenSettings
-	rm -f "$CONFIG/server-settings.json"
-	rm -f "$CONFIG/map-gen-settings.json"
-	rm -f "$CONFIG/map-settings.json"
+
+	#move new files into place
 	cp ./server-settings-template.json "$CONFIG/server-settings.json"
 	cp ./map-gen-settings-template.json "$CONFIG/map-gen-settings.json"
 	cp ./map-settings-template.json "$CONFIG/map-settings.json"
