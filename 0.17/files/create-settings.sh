@@ -114,9 +114,9 @@ mapGenSettings () {
 	updateTemplateNumber	templateGenCoalSize					TEMPLATE_GEN_COAL_SIZE					1
 	updateTemplateNumber	templateGenCoalFrequency			TEMPLATE_GEN_COAL_FREQUENCY				1
 	#stone
-	updateTemplateNumber	templateGenstoneRichness			TEMPLATE_GEN_STONE_RICHNESS				1
-	updateTemplateNumber	templateGenstoneSize				TEMPLATE_GEN_STONE_SIZE					1
-	updateTemplateNumber	templateGenstoneFrequency			TEMPLATE_GEN_STONE_FREQUENCY			1
+	updateTemplateNumber	templateGenStoneRichness			TEMPLATE_GEN_STONE_RICHNESS				1
+	updateTemplateNumber	templateGenStoneSize				TEMPLATE_GEN_STONE_SIZE					1
+	updateTemplateNumber	templateGenStoneFrequency			TEMPLATE_GEN_STONE_FREQUENCY			1
 	#Copper
 	updateTemplateNumber	templateGenCopperRichness			TEMPLATE_GEN_COPPER_RICHNESS			1
 	updateTemplateNumber	templateGenCopperSize				TEMPLATE_GEN_COPPER_SIZE				1

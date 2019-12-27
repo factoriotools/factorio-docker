@@ -1,70 +1,70 @@
 {
-	"terrain_segmentation": 1,
-	"water": 1,
-	"width": 0,
-	"height": 0,
-	"starting_area": 1,
-	"peaceful_mode": false,
+	"terrain_segmentation": templateGenTerrainSegmentation,
+	"water": templateGenTerrainWater,
+	"width": templateGenMapWidth,
+	"height": templateGenMapHeight,
+	"starting_area": templateGenMapStartingArea,
+	"peaceful_mode": templateGenPeacefullMode,
 	"autoplace_controls": {
 		"coal": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenCoalFrequency,
+			"size": templateGenCoalSize,
+			"richness": templateGenCoalRichness
 		},
 		"stone": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenStoneFrequency,
+			"size": templateGenStoneSize,
+			"richness": templateGenStoneRichness
 		},
 		"copper-ore": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenCopperFrequency,
+			"size": templateGenCopperSize,
+			"richness": templateGenCopperRichness
 		},
 		"iron-ore": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenIronFrequency,
+			"size": templateGenIronSize,
+			"richness": templateGenIronRichness
 		},
 		"uranium-ore": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenUraniumFrequency,
+			"size": templateGenUraniumSize,
+			"richness": templateGenUraniumRichness
 		},
 		"crude-oil": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenCrudeFrequency,
+			"size": templateGenCrudeSize,
+			"richness": templateGenCrudeRichness
 		},
 		"trees": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenTreesFrequency,
+			"size": templateGenTreesSize,
+			"richness": templateGenTreesRichness
 		},
 		"enemy-base": {
-			"frequency": 1,
-			"size": 1,
-			"richness": 1
+			"frequency": templateGenBiterFrequency,
+			"size": templateGenBiterSize,
+			"richness": templateGenBiterRichness
 		}
 	},
 	"cliff_settings": {
-		"name": "cliff",
-		"cliff_elevation_0": 10,
-		"cliff_elevation_interval": 10,
-		"richness": 1
+		"name": "templateGenCliffName",
+		"cliff_elevation_0": templateGenCliffElevationZero,
+		"cliff_elevation_interval": templateGenCliffElevationInterval,
+		"richness": templateGenCliffRichness
 	},
 	"property_expression_names": {
-		"elevation": "0_17-island",
-		"control-setting:aux:bias": "0.300000",
-		"control-setting:aux:frequency:multiplier": "1.333333",
-		"control-setting:moisture:bias": "0.100000",
-		"control-setting:moisture:frequency:multiplier": "0.500000"
+		"elevation": "templateGenExpressionElevation",
+		"control-setting:aux:bias": "templateGenAuxBias",
+		"control-setting:aux:frequency:multiplier": "templateGenAuxMultiplier",
+		"control-setting:moisture:bias": "templateGenMoistureBias",
+		"control-setting:moisture:frequency:multiplier": "templateGenMoistureMultiplier"
 	},
 	"starting_points": [
 		{
-			"x": 1000,
-			"y": 2000
+			"x": templateGenStartingPointX,
+			"y": templateGenStartingPointY
 		}
 	],
-	"seed": null
+	"seed": templateGenMapSeed
 }
