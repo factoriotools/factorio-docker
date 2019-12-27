@@ -245,6 +245,130 @@ The `server-settings.json` file may then contain the variable references like th
 "description": "${INSTANCE_DESC}",
 ```
 
+### configuration file generation
+
+It is possible, by setting GENERATE_SETTINGS_FILES to true, to generate the server-settings.json, map-gen-settings.json and some of map-settings.json files based on environment variables. The tables below describe the different variables avaliable.
+
+
+### Environment Variables
+
+|Variable											|default				|description|
+|---------------------------------------------------|:---------------------:|-----------|
+|__**META VARIABLES**__								|						|variables used for configuration of the container itself, or used in the scripts to determine functionality. |
+|SAVE_NAME											|						|the name of the game save|
+|ENABLE_SERVER_LOAD_LATEST							|true					||
+|ENABLE_GENERATE_NEW_MAP_SAVE						|false					||
+|GENERATE_SETTINGS_FILES							|false					|if 'true', the server settings files will be generated based on the environment variables or defaults. Otherwise, tbe files will be copied from the files in /opt/factorio/data|
+|GENERATE_SETTINGS_FILES_DEBUG						|false					|if 'true', any variables that are set will output when used in the settings files generation.|
+|FORCE_GENERATE_SETTINGS_FILES						|false					|If 'true', the settings files will be generated from the environment variables, regardless of if the files exist already.|
+|__**SERVER SETTINGS**__							|						|server-settings.json|
+|TEMPLATE_SERVER_NAME								|my-server				|Name of the game as it will appear in the game listing|
+|TEMPLATE_SERVER_DESCRIPTION						|my-server				|Description of the game that will appear in the listing|
+|TEMPLATE_SERVER_TAGS								|"factorio","docker"	|Game tags|
+|TEMPLATE_SERVER_MAX_PLAYERS						|0						|Maximum number of players allowed, admins can join even a full server. 0 means unlimited.|
+|TEMPLATE_SERVER_PUBLIC_VISIBILITY					|true					|Game will be published on the official Factorio matching server|
+|TEMPLATE_SERVER_LAN_VISIBILITY						|true					|Game will be broadcast on LAN|
+|TEMPLATE_SERVER_USERNAME							|						|Your factorio.com login Username. Required for games with visibility public|
+|TEMPLATE_SERVER_PASSWORD							|						|Your factorio.com login Password. Required for games with visibility public|
+|TEMPLATE_SERVER_TOKEN								|						|Authentication token. May be used instead of 'password' above.|
+|TEMPLATE_SERVER_GAME_PASSWORD						|						|The password that the server |
+|TEMPLATE_SERVER_REQUIRE_USER_VERIFICATION			|true					|When set to true, the server will only allow clients that have a valid Factorio.com account|
+|TEMPLATE_SERVER_MAX_UPLOAD							|0						|Default value is 0. 0 means unlimited. Value is in Kilobytes per second.|
+|TEMPLATE_SERVER_MAX_UPLOAD_SLOTS					|5						|Default value is 5. 0 means unlimited.|
+|TEMPLATE_SERVER_MIN_LATENCY_TICKS					|0						|One tick is 16ms in default speed, default value is 0. 0 means no minimum.|
+|TEMPLATE_SERVER_IGNORE_LIMIT_FOR_RETURNING			|false					|Players that played on this map already can join even when the max player limit was reached.|
+|TEMPLATE_SERVER_ALLOW_COMMANDS						|admins-only			|The ability for commands to be used on the server. Possible values are, true, false and admins-only|
+|TEMPLATE_SERVER_AUTOSAVE_INTERVAL					|5						|Autosave interval in minutes|
+|TEMPLATE_SERVER_AUTOSAVE_SLOTS						|3						|Server autosave slots, it is cycled through when the server autosaves.|
+|TEMPLATE_SERVER_AFK_KICK_INTERVAL					|0						|How many minutes until someone is kicked when doing nothing, 0 for never.|
+|TEMPLATE_SERVER_AUTOPAUSE							|true					|Whether should the server be paused when no players are present.|
+|TEMPLATE_SERVER_ADMIN_ONLY_PAUSE					|true					|Whether only admins can pause the game.|
+|TEMPLATE_SERVER_SERVER_ONLY_AUTOSAVE				|true					|Whether autosaves should be saved only on server or also on all connected clients. |
+|TEMPLATE_SERVER_NONBLOCKING_SAVE					|false					|Highly experimental feature, enable only at your own risk of losing your saves. On UNIX systems, server will fork itself to create an autosave. Autosaving on connected Windows clients will be disabled regardless of autosave_only_on_server option.|
+|TEMPLATE_SERVER_MIN_SEGMENT_SIZE					|25						||
+|TEMPLATE_SERVER_MIN_SEGMENT_SIZE_PEER				|20						||
+|TEMPLATE_SERVER_MAX_SEGMENT_SIZE					|100					||
+|TEMPLATE_SERVER_MAX_SEGMENT_SIZE_PEER				|10						||
+|__**MAP GEN SETTINGS**__							|						|map-gen-settings.json|
+|TEMPLATE_GEN_TERRAIN_SEGMENTATION					|1						|Inverse of map scale|
+|TEMPLATE_GEN_TERRAIN_WATER							|1						|Multiplier for water 'coverage' - higher increases the water level. Water level = 10 * log2(this value)|
+|TEMPLATE_GEN_MAP_WIDTH								|0						|Width of map, in tiles; 0 means infinite.|
+|TEMPLATE_GEN_MAP_HEIGHT							|0						|Height of map, in tiles; 0 means infinite.|
+|TEMPLATE_GEN_MAP_STARTING_AREA						|1						|Multiplier for 'biter free zone radius'|
+|TEMPLATE_GEN_PEACEFULL_MODE						|false					||
+|TEMPLATE_GEN_COAL_RICHNESS							|1						||
+|TEMPLATE_GEN_COAL_SIZE								|1						||
+|TEMPLATE_GEN_COAL_FREQUENCY						|1						||
+|TEMPLATE_GEN_STONE_RICHNESS						|1						||
+|TEMPLATE_GEN_STONE_SIZE							|1						||
+|TEMPLATE_GEN_STONE_FREQUENCY						|1						||
+|TEMPLATE_GEN_COPPER_RICHNESS						|1						||
+|TEMPLATE_GEN_COPPER_SIZE							|1						||
+|TEMPLATE_GEN_COPPER_FREQUENCY						|1						||
+|TEMPLATE_GEN_IRON_RICHNESS							|1						||
+|TEMPLATE_GEN_IRON_SIZE								|1						||
+|TEMPLATE_GEN_IRON_FREQUENCY						|1						||
+|TEMPLATE_GEN_URANIUM_RICHNESS						|1						||
+|TEMPLATE_GEN_URANIUM_SIZE							|1						||
+|TEMPLATE_GEN_URANIUM_FREQUENCY						|1						||
+|TEMPLATE_GEN_CRUDE_RICHNESS						|1						||
+|TEMPLATE_GEN_CRUDE_SIZE							|1						||
+|TEMPLATE_GEN_CRUDE_FREQUENCY						|1						||
+|TEMPLATE_GEN_TREES_RICHNESS						|1						||
+|TEMPLATE_GEN_TREES_SIZE							|1						||
+|TEMPLATE_GEN_TREES_FREQUENCY						|1						||
+|TEMPLATE_GEN_BITER_RICHNESS						|1						||
+|TEMPLATE_GEN_BITER_SIZE							|1						||
+|TEMPLATE_GEN_BITER_FREQUENCY						|1						||
+|TEMPLATE_GEN_CLIFF_NAME							|cliff					|Name of the cliff prototype.|
+|TEMPLATE_GEN_CLIFF_ELEVATION_ZERO					|10						|Elevation of first row of cliffs.|
+|TEMPLATE_GEN_CLIFF_ELEVATION_INTERVAL				|10						|Elevation difference between successive rows of cliffs.|
+|TEMPLATE_GEN_CLIFF_RICHNESS						|1						|Multiplier for cliff continuity; 0 will result in no cliffs, 10 will make all cliff rows completely solid.|
+|TEMPLATE_GEN_EXPRESSION_ELEVATION					|						|Overrides for property value generators. Elevation influences water and cliff placement. Leave it blank to get 'normal' terrain. Use '0_16-elevation' to reproduce terrain from 0.16. Use '0_17-island' to get an island.|
+|TEMPLATE_GEN_AUX_BIAS								|0.300000				||
+|TEMPLATE_GEN_AUX_MULTIPLIER						|1.333333				||
+|TEMPLATE_GEN_MOISTURE_BIAS							|0.100000				||
+|TEMPLATE_GEN_MOISTURE_MULTIPLIER					|0.500000				||
+|TEMPLATE_GEN_STARTING_POINT_X						|1000					||
+|TEMPLATE_GEN_STARTING_POINT_Y						|2000					||
+|TEMPLATE_GEN_MAP_SEED								|null					|Use null for a random seed, number for a specific seed.|
+|__**MAP SETTINGS**__								|						|map-settings.json|
+|TEMPLATE_MAP_DIFFICULTY_RECIPE						|0						||
+|TEMPLATE_MAP_DIFFICULTY_TECHNOLOGY					|0						||
+|TEMPLATE_MAP_DIFFICULTY_TECH_PRICE					|1						||
+|TEMPLATE_MAP_DIFFICULTY_RESEARCH_QUEUE				|after-victory			||
+|TEMPLATE_MAP_POLLUTION_ENABLED						|true					||
+|TEMPLATE_MAP_POLLUTION_DIFFUSION_RATIO				|0.02					||
+|TEMPLATE_MAP_POLLUTION_MIN_TO_DEFUSE				|15						| amount that is diffused to neighboring chunk (these are values for 60 ticks (1 simulated second)).|
+|TEMPLATE_MAP_POLLUTION_AGEING						|1						||
+|TEMPLATE_MAP_POLLUTION_EXPECTED_MAX_PER_CHUNK		|150					||
+|TEMPLATE_MAP_POLLUTION_MIN_TO_SHOW_PER_CHUNK		|50						||
+|TEMPLATE_MAP_POLLUTION_MIN_TO_DAMAGE_TREES			|60						||
+|TEMPLATE_MAP_POLLUTION_MAX_FOREST_DAMMAGE			|150					||
+|TEMPLATE_MAP_POLLUTION_PER_TREE_DAMAGE				|50						||
+|TEMPLATE_MAP_POLLUTION_RESTORED_PER_TREE_DAMAGE	|10						||
+|TEMPLATE_MAP_POLLUTION_MAX_TO_RESTORE_TREES		|20						||
+|TEMPLATE_MAP_POLLUTION_BITER_ATTACK_MODIFIER		|1						||
+|TEMPLATE_MAP_EVOLUTION_ENABLED						|true					||
+|TEMPLATE_MAP_EVOLUTION_TIME_FACTOR					|0.000004				||
+|TEMPLATE_MAP_EVOLUTION_DESTROY_FACTOR				|0.002					||
+|TEMPLATE_MAP_EVOLUTION_POLLUTION_FACTOR			|0.0000009				||
+|TEMPLATE_MAP_EXPANSION_ENABLED						|true					||
+|TEMPLATE_MAP_EXPANSION_MIN_BASE_SPACING			|3						||
+|TEMPLATE_MAP_EXPANSION_MAX_EXPANSION_DISTANCE		|7						||
+|TEMPLATE_MAP_EXPANSION_FRIENDLY_BASE_RADIUS		|2						||
+|TEMPLATE_MAP_EXPANSION_BITER_BASE_RADIUS			|2						||
+|TEMPLATE_MAP_EXPANSION_BUILDING_CFF				|0.1					||
+|TEMPLATE_MAP_EXPANSION_OTHER_BASE_CFF				|2.0					||
+|TEMPLATE_MAP_EXPANSION_NEIGHBOUR_CHUNK_CFF			|0.5					||
+|TEMPLATE_MAP_EXPANSION_NEIGHBOUR_BASE_CHUNK_CFF	|0.4					||
+|TEMPLATE_MAP_EXPANSION_MAX_COLLIDING_TILES_CFF		|0.9					||
+|TEMPLATE_MAP_EXPANSION_SETTLER_GROUP_MIN			|5						||
+|TEMPLATE_MAP_EXPANSION_SETTLER_GROUP_MAX			|20						||
+|TEMPLATE_MAP_EXPANSION_MIN_COOLDOWN				|14400					||
+|TEMPLATE_MAP_EXPANSION_MAX_COOLDOWN				|216000					||
+
+
 ## Container Details
 
 The philosophy is to [keep it simple](http://wiki.c2.com/?KeepItSimple).
@@ -381,3 +505,4 @@ Use the `PORT` environment variable to start the server on the a different port,
 * [bplein](https://github.com/bplein/docker_factorio_server) - Coded scenario support
 * [jaredledvina](https://github.com/jaredledvina/docker_factorio_server) - Contributed version updates
 * [carlbennett](https://github.com/carlbennett) - Contributed version updates and bugfixes
+* [deef0000dragon1](https://github.com/deef0000dragon1) - Contributed Environment Variable based settings file generation.

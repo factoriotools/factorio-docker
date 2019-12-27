@@ -18,6 +18,9 @@ updateTemplate () {
 		sed -i "s/$1/$3/g" "$TEMPLATE_FILE"
 	else
 		#Replace the value in the template file with the value in the environment Variable
+		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
+			echo Setting $1 to $val in $TEMPLATE_FILE
+		fi
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 	fi
 	
@@ -40,6 +43,9 @@ updateTemplateBool (){
 	then
 		#replace the value in the template file with the argument
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
+		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
+			echo Setting $1 to $val in $TEMPLATE_FILE
+		fi
 	else
 		#Replace the value in the template file with the default
 		sed -i "s/$1/$3/g" "$TEMPLATE_FILE"
@@ -63,6 +69,9 @@ updateTemplateNumber (){
 	then
 		#replace the value in the template file with the argument
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
+		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
+			echo Setting $1 to $val in $TEMPLATE_FILE
+		fi
 	else
 		#Replace the value in the template file with the default
 		sed -i "s/$1/$3/g" "$TEMPLATE_FILE"
@@ -88,6 +97,9 @@ updateTemplateEmpty(){
 	else
 		#Replace the value in the template file with the value in the environment Variable
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
+		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
+			echo Setting $1 to $val in $TEMPLATE_FILE
+		fi
 	fi
 }
 
@@ -185,7 +197,7 @@ mapGenSettings () {
 	updateTemplateNumber	templateGenCliffElevationInterval	TEMPLATE_GEN_CLIFF_ELEVATION_INTERVAL	10
 	updateTemplateNumber	templateGenCliffRichness			TEMPLATE_GEN_CLIFF_RICHNESS				1
 	#expression Names
-	updateTemplate			templateGenExpressionElevation		TEMPLATE_GEN_EXPRESSION_ELEVATION		"0_17-island"
+	updateTemplateEmpty		templateGenExpressionElevation		TEMPLATE_GEN_EXPRESSION_ELEVATION
 	updateTemplateNumber	templateGenAuxBias					TEMPLATE_GEN_AUX_BIAS					"0.300000"
 	updateTemplateNumber	templateGenAuxMultiplier			TEMPLATE_GEN_AUX_MULTIPLIER				"1.333333"
 	updateTemplateNumber	templateGenMoistureBias				TEMPLATE_GEN_MOISTURE_BIAS				"0.100000"
@@ -204,7 +216,7 @@ serverSettings(){
 
 	updateTemplate				templateServerName						TEMPLATE_SERVER_NAME						"my-server"
 	updateTemplate				templateServerDescription				TEMPLATE_SERVER_DESCRIPTION					"my-server"
-	updateTemplate				templateServerTags						TEMPLATE_SERVER_TAGS						'"kubernetes","docker"'
+	updateTemplate				templateServerTags						TEMPLATE_SERVER_TAGS						'"factorio","docker"'
 	updateTemplateNumber		templateServerMaxPlayers				TEMPLATE_SERVER_MAX_PLAYERS					0
 	updateTemplateBool			templateServerPulicVisibility			TEMPLATE_SERVER_PUBLIC_VISIBILITY			true
 	updateTemplateBool			templateServerLanVisibility				TEMPLATE_SERVER_LAN_VISIBILITY				true
@@ -232,23 +244,42 @@ serverSettings(){
 }
 
 
-#call the functions to generate and copy the files from the templates.
-if [[ ! -f $CONFIG/server-settings.json ]]; then
-	# Copy default settings if server-settings.json doesn't exist
+
+if [[ $FORCE_GENERATE_SETTINGS_FILES ]]
+then
+	#generate new files, regardless of if a file already exists.
 	serverSettings
-	cp ./server-settings-template.json "$CONFIG/server-settings.json"
-fi
-
-if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
-	mapGenSettings
-	cp ./map-gen-settings-template.json "$CONFIG/map-gen-settings.json"
-fi
-
-if [[ ! -f $CONFIG/map-settings.json ]]; then
 	mapSettings
+	mapGenSettings
+	rm -f "$CONFIG/server-settings.json"
+	rm -f "$CONFIG/map-gen-settings.json"
+	rm -f "$CONFIG/map-settings.json"
+	cp ./server-settings-template.json "$CONFIG/server-settings.json"
+	cp ./map-gen-settings-template.json "$CONFIG/map-gen-settings.json"
 	cp ./map-settings-template.json "$CONFIG/map-settings.json"
-fi
+else
+	#call the functions to generate and copy the files from the templates.
+	if [[ ! -f $CONFIG/server-settings.json ]]
+	then
+		# generate settings if server-settings.json doesn't exist
+		serverSettings
+		cp ./server-settings-template.json "$CONFIG/server-settings.json"
+	fi
 
+	if [[ ! -f $CONFIG/map-gen-settings.json ]]
+	then
+		mapGenSettings
+		cp ./map-gen-settings-template.json "$CONFIG/map-gen-settings.json"
+	fi
+
+	if [[ ! -f $CONFIG/map-settings.json ]]
+	then
+		mapSettings
+		cp ./map-settings-template.json "$CONFIG/map-settings.json"
+	fi
+
+
+fi
 
 
 
