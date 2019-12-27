@@ -231,7 +231,24 @@ serverSettings(){
 	updateTemplateNumber		templateServerMaxSegmentSizePeer		TEMPLATE_SERVER_MAX_SEGMENT_SIZE_PEER		10
 }
 
-#call the functions to generate the files from the templates.
-mapSettings
-mapGenSettings
-serverSettings
+
+#call the functions to generate and copy the files from the templates.
+if [[ ! -f $CONFIG/server-settings.json ]]; then
+	# Copy default settings if server-settings.json doesn't exist
+	serverSettings
+	cp ./server-settings-template.json "$CONFIG/server-settings.json"
+fi
+
+if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
+	mapGenSettings
+	cp ./map-gen-settings-template.json "$CONFIG/map-gen-settings.json"
+fi
+
+if [[ ! -f $CONFIG/map-settings.json ]]; then
+	mapSettings
+	cp ./map-settings-template.json "$CONFIG/map-settings.json"
+fi
+
+
+
+

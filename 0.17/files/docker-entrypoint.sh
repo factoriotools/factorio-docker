@@ -18,18 +18,8 @@ if [[ ! -f $CONFIG/rconpw ]]; then
   pwgen 15 1 >"$CONFIG/rconpw"
 fi
 
-if [[ ! -f $CONFIG/server-settings.json ]]; then
-  # Copy default settings if server-settings.json doesn't exist
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
-fi
-
-if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
-  cp /opt/factorio/data/map-gen-settings.example.json "$CONFIG/map-gen-settings.json"
-fi
-
-if [[ ! -f $CONFIG/map-settings.json ]]; then
-  cp /opt/factorio/data/map-settings.example.json "$CONFIG/map-settings.json"
-fi
+#call the script to create the settings from the template settings json files.
+./create-settings.sh
 
 NRTMPSAVES=$( find -L "$SAVES" -iname \*.tmp.zip -mindepth 1 | wc -l )
 if [[ $NRTMPSAVES -gt 0 ]]; then
