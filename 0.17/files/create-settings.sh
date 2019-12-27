@@ -59,7 +59,7 @@ updateTemplateNumber (){
 	#get the value from the environment varaible and put it in val
 	val=${!2}
 	#Test if there was a value that was set to true or false
-	if [[ ${val} =~ ^[0-9]+$ ]]
+	if [[ ${val} =~ ^[0-9]+\.?[0-9]*$ ]]
 	then
 		#replace the value in the template file with the argument
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
@@ -69,14 +69,14 @@ updateTemplateNumber (){
 	fi
 }
 
-# updateTemplateEmptyDefault 
+# updateTemplateEmpty
 #
 # replaces the template string with either an empty string, or 
 # the value in the passed in environment variable.
 #
 # $1 Template String: The value that is replaced in the template.
 # $2 Environment Variable String: the environment variable that is checked for a value
-updateTemplateEmptyDefault(){
+updateTemplateEmpty(){
 	#get the value from the environment varaible and put it in val
 	val=${!2}
 
@@ -102,6 +102,61 @@ mapSettings () {
 mapGenSettings () {
 	echo Creating map settings file
 	TEMPLATE_FILE=map-gen-settings-template.json
+
+	updateTemplateNumber	templateGenTerrainSegmentation		TEMPLATE_GEN_TERRAIN_SEGMENTATION		1
+	updateTemplateNumber	templateGenTerrainWater				TEMPLATE_GEN_TERRAIN_WATER				1
+	updateTemplateNumber	templateGenMapWidth					TEMPLATE_GEN_MAP_WIDTH					0
+	updateTemplateNumber	templateGenMapHeight				TEMPLATE_GEN_MAP_HEIGHT					0
+	updateTemplateNumber	templateGenMapStartingArea			TEMPLATE_GEN_MAP_STARTING_AREA			1
+	updateTemplateBool		templateGenPeacefullMode			TEMPLATE_GEN_PEACEFULL_MODE				false
+	#coal
+	updateTemplateNumber	templateGenCoalRichness				TEMPLATE_GEN_COAL_RICHNESS				1
+	updateTemplateNumber	templateGenCoalSize					TEMPLATE_GEN_COAL_SIZE					1
+	updateTemplateNumber	templateGenCoalFrequency			TEMPLATE_GEN_COAL_FREQUENCY				1
+	#stone
+	updateTemplateNumber	templateGenstoneRichness			TEMPLATE_GEN_STONE_RICHNESS				1
+	updateTemplateNumber	templateGenstoneSize				TEMPLATE_GEN_STONE_SIZE					1
+	updateTemplateNumber	templateGenstoneFrequency			TEMPLATE_GEN_STONE_FREQUENCY			1
+	#Copper
+	updateTemplateNumber	templateGenCopperRichness			TEMPLATE_GEN_COPPER_RICHNESS			1
+	updateTemplateNumber	templateGenCopperSize				TEMPLATE_GEN_COPPER_SIZE				1
+	updateTemplateNumber	templateGenCopperFrequency			TEMPLATE_GEN_COPPER_FREQUENCY			1
+	#Iron
+	updateTemplateNumber	templateGenIronRichness				TEMPLATE_GEN_IRON_RICHNESS				1
+	updateTemplateNumber	templateGenIronSize					TEMPLATE_GEN_IRON_SIZE					1
+	updateTemplateNumber	templateGenIronFrequency			TEMPLATE_GEN_IRON_FREQUENCY				1
+	#Uranium
+	updateTemplateNumber	templateGenUraniumRichness			TEMPLATE_GEN_URANIUM_RICHNESS			1
+	updateTemplateNumber	templateGenUraniumSize				TEMPLATE_GEN_URANIUM_SIZE				1
+	updateTemplateNumber	templateGenUraniumFrequency			TEMPLATE_GEN_URANIUM_FREQUENCY			1
+	#Crude
+	updateTemplateNumber	templateGenCrudeRichness			TEMPLATE_GEN_CRUDE_RICHNESS				1
+	updateTemplateNumber	templateGenCrudeSize				TEMPLATE_GEN_CRUDE_SIZE					1
+	updateTemplateNumber	templateGenCrudeFrequency			TEMPLATE_GEN_CRUDE_FREQUENCY			1
+	#Trees
+	updateTemplateNumber	templateGenTreesRichness			TEMPLATE_GEN_TREES_RICHNESS				1
+	updateTemplateNumber	templateGenTreesSize				TEMPLATE_GEN_TREES_SIZE					1
+	updateTemplateNumber	templateGenTreesFrequency			TEMPLATE_GEN_TREES_FREQUENCY			1
+	#Biters
+	updateTemplateNumber	templateGenBiterRichness			TEMPLATE_GEN_BITER_RICHNESS				1
+	updateTemplateNumber	templateGenBiterSize				TEMPLATE_GEN_BITER_SIZE					1
+	updateTemplateNumber	templateGenBiterFrequency			TEMPLATE_GEN_BITER_FREQUENCY			1
+	#cliffs
+	updateTemplate			templateGenCliffName				TEMPLATE_GEN_CLIFF_NAME					cliff
+	updateTemplateNumber	templateGenCliffElevationZero		TEMPLATE_GEN_CLIFF_ELEVATION_ZERO		10
+	updateTemplateNumber	templateGenCliffElevationInterval	TEMPLATE_GEN_CLIFF_ELEVATION_INTERVAL	10
+	updateTemplateNumber	templateGenCliffRichness			TEMPLATE_GEN_CLIFF_RICHNESS				1
+	#expression Names
+	updateTemplate			templateGenExpressionElevation		TEMPLATE_GEN_EXPRESSION_ELEVATION		0_17-island
+	updateTemplateNumber	templateGenAuxBias					TEMPLATE_GEN_AUX_BIAS					"0.300000"
+	updateTemplateNumber	templateGenAuxMultiplier			TEMPLATE_GEN_AUX_MULTIPLIER				"1.333333"
+	updateTemplateNumber	templateGenMoistureBias				TEMPLATE_GEN_MOISTURE_BIAS				"0.100000"
+	updateTemplateNumber	templateGenMoistureMultiplier		TEMPLATE_GEN_MOISTURE_MULTIPLIER		"0.500000"
+	#Starting Point
+	updateTemplateNumber	templateGenStartingPointX			TEMPLATE_GEN_STARTING_POINT_X			1000
+	updateTemplateNumber	templateGenStartingPointY			TEMPLATE_GEN_STARTING_POINT_Y			2000
+	#seed
+	updateTemplateNumber	templateGenMapSeed					TEMPLATE_GEN_MAP_SEED					null
 }
 
 #Using the template, generate a server-settings.json file.
@@ -115,10 +170,10 @@ serverSettings(){
 	updateTemplateNumber		templateServerMaxPlayers				TEMPLATE_SERVER_MAX_PLAYERS					0
 	updateTemplateBool			templateServerPulicVisibility			TEMPLATE_SERVER_PUBLIC_VISIBILITY			true
 	updateTemplateBool			templateServerLanVisibility				TEMPLATE_SERVER_LAN_VISIBILITY				true
-	updateTemplateEmptyDefault	templateServerUsername					TEMPLATE_SERVER_USERNAME 
-	updateTemplateEmptyDefault	templateServerPassword					TEMPLATE_SERVER_PASSWORD
-	updateTemplateEmptyDefault	templateServerGameToken					TEMPLATE_SERVER_TOKEN
-	updateTemplateEmptyDefault	templateServerGamePassword				TEMPLATE_SERVER_GAME_PASSWORD
+	updateTemplateEmpty			templateServerUsername					TEMPLATE_SERVER_USERNAME 
+	updateTemplateEmpty			templateServerPassword					TEMPLATE_SERVER_PASSWORD
+	updateTemplateEmpty			templateServerGameToken					TEMPLATE_SERVER_TOKEN
+	updateTemplateEmpty			templateServerGamePassword				TEMPLATE_SERVER_GAME_PASSWORD
 	updateTemplateBool			templateServerRequireUserVerification	TEMPLATE_SERVER_REQUIRE_USER_VERIFICATION	true
 	updateTemplateNumber		templateServerMaxUploadCount			TEMPLATE_SERVER_MAX_UPLOAD					0
 	updateTemplateNumber		templateServerMaxUploadSlots			TEMPLATE_SERVER_MAX_UPLOAD_SLOTS			5

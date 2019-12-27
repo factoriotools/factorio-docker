@@ -1,15 +1,8 @@
 {
-	"_terrain_segmentation_comment": "Inverse of map scale",
 	"terrain_segmentation": 1,
-	"_water_comment": [
-		"Multiplier for water 'coverage' - higher increases the water level.",
-		"Water level = 10 * log2(this value)"
-	],
 	"water": 1,
-	"_comment_width+height": "Width and height of map, in tiles; 0 means infinite",
 	"width": 0,
 	"height": 0,
-	"_starting_area_comment": "Multiplier for 'biter free zone radius'",
 	"starting_area": 1,
 	"peaceful_mode": false,
 	"autoplace_controls": {
@@ -55,22 +48,11 @@
 		}
 	},
 	"cliff_settings": {
-		"_name_comment": "Name of the cliff prototype",
 		"name": "cliff",
-		"_cliff_elevation_0_comment": "Elevation of first row of cliffs",
 		"cliff_elevation_0": 10,
-		"_cliff_elevation_interval_comment": "Elevation difference between successive rows of cliffs",
 		"cliff_elevation_interval": 10,
-		"_richness_comment": "Multiplier for cliff continuity; 0 will result in no cliffs, 10 will make all cliff rows completely solid",
 		"richness": 1
 	},
-	"_property_expression_names_comment": [
-		"Overrides for property value generators",
-		"Elevation influences water and cliff placement.",
-		"Leave it blank to get 'normal' terrain.",
-		"Use '0_16-elevation' to reproduce terrain from 0.16.",
-		"Use '0_17-island' to get an island."
-	],
 	"property_expression_names": {
 		"elevation": "0_17-island",
 		"control-setting:aux:bias": "0.300000",
@@ -84,6 +66,5 @@
 			"y": 2000
 		}
 	],
-	"_seed_comment": "Use null for a random seed, number for a specific seed.",
 	"seed": null
 }
