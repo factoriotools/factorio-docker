@@ -142,12 +142,12 @@ mapGenSettings () {
 	updateTemplateNumber	templateGenBiterSize				TEMPLATE_GEN_BITER_SIZE					1
 	updateTemplateNumber	templateGenBiterFrequency			TEMPLATE_GEN_BITER_FREQUENCY			1
 	#cliffs
-	updateTemplate			templateGenCliffName				TEMPLATE_GEN_CLIFF_NAME					cliff
+	updateTemplate			templateGenCliffName				TEMPLATE_GEN_CLIFF_NAME					"cliff"
 	updateTemplateNumber	templateGenCliffElevationZero		TEMPLATE_GEN_CLIFF_ELEVATION_ZERO		10
 	updateTemplateNumber	templateGenCliffElevationInterval	TEMPLATE_GEN_CLIFF_ELEVATION_INTERVAL	10
 	updateTemplateNumber	templateGenCliffRichness			TEMPLATE_GEN_CLIFF_RICHNESS				1
 	#expression Names
-	updateTemplate			templateGenExpressionElevation		TEMPLATE_GEN_EXPRESSION_ELEVATION		0_17-island
+	updateTemplate			templateGenExpressionElevation		TEMPLATE_GEN_EXPRESSION_ELEVATION		"0_17-island"
 	updateTemplateNumber	templateGenAuxBias					TEMPLATE_GEN_AUX_BIAS					"0.300000"
 	updateTemplateNumber	templateGenAuxMultiplier			TEMPLATE_GEN_AUX_MULTIPLIER				"1.333333"
 	updateTemplateNumber	templateGenMoistureBias				TEMPLATE_GEN_MOISTURE_BIAS				"0.100000"
