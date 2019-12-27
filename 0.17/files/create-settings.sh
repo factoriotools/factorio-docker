@@ -96,6 +96,44 @@ mapSettings () {
 	echo Creating map generation settings file
 	TEMPLATE_FILE=map-settings-template.json
 	
+	updateTemplateNumber	templateMapDifficultyRecipe					TEMPLATE_MAP_DIFFICULTY_RECIPE						0
+	updateTemplateNumber	templateMapDifficultyTechnology				TEMPLATE_MAP_DIFFICULTY_TECHNOLOGY					0
+	updateTemplateNumber	templateMapDifficultyTechPrice				TEMPLATE_MAP_DIFFICULTY_TECH_PRICE					1
+	updateTemplate			templateMapDifficultyResearchQueue			TEMPLATE_MAP_DIFFICULTY_RESEARCH_QUEUE				"after-victory"
+	updateTemplateBool		templateMapPollutionEnabled					TEMPLATE_MAP_POLLUTION_ENABLED						true
+	updateTemplateNumber	templateMapPollutionDiffusionRatio			TEMPLATE_MAP_POLLUTION_DIFFUSION_RATIO				0.02
+	updateTemplateNumber	templateMapPollutionMinToDefuse				TEMPLATE_MAP_POLLUTION_MIN_TO_DEFUSE				15
+	updateTemplateNumber	templateMapPollutionAgeing					TEMPLATE_MAP_POLLUTION_AGEING						1
+	updateTemplateNumber	templateMapPollutionExpectedMaxPerChunk		TEMPLATE_MAP_POLLUTION_EXPECTED_MAX_PER_CHUNK		150
+	updateTemplateNumber	templateMapPollutionMinToShowPerChunk		TEMPLATE_MAP_POLLUTION_MIN_TO_SHOW_PER_CHUNK		50
+	updateTemplateNumber	templateMapPollutionMinToDamageTrees		TEMPLATE_MAP_POLLUTION_MIN_TO_DAMAGE_TREES			60
+	updateTemplateNumber	templateMapPollutionMaxForrestDamage		TEMPLATE_MAP_POLLUTION_MAX_FORREST_DAMMAGE			150
+	updateTemplateNumber	templateMapPollutionPerTreeDamage			TEMPLATE_MAP_POLLUTION_PER_TREE_DAMAGE				50
+	updateTemplateNumber	templateMapPollutionRestoredPerTreeDamage	TEMPLATE_MAP_POLLUTION_RESTORED_PER_TREE_DAMAGE		10
+	updateTemplateNumber	templateMapPollutionMaxToRestoreTrees		TEMPLATE_MAP_POLLUTION_MAX_TO_RESTORE_TREES			20
+	updateTemplateNumber	templateMapPollutionBiterAttackModifier		TEMPLATE_MAP_POLLUTION_BITER_ATTACK_MODIFIER		1
+	updateTemplateBool		templateMapEvolutionEnabled					TEMPLATE_MAP_EVOLUTION_ENABLED						true
+	updateTemplateNumber	templateMapEvolutionTimeFactor				TEMPLATE_MAP_EVOLUTION_TIME_FACTOR					0.000004
+	updateTemplateNumber	templateMapEvolutionDestroyFactor			TEMPLATE_MAP_EVOLUTION_DESTROY_FACTOR				0.002
+	updateTemplateNumber	templateMapEvolutionPolutionFactor			TEMPLATE_MAP_EVOLUTION_POLUTION_FACTOR				0.0000009
+	updateTemplateBool		templateMapExpansionEnabled					TEMPLATE_MAP_EXPANSION_ENABLED						true
+	updateTemplateNumber	templateMapExpansionMinBaseSpacing			TEMPLATE_MAP_EXPANSION_MIN_BASE_SPACING				3
+	updateTemplateNumber	templateMapExpansionMaxExpansionDistance	TEMPLATE_MAP_EXPANSION_MAX_EXPANSION_DISTANCE		7
+	updateTemplateNumber	templateMapExpansionFriendlyBaseRadius		TEMPLATE_MAP_EXPANSION_FRIENDLY_BASE_RADIUS			2
+	updateTemplateNumber	templateMapExpansionBiterBaseRadius			TEMPLATE_MAP_EXPANSION_BITER_BASE_RADIUS			2
+	updateTemplateNumber	templateMapExpansionBuildingCff				TEMPLATE_MAP_EXPANSION_BUILDING_CFF					0.1
+	updateTemplateNumber	templateMapExpansionOtherBaseCff			TEMPLATE_MAP_EXPANSION_OTHER_BASE_CFF				2.0
+	updateTemplateNumber	templateMapExpansionNeighbourChunkCff		TEMPLATE_MAP_EXPANSION_NEIGHBOUR_CHUNK_CFF			0.5
+	updateTemplateNumber	templateMapExpansionNeighbourBaseChunkCff	TEMPLATE_MAP_EXPANSION_NEIGHBOUR_BASE_CHUNK_CFF		0.4
+	updateTemplateNumber	templateMapExpansionMaxCollidingTilesCff	TEMPLATE_MAP_EXPANSION_MAX_COLLIDING_TILES_CFF		0.9
+	updateTemplateNumber	templateMapExpansionSettlerGroupMin			TEMPLATE_MAP_EXPANSION_SETTLER_GROUP_MIN			5
+	updateTemplateNumber	templateMapExpansionSettlerGroupMax			TEMPLATE_MAP_EXPANSION_SETTLER_GROUP_MAX			20
+	updateTemplateNumber	templateMapExpansionMinCooldown				TEMPLATE_MAP_EXPANSION_MIN_COOLDOWN					14400
+	updateTemplateNumber	templateMapExpansionMaxCooldown				TEMPLATE_MAP_EXPANSION_MAX_COOLDOWN					216000
+
+	#unit_group, Steering, Path_finder, and max_failed_behavior_count settings not included at this time
+	#as they are likely very optimized by the developers;
+
 }
 
 #Using the template, generate a map-gen-settings.json file

@@ -7,8 +7,6 @@
 	},
 	"pollution": {
 		"enabled": true,
-		"_comment_min_to_diffuse_1": "these are values for 60 ticks (1 simulated second)",
-		"_comment_min_to_diffuse_2": "amount that is diffused to neighboring chunk",
 		"diffusion_ratio": 0.02,
 		"min_to_diffuse": 15,
 		"ageing": 1,
