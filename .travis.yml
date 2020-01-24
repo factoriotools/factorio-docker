@@ -1,7 +1,6 @@
 dist: xenial
-sudo: required
 language: bash
-services: 
+services:
   - docker
 
 addons:
@@ -18,9 +17,11 @@ jobs:
 
     - &build
       stage: Build & update Docker HUB description
-      env: VERSION_SHORT=0.17 EXTRA_TAG=latest STABLE=0.17.79
+      env: VERSION_SHORT=0.18 EXTRA_TAG=latest
       script:
         - ./build.sh $VERSION_SHORT
+    - <<: *build
+      env: VERSION_SHORT=0.17 EXTRA_TAG=stable
     - <<: *build
       env: VERSION_SHORT=0.16
     - <<: *build
@@ -28,6 +29,6 @@ jobs:
     - <<: *build
       env: VERSION_SHORT=0.14
     - <<: *build
-      if: branch = master
+      if: branch = master AND type != pull_request
       env:
       script: docker run -v $PWD:/workspace -e DOCKERHUB_USERNAME=$DOCKER_USERNAME -e DOCKERHUB_PASSWORD=$DOCKER_PASSWORD -e DOCKERHUB_REPOSITORY='factoriotools/factorio' -e README_FILEPATH='/workspace/README.md' peterevans/dockerhub-description:2.1.0
