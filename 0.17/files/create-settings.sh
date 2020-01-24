@@ -251,17 +251,17 @@ then
 	#backup old files using timestamp.
 	if [[ ! -f $CONFIG/server-settings.json ]]
 	then
-		mv "$CONFIG/server-settings.json" "$CONFIG/server-settings.json"."$(date +%Y.%m.%d.%H.%M.%S)"
+		mv "$CONFIG/server-settings.json" "$CONFIG/server-settings.json.$(date +%Y.%m.%d.%H.%M.%S)"
 	fi
 
 	if [[ ! -f $CONFIG/map-gen-settings.json ]]
 	then
-		mv "$CONFIG/map-gen-settings.json" "$CONFIG/map-gen-settings.json"."$(date +%Y.%m.%d.%H.%M.%S)"
+		mv "$CONFIG/map-gen-settings.json" "$CONFIG/map-gen-settings.json.$(date +%Y.%m.%d.%H.%M.%S)"
 	fi
 
 	if [[ ! -f $CONFIG/map-settings.json ]]
 	then
-		mv "$CONFIG/map-settings.json" "$CONFIG/map-settings.json"."$(date +%Y.%m.%d.%H.%M.%S)"
+		mv "$CONFIG/map-settings.json" "$CONFIG/map-settings.json.$(date +%Y.%m.%d.%H.%M.%S)"
 	fi
 
 	#generate new files.
