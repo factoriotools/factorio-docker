@@ -19,7 +19,7 @@ updateTemplate () {
 	else
 		#Replace the value in the template file with the value in the environment Variable
 		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
-			echo Setting $1 to $val in $TEMPLATE_FILE
+			echo Setting "$1" to "$val" in "$TEMPLATE_FILE"
 		fi
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 	fi
@@ -44,7 +44,7 @@ updateTemplateBool (){
 		#replace the value in the template file with the argument
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
-			echo Setting $1 to $val in $TEMPLATE_FILE
+			echo Setting "$1" to "$val" in "$TEMPLATE_FILE"
 		fi
 	else
 		#Replace the value in the template file with the default
@@ -70,7 +70,7 @@ updateTemplateNumber (){
 		#replace the value in the template file with the argument
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
-			echo Setting $1 to $val in $TEMPLATE_FILE
+			echo Setting "$1" to "$val" in "$TEMPLATE_FILE"
 		fi
 	else
 		#Replace the value in the template file with the default
@@ -98,7 +98,7 @@ updateTemplateEmpty(){
 		#Replace the value in the template file with the value in the environment Variable
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
 		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
-			echo Setting $1 to $val in $TEMPLATE_FILE
+			echo Setting "$1" to "$val" in "$TEMPLATE_FILE"
 		fi
 	fi
 }
@@ -251,17 +251,17 @@ then
 	#backup old files using timestamp.
 	if [[ ! -f $CONFIG/server-settings.json ]]
 	then
-		mv "$CONFIG/server-settings.json" "$CONFIG/server-settings.json".`date +%Y.%m.%d.%H.%M.%S`
+		mv "$CONFIG/server-settings.json" "$CONFIG/server-settings.json"."$(date +%Y.%m.%d.%H.%M.%S)"
 	fi
 
 	if [[ ! -f $CONFIG/map-gen-settings.json ]]
 	then
-		mv "$CONFIG/map-gen-settings.json" "$CONFIG/map-gen-settings.json".`date +%Y.%m.%d.%H.%M.%S`
+		mv "$CONFIG/map-gen-settings.json" "$CONFIG/map-gen-settings.json"."$(date +%Y.%m.%d.%H.%M.%S)"
 	fi
 
 	if [[ ! -f $CONFIG/map-settings.json ]]
 	then
-		mv "$CONFIG/map-settings.json" "$CONFIG/map-settings.json".`date +%Y.%m.%d.%H.%M.%S`
+		mv "$CONFIG/map-settings.json" "$CONFIG/map-settings.json"."$(date +%Y.%m.%d.%H.%M.%S)"
 	fi
 
 	#generate new files.
