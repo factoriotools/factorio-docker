@@ -19,7 +19,7 @@ if [[ ! -f $CONFIG/rconpw ]]; then
 fi
 
 #call the script to create the settings from the template settings json files.
-if [[ $GENERATE_SETTINGS_FILES ]]; then
+if [[ ${GENERATE_SETTINGS_FILES:-} ]]; then
 	./create-settings.sh
 else
 	if [[ ! -f $CONFIG/server-settings.json ]]; then

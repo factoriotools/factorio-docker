@@ -18,7 +18,7 @@ updateTemplate () {
 		sed -i "s/$1/$3/g" "$TEMPLATE_FILE"
 	else
 		#Replace the value in the template file with the value in the environment Variable
-		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
+		if [[ ${GENERATE_SETTINGS_FILES_DEBUG:-} ]]; then
 			echo Setting "$1" to "$val" in "$TEMPLATE_FILE"
 		fi
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
@@ -43,7 +43,7 @@ updateTemplateBool (){
 	then
 		#replace the value in the template file with the argument
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
-		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
+		if [[ ${GENERATE_SETTINGS_FILES_DEBUG:-} ]]; then
 			echo Setting "$1" to "$val" in "$TEMPLATE_FILE"
 		fi
 	else
@@ -69,7 +69,7 @@ updateTemplateNumber (){
 	then
 		#replace the value in the template file with the argument
 		sed -i "s/$1/$val/g" "$TEMPLATE_FILE"
-		if [[ $GENERATE_SETTINGS_FILES_DEBUG ]]; then
+		if [[ ${GENERATE_SETTINGS_FILES_DEBUG:-} ]]; then
 			echo Setting "$1" to "$val" in "$TEMPLATE_FILE"
 		fi
 	else
@@ -245,7 +245,7 @@ serverSettings(){
 
 
 
-if [[ $FORCE_GENERATE_SETTINGS_FILES ]]
+if [[ ${FORCE_GENERATE_SETTINGS_FILES:-} ]]
 then
 
 	#backup old files using timestamp.
