@@ -100,7 +100,9 @@
 		"short_request_max_steps": 1000,
 		"short_request_ratio": 0.5,
 		"min_steps_to_check_path_find_termination": 2000,
-		"start_to_goal_cost_multiplier_to_terminate_path_find": 500.0
+		"start_to_goal_cost_multiplier_to_terminate_path_find": 500.0,
+		"overload_levels": [0, 100, 500],
+		"overload_multipliers": [2, 3, 4]
 	},
 	"max_failed_behavior_count": 3
 }
