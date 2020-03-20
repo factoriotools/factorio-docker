@@ -32,15 +32,16 @@ update_mod()
   MOD_INFO_URL="$MOD_BASE_URL/api/mods/$MOD_NAME"
   MOD_INFO_JSON=$(curl --silent "$MOD_INFO_URL")
 
+  if ! echo "$MOD_INFO_JSON" | jq -e .name >/dev/null; then
+    print_success "  Custom mod not on $MOD_BASE_URL, skipped."
+    return 0
+  fi
+
   MOD_INFO=$(echo "$MOD_INFO_JSON" | jq -j --arg version "$FACTORIO_VERSION" ".releases|reverse|map(select(.info_json.factorio_version as \$mod_version | \$version | startswith(\$mod_version)))[0]|.file_name, \";\", .download_url, \";\", .sha1")
 
   MOD_FILENAME=$(echo "$MOD_INFO" | cut -f1 -d";")
   MOD_URL=$(echo "$MOD_INFO" | cut -f2 -d";")
   MOD_SHA1=$(echo "$MOD_INFO" | cut -f3 -d";")
-
-  if [[ -z $MOD_URL ]]; then
-    return 1
-  fi
 
   if [[ $MOD_FILENAME == null ]]; then
     print_failure "  Not compatible with version"
