@@ -118,22 +118,22 @@ sudo docker run -d \
   -p 34197:34197/udp \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
-  -e ENABLE_SERVER_LOAD_LATEST=false \
+  -e LOAD_LATEST_SAVE=false \
   -e SAVE_NAME=replaceme \
   --name factorio \
   --restart=always \
   factoriotools/factorio
 ```
 
-To generate a new map set `ENABLE_GENERATE_NEW_MAP_SAVE=true` and specify `SAVE_NAME`:
+To generate a new map set `GENERATE_NEW_SAVE=true` and specify `SAVE_NAME`:
 
 ```shell
 sudo docker run -d \
   -p 34197:34197/udp \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
-  -e ENABLE_SERVER_LOAD_LATEST=false \
-  -e ENABLE_GENERATE_NEW_MAP_SAVE=true \
+  -e LOAD_LATEST_SAVE=false \
+  -e GENERATE_NEW_SAVE=true \
   -e SAVE_NAME=replaceme \
   --name factorio \
   --restart=always \
