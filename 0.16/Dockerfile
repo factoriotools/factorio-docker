@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-glibc:alpine-3.9
+FROM frolvlad/alpine-glibc:alpine-3.11
 
 LABEL maintainer="https://github.com/factoriotools/factorio-docker"
 
