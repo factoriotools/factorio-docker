@@ -27,8 +27,10 @@ else
     elif [[ $VERSION == "${TRAVIS_BRANCH%-*}" ]]; then
       TAGS="-t $DOCKER_REPO:$TRAVIS_BRANCH -t $DOCKER_REPO:$VERSION -t $DOCKER_REPO:$VERSION_SHORT"
     # we build a other branch than master
-    elif [[ -n $TRAVIS_BRANCH ]]; then
-      TAGS="-t $DOCKER_REPO:$TRAVIS_BRANCH"
+    # disabled for now cause it breaks Travis CI builds of dependabot
+    # https://travis-ci.org/github/factoriotools/factorio-docker/jobs/688176474#L182
+    # elif [[ -n $TRAVIS_BRANCH ]]; then
+    #   TAGS="-t $DOCKER_REPO:$TRAVIS_BRANCH"
     fi
   else
     # we are not in CI and tag version and version short
