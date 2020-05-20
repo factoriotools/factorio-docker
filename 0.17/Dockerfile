@@ -31,19 +31,13 @@ RUN set -ox pipefail \
     && chmod ugo=rwx /opt/factorio \
     && rm "$archive" \
     && mkdir -p /opt/factorio/config/ \
-    && printf "\
-[path]\n\
-read-data=__PATH__executable__/../../data\n\
-write-data=/factorio\n\
-" >> /opt/factorio/config/config.ini \
     && addgroup -g "$PGID" -S "$GROUP" \
     && adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" \
     && chown -R "$USER":"$GROUP" /opt/factorio /factorio
 
+COPY files/*.sh /
+COPY files/config.ini /opt/factorio/config/config.ini
+
 VOLUME /factorio
-
 EXPOSE $PORT/udp $RCON_PORT/tcp
-
-COPY files/ /
-
 ENTRYPOINT ["/docker-entrypoint.sh"]
