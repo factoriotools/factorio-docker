@@ -25,11 +25,12 @@ print_failure()
 
 update_mod()
 {
-  MOD_NAME="${1// /%20}"
+  MOD_NAME="$1"
+  MOD_NAME_ENCODED="${1// /%20}"
 
   print_step "Checking for update of mod $MOD_NAME..."
 
-  MOD_INFO_URL="$MOD_BASE_URL/api/mods/$MOD_NAME"
+  MOD_INFO_URL="$MOD_BASE_URL/api/mods/$MOD_NAME_ENCODED"
   MOD_INFO_JSON=$(curl --silent "$MOD_INFO_URL")
 
   if ! echo "$MOD_INFO_JSON" | jq -e .name >/dev/null; then
