@@ -30,6 +30,7 @@ RUN set -ox pipefail \
     && tar xf "$archive" --directory /opt \
     && chmod ugo=rwx /opt/factorio \
     && rm "$archive" \
+    && ln -s "$SCENARIOS" /opt/factorio/scenarios \
     && mkdir -p /opt/factorio/config/ \
     && addgroup -g "$PGID" -S "$GROUP" \
     && adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" \
