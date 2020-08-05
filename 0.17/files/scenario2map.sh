@@ -25,3 +25,5 @@ fi
 
 exec /opt/factorio/bin/x64/factorio \
   --scenario2map "$SERVER_SCENARIO"
+  --map-gen-settings "$CONFIG/map-gen-settings.json" \
+  --map-settings "$CONFIG/map-settings.json"
