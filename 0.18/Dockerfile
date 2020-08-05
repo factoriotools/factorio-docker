@@ -31,6 +31,7 @@ RUN set -ox pipefail \
     && chmod ugo=rwx /opt/factorio \
     && rm "$archive" \
     && ln -s "$SCENARIOS" /opt/factorio/scenarios \
+    && ln -s "$SAVES" /opt/factorio/saves \
     && mkdir -p /opt/factorio/config/ \
     && addgroup -g "$PGID" -S "$GROUP" \
     && adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" \
