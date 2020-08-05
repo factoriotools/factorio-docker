@@ -32,6 +32,8 @@ fi
 exec /opt/factorio/bin/x64/factorio \
   --port "$PORT" \
   --start-server-load-scenario "$SERVER_SCENARIO" \
+  --map-gen-settings "$CONFIG/map-gen-settings.json" \
+  --map-settings "$CONFIG/map-settings.json" \
   --server-settings "$CONFIG/server-settings.json" \
   --server-banlist "$CONFIG/server-banlist.json" \
   --server-whitelist "$CONFIG/server-whitelist.json" \
