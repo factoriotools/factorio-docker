@@ -76,6 +76,12 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
     fi
 fi
 
+# check to see if the user has specified a custom port environment variable
+if [[ ! -z "$CUSTOM_PORT" && "$CUSTOM_PORT" -eq "$CUSTOM_PORT" ]]; then
+    PORT="$CUSTOM_PORT"
+fi
+
+
 FLAGS=(\
   --port "$PORT" \
   --server-settings "$CONFIG/server-settings.json" \

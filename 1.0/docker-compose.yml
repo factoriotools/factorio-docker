@@ -4,6 +4,7 @@ services:
     build: .
     ports:
      - "34197:34197/udp"
+#     - "34198:34198/udp"
      - "27015:27015/tcp"
     volumes:
      - /opt/factorio:/factorio
@@ -13,3 +14,4 @@ services:
 #      - UPDATE_MODS_ON_START=true
 #      - USERNAME=FactorioUsername
 #      - TOKEN=FactorioToken
+#      - CUSTOM_PORT=34198

@@ -312,7 +312,7 @@ sudo docker-compose up -d
 
 ### Ports
 
-* `34197/udp` - Game server (required).
+* `34197/udp` - Game server (required). To use a custom port see the `CUSTOM_PORT` environmnet variable for more info.
 * `27015/tcp` - RCON (optional).
 
 ## LAN Games
@@ -371,6 +371,8 @@ To fix the incorrect port, start the Docker service with the `--userland-proxy=f
 
 Use the `PORT` environment variable to start the server on the a different port, .e.g. `docker run -e "PORT=34198"`. This changes the source port on the packets used for port detection. `-p 34198:34197` works fine for private servers, but the server browser detects the wrong port.
 
+A new way to have multiple servers hosted on the same server is to make use of the `CUSTOM_PORT` variable, this overrides the default port of `34197` and you just need to tell docker to forward traffic to that port instead e.g. `-p 34198:34198`.
+
 ## Contributors
 
 * [dtandersen](https://github.com/dtandersen) - Maintainer
@@ -383,3 +385,4 @@ Use the `PORT` environment variable to start the server on the a different port,
 * [bplein](https://github.com/bplein/docker_factorio_server) - Coded scenario support
 * [jaredledvina](https://github.com/jaredledvina/docker_factorio_server) - Contributed version updates
 * [carlbennett](https://github.com/carlbennett) - Contributed version updates and bugfixes
+* [Pyroseza](https://github.com/Pyroseza) - fixed multi server setup
