@@ -5,7 +5,7 @@ if [[ -f /run/secrets/username ]]; then
   USERNAME=$(cat /run/secrets/username)
 fi
 
-if [[ -f /run/secrets/username ]]; then
+if [[ -f /run/secrets/token ]]; then
   TOKEN=$(cat /run/secrets/token)
 fi
 
