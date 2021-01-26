@@ -1,0 +1,45 @@
+name: Docker build & push
+
+on:
+  pull_request:
+  push:
+    branches: master
+
+jobs:
+  old-version:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [ 0.18, 0.17, 0.16, 0.15, 0.14 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: build 
+        env:
+          VERSION_SHORT: ${{ matrix.version }}
+        run: |
+          ./build.sh ${{ matrix.version }}
+          
+  stable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: build 
+        env:
+          EXTRA_TAG: stable
+          VERSION_SHORT: 1.0
+        run: |
+          ./build.sh $VERSION_SHORT
+
+  experimental:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: build 
+        env:
+          EXTRA_TAG: latest
+          VERSION_SHORT: 1.1
+        run: |
+          ./build.sh $VERSION_SHORT

@@ -16,19 +16,21 @@ cd "$VERSION_SHORT" || exit 1
 VERSION=$(grep -oP '[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | head -1)
 DOCKER_REPO=factoriotools/factorio
 
-if [[ ${TRAVIS_PULL_REQUEST:-} == true ]]; then
-  TAGS="$DOCKER_REPO:$TRAVIS_PULL_REQUEST_SLUG"
+BRANCH=${GITHUB_REF#refs/heads/}
+
+if [[ -n ${GITHUB_BASE_REF:-} ]]; then
+  TAGS="$DOCKER_REPO:$GITHUB_BASE_REF"
 else
   if [[ -n ${CI:-} ]]; then
     # we are either on master or on a tag build
-    if [[ ${TRAVIS_BRANCH:-} == master || ${TRAVIS_BRANCH:-} == "$VERSION" ]]; then
+    if [[ ${BRANCH:-} == master || ${BRANCH:-} == "$VERSION" ]]; then
       TAGS="-t $DOCKER_REPO:$VERSION -t $DOCKER_REPO:$VERSION_SHORT"
     # we are on an incremental build of a tag
-    elif [[ $VERSION == "${TRAVIS_BRANCH%-*}" ]]; then
-      TAGS="-t $DOCKER_REPO:$TRAVIS_BRANCH -t $DOCKER_REPO:$VERSION -t $DOCKER_REPO:$VERSION_SHORT"
+    elif [[ $VERSION == "${BRANCH%-*}" ]]; then
+      TAGS="-t $DOCKER_REPO:$BRANCH -t $DOCKER_REPO:$VERSION -t $DOCKER_REPO:$VERSION_SHORT"
     # we build a other branch than master and exclude dependabot branches from tags cause the / is not supported by docker
-    elif [[ -n ${TRAVIS_BRANCH:-} && ! $TRAVIS_BRANCH =~ "/" ]]; then
-      TAGS="-t $DOCKER_REPO:$TRAVIS_BRANCH"
+    elif [[ -n ${BRANCH:-} && ! $BRANCH =~ "/" ]]; then
+      TAGS="-t $DOCKER_REPO:$BRANCH"
     fi
   else
     # we are not in CI and tag version and version short
@@ -58,13 +60,13 @@ docker images
 
 # remove -1 from incremental tag
 # eg before: 0.18.24-1, after 0.18.24
-if [[ ${TRAVIS_BRANCH:-} ]]; then
-  TRAVIS_BRANCH_VERSION=${TRAVIS_BRANCH%-*}
+if [[ ${BRANCH:-} ]]; then
+  BRANCH_VERSION=${BRANCH%-*}
 fi
 
 # only push when:
 # or we build a tag and we don't build a PR
-if [[ $VERSION == "${TRAVIS_BRANCH_VERSION:-}" && ${TRAVIS_PULL_REQUEST_BRANCH:-} == "" ]] ||
+if [[ $VERSION == "${BRANCH_VERSION:-}" && ${GITHUB_BASE_REF:-} == "" ]] ||
   # or we are not in CI
   [[ -z ${CI:-} ]]; then
 
@@ -73,18 +75,18 @@ if [[ $VERSION == "${TRAVIS_BRANCH_VERSION:-}" && ${TRAVIS_PULL_REQUEST_BRANCH:-
   fi
 
   # push a tag on a branch other than master except dependabot branches cause docker does not support /
-  if [[ -n ${TRAVIS_BRANCH:-} && $VERSION != "${TRAVIS_BRANCH_VERSION:-}" && ${TRAVIS_BRANCH:-} != "master" && ! ${TRAVIS_BRANCH:-} =~ "/" ]]; then
-    docker push "$DOCKER_REPO:$TRAVIS_BRANCH"
+  if [[ -n ${BRANCH:-} && $VERSION != "${BRANCH_VERSION:-}" && ${BRANCH:-} != "master" && ! ${BRANCH:-} =~ "/" ]]; then
+    docker push "$DOCKER_REPO:$BRANCH"
   fi
 
   # push an incremental tag
   # eg 0.18.24-1
-  if [[ $VERSION == "${TRAVIS_BRANCH_VERSION:-}" ]]; then
-    docker push "$DOCKER_REPO:$TRAVIS_BRANCH"
+  if [[ $VERSION == "${BRANCH_VERSION:-}" ]]; then
+    docker push "$DOCKER_REPO:$BRANCH"
   fi
 
   # only push on tags or when manually running the script
-  if [[ -n ${TRAVIS_TAG:-} || -z ${CI:-} ]]; then
+  if [[ -n ${GITHUB_BASE_REF:-} || -z ${CI:-} ]]; then
     docker push "$DOCKER_REPO:$VERSION"
     docker push "$DOCKER_REPO:$VERSION_SHORT"
   fi
