@@ -51,17 +51,20 @@ if ! find -L "$SAVES" -iname \*.zip -mindepth 1 -print | grep -q .; then
 fi
 
 #-z string True if the string is null
-if [ -z "${FACTORIO_SERVER_ID_LOCATION}" ]; then
+if [[ -z "${FACTORIO_SERVER_ID_LOCATION:-}" ]]; then
     FACTORIO_SERVER_ID_LOCATION="/factorio/config/server-id.json"
+    echo "Setting Default Factorio Server ID Location"
 fi
 #-z string True if the string is null
-if [ -z "${FACTORIO_SERVER_WHITELIST}" ]; then
+if [[ -z "${FACTORIO_SERVER_WHITELIST:-}" ]]; then
     FACTORIO_SERVER_WHITELIST="$CONFIG/server-whitelist.json"
+    echo "Setting Default Factorio Server whitelist Location"
 fi
 
 #-z string True if the string is null
-if [ -z "${FACTORIO_SERVER_BANLIST}" ]; then
+if [[ -z "${FACTORIO_SERVER_BANLIST:-}" ]]; then
     FACTORIO_SERVER_BANLIST="$CONFIG/server-banlist.json"
+    echo "Setting Default Factorio Server banlist Location"
 fi
 mkdir -p $(dirname "$FACTORIO_SERVER_ID_LOCATION")
 mkdir -p $(dirname "$FACTORIO_SERVER_WHITELIST")
