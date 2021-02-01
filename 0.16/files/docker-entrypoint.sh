@@ -50,13 +50,31 @@ if ! find -L "$SAVES" -iname \*.zip -mindepth 1 -print | grep -q .; then
     --map-settings "$CONFIG/map-settings.json"
 fi
 
+#-z string True if the string is null
+if [ -z "${FACTORIO_SERVER_ID_LOCATION}" ]; then
+    FACTORIO_SERVER_ID_LOCATION="/factorio/config/server-id.json"
+fi
+#-z string True if the string is null
+if [ -z "${FACTORIO_SERVER_WHITELIST}" ]; then
+    FACTORIO_SERVER_WHITELIST="$CONFIG/server-whitelist.json"
+fi
+
+#-z string True if the string is null
+if [ -z "${FACTORIO_SERVER_BANLIST}" ]; then
+    FACTORIO_SERVER_BANLIST="$CONFIG/server-banlist.json"
+fi
+mkdir -p $(dirname "$FACTORIO_SERVER_ID_LOCATION")
+mkdir -p $(dirname "$FACTORIO_SERVER_WHITELIST")
+mkdir -p $(dirname "$FACTORIO_SERVER_BANLIST")
+
+
 $SU_EXEC /opt/factorio/bin/x64/factorio \
   --port "$PORT" \
   --start-server-load-latest \
   --server-settings "$CONFIG/server-settings.json" \
-  --server-whitelist "$CONFIG/server-whitelist.json" \
-  --server-banlist "$CONFIG/server-banlist.json" \
+  --server-whitelist "$FACTORIO_SERVER_WHITELIST" \
+  --server-banlist "$FACTORIO_SERVER_BANLIST" \
   --rcon-port "$RCON_PORT" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id /factorio/config/server-id.json \
+  --server-id "$FACTORIO_SERVER_ID_LOCATION" \
   "$@"
