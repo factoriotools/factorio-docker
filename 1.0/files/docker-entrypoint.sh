@@ -105,7 +105,7 @@ FLAGS=(\
   --rcon-port "$RCON_PORT" \
   --server-whitelist "$FACTORIO_SERVER_WHITELIST" \
   --use-server-whitelist \
-  --server-adminlist "$FACTORIO_SERVER_ID_LOCATION" \
+  --server-adminlist "$FACTORIO_SERVER_ADMIN_LIST" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
   --server-id "$FACTORIO_SERVER_ID_LOCATION" \
 )
