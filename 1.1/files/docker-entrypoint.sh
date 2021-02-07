@@ -76,16 +76,41 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
     fi
 fi
 
+if [[ -z "${FACTORIO_SERVER_ID_LOCATION:-}" ]]; then
+    FACTORIO_SERVER_ID_LOCATION="/factorio/config/server-id.json"
+    echo "Setting Default Factorio Server ID Location"
+fi
+
+if [[ -z "${FACTORIO_SERVER_ADMIN_LIST:-}" ]]; then
+    FACTORIO_SERVER_ADMIN_LIST="$CONFIG/server-adminlist.json"
+    echo "Setting Default Factorio Server admin list Location"
+fi
+
+if [[ -z "${FACTORIO_SERVER_WHITELIST:-}" ]]; then
+    FACTORIO_SERVER_WHITELIST="$CONFIG/server-whitelist.json"
+    echo "Setting Default Factorio Server whitelist Location"
+fi
+
+
+if [[ -z "${FACTORIO_SERVER_BANLIST:-}" ]]; then
+    FACTORIO_SERVER_BANLIST="$CONFIG/server-banlist.json"
+    echo "Setting Default Factorio Server banlist Location"
+fi
+mkdir -p "$(dirname "$FACTORIO_SERVER_ID_LOCATION")"
+mkdir -p "$(dirname "$FACTORIO_SERVER_ADMIN_LIST")"
+mkdir -p "$(dirname "$FACTORIO_SERVER_WHITELIST")"
+mkdir -p "$(dirname "$FACTORIO_SERVER_BANLIST")"
+
 FLAGS=(\
   --port "$PORT" \
   --server-settings "$CONFIG/server-settings.json" \
-  --server-banlist "$CONFIG/server-banlist.json" \
+  --server-banlist "$FACTORIO_SERVER_BANLIST" \
   --rcon-port "$RCON_PORT" \
-  --server-whitelist "$CONFIG/server-whitelist.json" \
+  --server-whitelist "$FACTORIO_SERVER_WHITELIST" \
   --use-server-whitelist \
-  --server-adminlist "$CONFIG/server-adminlist.json" \
+  --server-adminlist "$FACTORIO_SERVER_ADMIN_LIST" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id /factorio/config/server-id.json \
+  --server-id "$FACTORIO_SERVER_ID_LOCATION" \
 )
 
 if [[ $LOAD_LATEST_SAVE == true ]]; then
