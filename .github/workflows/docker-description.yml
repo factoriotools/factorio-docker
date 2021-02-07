@@ -1,0 +1,18 @@
+name: Docker build & push
+
+on:
+  push:
+    branches: master
+
+jobs:
+  docker-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2.4.1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: factoriotools/factorio
