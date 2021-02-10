@@ -60,4 +60,3 @@ $SU_EXEC /opt/factorio/bin/x64/factorio \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
   --server-id /factorio/config/server-id.json \
   "$@"
-  
