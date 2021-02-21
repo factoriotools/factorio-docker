@@ -1,4 +1,10 @@
 #!/bin/bash
+#########
+#########
+#### senario.sh is deprecated and is subject to removal in a future release
+#########
+#########
+
 set -eoux pipefail
 
 if [[ -z ${1:-} ]]; then
