@@ -1,6 +1,6 @@
 # Factorio [![Build Status](https://travis-ci.org/factoriotools/factorio-docker.svg?branch=master)](https://travis-ci.org/factoriotools/factorio-docker) ![Updater status](https://img.shields.io/endpoint?label=Updater%20status&logo=a&url=https%3A%2F%2Fhealthchecks.supersandro.de%2Fbadge%2F1a0a7698-445d-4e54-9e4b-f61a1544e01f%2FBO8VukOA%2Fmaintainer.shields) [![Docker Version](https://images.microbadger.com/badges/version/factoriotools/factorio.svg)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Pulls](https://img.shields.io/docker/pulls/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/) [![Microbadger Layers](https://images.microbadger.com/badges/image/factoriotools/factorio.svg)](https://microbadger.com/images/factoriotools/factorio "Get your own image badge on microbadger.com")
 
-* `1.1.26`, `1.1`, `latest`, `stable` [(1.1/Dockerfile)](https://github.com/factoriotools/factorio-docker/blob/master/1.1/Dockerfile)
+* `1.1.26`, `1.1`, `latest` [(1.1/Dockerfile)](https://github.com/factoriotools/factorio-docker/blob/master/1.1/Dockerfile)
 * `1.0.0`, `1.0` [(1.0/Dockerfile)](https://github.com/factoriotools/factorio-docker/blob/master/1.0/Dockerfile)
 * `0.18.47`, `0.18` [(0.18/Dockerfile)](https://github.com/factoriotools/factorio-docker/blob/master/0.18/Dockerfile)
 * `0.17.79`, `0.17` [(0.17/Dockerfile)](https://github.com/factoriotools/factorio-docker/blob/master/0.17/Dockerfile)
@@ -11,7 +11,6 @@
 ## Tag descriptions
 
 * `latest` - most up-to-date version (may be experimental).
-* `stable` - version declared stable on [factorio.com](https://www.factorio.com).
 * `0.x`    - latest version in a branch.
 * `0.x.y` - a specific version.
 * `0.x-z` - incremental fix for that version.
