@@ -8,21 +8,20 @@ on:
       - '*'
 
 jobs:
-  old-version:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: [ "1.0", "0.17", "0.16", "0.15", "0.14" ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: build 
+      - name: Install dependencies
+        run: pip install jinja2
+      - name: build
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           VERSION_SHORT: ${{ matrix.version }}
         run: |
-          ./build.sh ${{ matrix.version }}
+          ./build.py
           
   stable:
     runs-on: ubuntu-latest
