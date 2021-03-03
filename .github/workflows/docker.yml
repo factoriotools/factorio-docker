@@ -16,23 +16,8 @@ jobs:
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          VERSION_SHORT: ${{ matrix.version }}
         run: |
           ./build.py
-          
-  stable:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: build 
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          EXTRA_TAG: stable,latest
-          VERSION_SHORT: "1.1"
-        run: |
-          ./build.sh $VERSION_SHORT
 
   # experimental:
   #   runs-on: ubuntu-latest
