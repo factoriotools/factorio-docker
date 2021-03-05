@@ -18,17 +18,3 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           ./build.py
-
-  # experimental:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: build
-  #       env:
-  #         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  #         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  #         EXTRA_TAG: latest
-  #         VERSION_SHORT: "1.2"
-  #       run: |
-  #         ./build.sh $VERSION_SHORT
