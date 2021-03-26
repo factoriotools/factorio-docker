@@ -1,7 +1,9 @@
-name: Docker build
+name: Docker build & push
 
 on:
-  pull_request:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -16,4 +18,4 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          ./build.py
+          ./build.py --push-tags
