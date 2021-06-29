@@ -150,7 +150,7 @@ As of 0.17 a new environment variable was added ``UPDATE_MODS_ON_START`` which i
 
 ### Scenarios
 
-If you want to launch a scenario from a clean start (not from a saved map) you'll need to start the docker image with additional environment variables. To do this, launch the image with the following syntax. Note that GENERATE_NEW_SAVE must be set to false, and LOAD_LATEST_SAVE must be set to false as well. SERVER_SCENARIO is the name of the Scenario in the Scenarios folder.
+If you want to launch a scenario from a clean start (not from a saved map) you'll need to start the docker image with additional environment variables. Note that GENERATE_NEW_SAVE must be set to false, and LOAD_LATEST_SAVE must be set to false as well. SERVER_SCENARIO is the name of the Scenario in the Scenarios folder.
 
 ```shell
 docker run -d \
