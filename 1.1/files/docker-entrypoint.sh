@@ -89,7 +89,7 @@ FLAGS=(\
   --server-id /factorio/config/server-id.json \
 )
 
-  if [ -z $SERVER_SCENARIO ]; then
+  if [[ -z $SERVER_SCENARIO ]]; then
       if [[ $LOAD_LATEST_SAVE == true ]]; then
           FLAGS+=( --start-server-load-latest )
       else
