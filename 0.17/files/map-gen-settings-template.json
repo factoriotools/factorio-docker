@@ -1,0 +1,70 @@
+{
+	"terrain_segmentation": templateGenTerrainSegmentation,
+	"water": templateGenTerrainWater,
+	"width": templateGenMapWidth,
+	"height": templateGenMapHeight,
+	"starting_area": templateGenMapStartingArea,
+	"peaceful_mode": templateGenPeacefullMode,
+	"autoplace_controls": {
+		"coal": {
+			"frequency": templateGenCoalFrequency,
+			"size": templateGenCoalSize,
+			"richness": templateGenCoalRichness
+		},
+		"stone": {
+			"frequency": templateGenStoneFrequency,
+			"size": templateGenStoneSize,
+			"richness": templateGenStoneRichness
+		},
+		"copper-ore": {
+			"frequency": templateGenCopperFrequency,
+			"size": templateGenCopperSize,
+			"richness": templateGenCopperRichness
+		},
+		"iron-ore": {
+			"frequency": templateGenIronFrequency,
+			"size": templateGenIronSize,
+			"richness": templateGenIronRichness
+		},
+		"uranium-ore": {
+			"frequency": templateGenUraniumFrequency,
+			"size": templateGenUraniumSize,
+			"richness": templateGenUraniumRichness
+		},
+		"crude-oil": {
+			"frequency": templateGenCrudeFrequency,
+			"size": templateGenCrudeSize,
+			"richness": templateGenCrudeRichness
+		},
+		"trees": {
+			"frequency": templateGenTreesFrequency,
+			"size": templateGenTreesSize,
+			"richness": templateGenTreesRichness
+		},
+		"enemy-base": {
+			"frequency": templateGenBiterFrequency,
+			"size": templateGenBiterSize,
+			"richness": templateGenBiterRichness
+		}
+	},
+	"cliff_settings": {
+		"name": "templateGenCliffName",
+		"cliff_elevation_0": templateGenCliffElevationZero,
+		"cliff_elevation_interval": templateGenCliffElevationInterval,
+		"richness": templateGenCliffRichness
+	},
+	"property_expression_names": {
+		"elevation": "templateGenExpressionElevation",
+		"control-setting:aux:bias": "templateGenAuxBias",
+		"control-setting:aux:frequency:multiplier": "templateGenAuxMultiplier",
+		"control-setting:moisture:bias": "templateGenMoistureBias",
+		"control-setting:moisture:frequency:multiplier": "templateGenMoistureMultiplier"
+	},
+	"starting_points": [
+		{
+			"x": templateGenStartingPointX,
+			"y": templateGenStartingPointY
+		}
+	],
+	"seed": templateGenMapSeed
+}

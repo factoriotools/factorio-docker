@@ -1,0 +1,33 @@
+{
+	"name": "templateServerName",
+	"description": "templateServerDescription",
+	"tags": [
+		templateServerTags
+	],
+	"max_players": templateServerMaxPlayers,
+	"visibility": {
+		"public": templateServerPulicVisibility,
+		"lan": templateServerLanVisibility
+	},
+	"username": "templateServerUsername",
+	"password": "templateServerPassword",
+	"token": "templateServerGameToken",
+	"game_password": "templateServerGamePassword",
+	"require_user_verification": templateServerRequireUserVerification,
+	"max_upload_in_kilobytes_per_second": templateServerMaxUploadCount,
+	"max_upload_slots": templateServerMaxUploadSlots,
+	"minimum_latency_in_ticks": templateServerMinimumLatenctInTicks,
+	"ignore_player_limit_for_returning_players": templateServerIgnoreLimitForReturning,
+	"allow_commands": "templateServerAllowCommands",
+	"autosave_interval": templateServerAutosaveInterval,
+	"autosave_slots": templateServerAutosaveSlots,
+	"afk_autokick_interval": templateServerAFKAutokickInterval,
+	"auto_pause": templateServerAutoPause,
+	"only_admins_can_pause_the_game": templateServerOnlyAdminsPause,
+	"autosave_only_on_server": templateServerAutosaveOnlyOnServer,
+	"non_blocking_saving": templateServerNonblockingSaving,
+	"minimum_segment_size": templateServerMinSegmentSizeCount,
+	"minimum_segment_size_peer_count": templateServerMinSegmentSizePeer,
+	"maximum_segment_size": templateServerMaxSegmentSizeCount,
+	"maximum_segment_size_peer_count": templateServerMaxSegmentSizePeer
+}
