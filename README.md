@@ -152,34 +152,19 @@ As of 0.17 a new environment variable was added ``UPDATE_MODS_ON_START`` which i
 
 ### Scenarios
 
-If you want to launch a scenario from a clean start (not from a saved map) you'll need to start the docker image from an alternate entrypoint. To do this, use the example entrypoint file stored in the /factorio/entrypoints directory in the volume, and launch the image with the following syntax. Note that this is the normal syntax with the addition of the --entrypoint setting AND the additional argument at the end, which is the name of the Scenario in the Scenarios folder.
+If you want to launch a scenario from a clean start (not from a saved map) you'll need to start the docker image with additional environment variables. Note that GENERATE_NEW_SAVE must be set to false, and LOAD_LATEST_SAVE must be set to false as well. SERVER_SCENARIO is the name of the Scenario in the Scenarios folder.
 
 ```shell
 docker run -d \
   -p 34197:34197/udp \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
+  -e LOAD_LATEST_SAVE=false \
+  -e GENERATE_NEW_SAVE=false \
+  -e SERVER_SCENARIO=MyScenario\
   --name factorio \
   --restart=always  \
-  --entrypoint "/scenario.sh" \
-  factoriotools/factorio \
-  MyScenarioName
-```
-
-### Converting Scenarios to Regular Maps
-
-If you would like to export your scenario to a saved map, you can use the example entrypoint similar to the Scenario usage above. Factorio will run once, converting the Scenario to a saved Map in your saves directory. A restart of the docker image using the standard options will then load that map, just as if the scenario were just started by the Scenarios example noted above.
-
-```shell
-docker run -d \
-  -p 34197:34197/udp \
-  -p 27015:27015/tcp \
-  -v /opt/factorio:/factorio \
-  --name factorio \
-  --restart=always  \
-  --entrypoint "/scenario2map.sh" \
   factoriotools/factorio
-  MyScenarioName
 ```
 
 ### RCON

@@ -5,6 +5,7 @@ FACTORIO_VOL=/factorio
 LOAD_LATEST_SAVE="${LOAD_LATEST_SAVE:-true}"
 GENERATE_NEW_SAVE="${GENERATE_NEW_SAVE:-false}"
 SAVE_NAME="${SAVE_NAME:-""}"
+SERVER_SCENARIO="${SERVER_SCENARIO:-""}"
 
 mkdir -p "$FACTORIO_VOL"
 mkdir -p "$SAVES"
@@ -88,11 +89,17 @@ FLAGS=(\
   --server-id /factorio/config/server-id.json \
 )
 
-if [[ $LOAD_LATEST_SAVE == true ]]; then
-    FLAGS+=( --start-server-load-latest )
-else
-    FLAGS+=( --start-server "$SAVE_NAME" )
-fi
+  if [[ -z $SERVER_SCENARIO ]]; then
+      if [[ $LOAD_LATEST_SAVE == true ]]; then
+          FLAGS+=( --start-server-load-latest )
+      else
+          FLAGS+=( --start-server "$SAVE_NAME" )
+      fi
+  else
+      FLAGS+=( --start-server-load-scenario "$SERVER_SCENARIO" )
+      FLAGS+=( --map-gen-settings "$CONFIG/map-gen-settings.json" )
+      FLAGS+=( --map-settings "$CONFIG/map-settings.json" )
+  fi
 
 # shellcheck disable=SC2086
 exec $SU_EXEC /opt/factorio/bin/x64/factorio "${FLAGS[@]}" "$@"
