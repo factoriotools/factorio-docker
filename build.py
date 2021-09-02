@@ -14,11 +14,11 @@ jinja_env = Environment(
 )
 
 
-def build_dockerfile(sha1, version, tags):
+def build_dockerfile(sha256, version, tags):
     build_dir = tempfile.mktemp()
     shutil.copytree("docker", build_dir)
     template = jinja_env.get_template("Dockerfile.jinja2")
-    dockerfile_content = template.render(sha1=sha1, version=version)
+    dockerfile_content = template.render(sha256=sha256, version=version)
     with open(os.path.join(build_dir, "Dockerfile"), "w") as dockerfile:
         dockerfile.write(dockerfile_content)
     build_command = ["docker", "build", "."]
@@ -52,9 +52,9 @@ def main(push_tags=False):
         login()
 
     for version, buildinfo in builddata.items():
-        sha1 = buildinfo["sha1"]
+        sha256 = buildinfo["sha256"]
         tags = buildinfo["tags"]
-        build_dockerfile(sha1, version, tags)
+        build_dockerfile(sha256, version, tags)
         if not push_tags:
             continue
         for tag in tags:

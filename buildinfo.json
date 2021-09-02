@@ -1,62 +1,62 @@
 {
   "0.12.35": {
-    "sha1": "ea15636469148662c26786ad916ac066ee5aab56",
+    "sha256": "ab9cf01a56dde3073aaaa5152c628bbf9a5bb85638b87dc3d7fdb77fb169aedd",
     "tags": [
       "0.12.35",
       "0.12"
     ]
   },
   "0.13.20": {
-    "sha1": "59ed0edb3f62f0f41a01fc291959b0a8b44cf631",
+    "sha256": "cbf5481e4b7e0efcc07c7b6a1fc3ff1404ad5597f3c9d37914a52ffb58d7c159",
     "tags": [
       "0.13.20",
       "0.13"
     ]
   },
   "0.14.23": {
-    "sha1": "6ef84341c6fc1cf45cfdd6acc8468aaa117b9e8a",
+    "sha256": "96c3e7acd4e0f066a499baba01823cac7c1caf0e50dbddcea5793f57bd60dc8c",
     "tags": [
       "0.14.23",
       "0.14"
     ]
   },
   "0.15.40": {
-    "sha1": "f79a975f6b8c0ee87e2fa60f7d1f7133f332c3ec",
+    "sha256": "1041ef61ea4aecd1f425e6030a909f0c349a9c01d1b3324d84a61b1cfef5ba6c",
     "tags": [
       "0.15.40",
       "0.15"
     ]
   },
   "0.16.51": {
-    "sha1": "127e7ff484ab263b13615d6114013ce0a66ac929",
+    "sha256": "6cb09f5ac87f16f8d5b43cef26c0ae26cc46a57a0382e253dfda032dc5bb367f",
     "tags": [
       "0.16.51",
       "0.16"
     ]
   },
   "0.17.79": {
-    "sha1": "7f127baf3cf01c6e545a9ca376dec1ac37468f8a",
+    "sha256": "9ace12fa986df028dc1851bf4de2cb038044d743e98823bc1c48ba21aa4d23df",
     "tags": [
       "0.17.79",
       "0.17"
     ]
   },
   "1.0.0": {
-    "sha1": "a50dd6f1ab17acde5a8d77bc5fb478c798d9c20e",
+    "sha256": "81d9e1aa94435aeec4131c8869fa6e9331726bea1ea31db750b65ba42dbd1464",
     "tags": [
       "1.0.0",
       "1.0"
     ]
   },
   "1.1.38": {
-    "sha1": "8adf06fd1369b84dc6afc6f927c616b5c3db23e1",
+    "sha256": "e1f030a7a63be036e867c0d2d5dcb9a549788c68beccd4eb66e0bb98d44d22b1",
     "tags": [
       "1.1.38",
       "stable"
     ]
   },
   "1.1.39": {
-    "sha1": "d51d0d3f5cb39e2358b33486ad2b05693e4f750c",
+    "sha256": "5528b8e23ac5d3a13e3328a0c64fee71f4a321792afe7b2fe46f95e62b7ed119",
     "tags": [
       "1.1.39",
       "1",
