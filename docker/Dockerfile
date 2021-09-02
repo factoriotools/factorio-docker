@@ -7,10 +7,14 @@ ARG GROUP=factorio
 ARG PUID=845
 ARG PGID=845
 
+# version checksum of the archive to download
+ARG VERSION
+ARG SHA256
+
 ENV PORT=34197 \
     RCON_PORT=27015 \
-    VERSION={{ version }} \
-    SHA256={{ sha256 }} \
+    VERSION=${VERSION:?} \
+    SHA256=${SHA256:?} \
     SAVES=/factorio/saves \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
