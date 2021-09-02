@@ -1,6 +1,6 @@
 # Factorio [![Build Status](https://travis-ci.org/factoriotools/factorio-docker.svg?branch=master)](https://travis-ci.org/factoriotools/factorio-docker) ![Updater status](https://img.shields.io/endpoint?label=Updater%20status&logo=a&url=https%3A%2F%2Fhealthchecks.supersandro.de%2Fbadge%2F1a0a7698-445d-4e54-9e4b-f61a1544e01f%2FBO8VukOA%2Fmaintainer.shields) [![Docker Version](https://img.shields.io/docker/v/factoriotools/factorio?sort=semver)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Pulls](https://img.shields.io/docker/pulls/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/)
 
-[中文](./README_zh_CN.md) 
+[中文](./README_zh_CN.md)
 
 * `1.1.38`, `1.1`, `latest`, `stable` [(1.1/Dockerfile)](https://github.com/factoriotools/factorio-docker/blob/master/1.1/Dockerfile)
 * `1.0.0`, `1.0` [(1.0/Dockerfile)](https://github.com/factoriotools/factorio-docker/blob/master/1.0/Dockerfile)
@@ -249,6 +249,23 @@ The `server-settings.json` file may then contain the variable references like th
 "name": "${INSTANCE_NAME}",
 "description": "${INSTANCE_DESC}",
 ```
+
+### Environment Variables
+
+These are the environment variables which can be specified at container run time.
+
+| Variable Name | Description | Default | Available in |
+| - | - | - | - |
+| GENERATE_NEW_SAVE | Generate a new save if one does not exist before starting the server  | false | 0.17+ |
+| LOAD_LATEST_SAVE | Load latest when true. Otherwise load SAVE_NAME | true | 0.17+ |
+| PORT | UDP port the server listens on | 34197 | 0.15+ |
+| RCON_PORT | TCP port the rcon server listens on | 27015 | 0.15+ |
+| SAVE_NAME | Name to use for the save file | _autosave1 | 0.17+ |
+| TOKEN | factorio.com token | | 0.17+ |
+| UPDATE_MODS_ON_START | If mods should be updated before starting the server | | 0.17+ |
+| USERNAME | factorio.com username | | 0.17+ | |
+
+**Note:** All environment variables are compared as strings
 
 ## Container Details
 
