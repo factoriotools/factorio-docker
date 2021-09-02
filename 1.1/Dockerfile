@@ -10,7 +10,7 @@ ARG PGID=845
 ENV PORT=34197 \
     RCON_PORT=27015 \
     VERSION=1.1.39 \
-    SHA1=d51d0d3f5cb39e2358b33486ad2b05693e4f750c \
+    SHA256=5528b8e23ac5d3a13e3328a0c64fee71f4a321792afe7b2fe46f95e62b7ed119 \
     SAVES=/factorio/saves \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
@@ -25,8 +25,8 @@ RUN set -ox pipefail \
     && mkdir -p /opt /factorio \
     && apk add --update --no-cache --no-progress bash binutils curl file gettext jq libintl pwgen shadow su-exec \
     && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" \
-    && echo "$SHA1  $archive" | sha1sum -c \
-    || (sha1sum "$archive" && file "$archive" && exit 1) \
+    && echo "$SHA256  $archive" | sha256sum -c \
+    || (sha256sum "$archive" && file "$archive" && exit 1) \
     && tar xf "$archive" --directory /opt \
     && chmod ugo=rwx /opt/factorio \
     && rm "$archive" \
