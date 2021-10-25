@@ -14,16 +14,16 @@ mkdir -p "$SCENARIOS"
 mkdir -p "$SCRIPTOUTPUT"
 
 # Initialize Factorio server configuration files location variables...
-ADMINLIST_FILE="${ADMINLIST_FILE:-$CONFIG/server-adminlist.json}"
-BANLIST_FILE="${BANLIST_FILE:-$CONFIG/server-banlist.json}"
+SERVER_ADMINLIST_FILE="${SERVER_ADMINLIST_FILE:-$CONFIG/server-adminlist.json}"
+SERVER_BANLIST_FILE="${SERVER_BANLIST_FILE:-$CONFIG/server-banlist.json}"
 SERVER_ID_FILE="${SERVER_ID_FILE:-$CONFIG/server-id.json}"
 SERVER_SETTINGS_FILE="${SERVER_SETTINGS_FILE:-$CONFIG/server-settings.json}"
-WHITELIST_FILE="${WHITELIST_FILE:-$CONFIG/server-whitelist.json}"
-mkdir -p "$(dirname "$ADMINLIST_FILE")"
-mkdir -p "$(dirname "$BANLIST_FILE")"
+SERVER_WHITELIST_FILE="${SERVER_WHITELIST_FILE:-$CONFIG/server-whitelist.json}"
+mkdir -p "$(dirname "$SERVER_ADMINLIST_FILE")"
+mkdir -p "$(dirname "$SERVER_BANLIST_FILE")"
 mkdir -p "$(dirname "$SERVER_ID_FILE")"
 mkdir -p "$(dirname "$SERVER_SETTINGS_FILE")"
-mkdir -p "$(dirname "$WHITELIST_FILE")"
+mkdir -p "$(dirname "$SERVER_WHITELIST_FILE")"
 
 if [[ ! -f $CONFIG/rconpw ]]; then
   # Generate a new RCON password if none exists
@@ -92,11 +92,11 @@ FLAGS=(\
   --port "$PORT" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
   --rcon-port "$RCON_PORT" \
-  --server-adminlist "$ADMINLIST_FILE" \
-  --server-banlist "$BANLIST_FILE" \
+  --server-adminlist "$SERVER_ADMINLIST_FILE" \
+  --server-banlist "$SERVER_BANLIST_FILE" \
   --server-id "$SERVER_ID_FILE" \
   --server-settings "$SERVER_SETTINGS_FILE" \
-  --server-whitelist "$WHITELIST_FILE" \
+  --server-whitelist "$SERVER_WHITELIST_FILE" \
   --use-server-whitelist \
 )
 
