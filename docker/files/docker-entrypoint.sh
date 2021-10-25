@@ -13,6 +13,24 @@ mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 mkdir -p "$SCRIPTOUTPUT"
 
+# Initialize Factorio server configuration files location variables..."
+SERVER_SETTINGS_FILE="${SERVER_SETTINGS_FILE:$CONFIG/server-settings.json}"
+SERVER_ID_FILE="${SERVER_ID_FILE:$CONFIG/server-id.json}"
+ADMINLIST_FILE="${ADMINLIST_FILE:-$CONFIG/server-adminlist.json}"
+WHITELIST_FILE="${WHITELIST_FILE:-$CONFIG/server-whitelist.json}"
+BANLIST_FILE="${BANLIST_FILE:-$CONFIG/server-banlist.json}"
+echo "SERVER_SETTINGS_FILE=$SERVER_SETTINGS_FILE"
+echo "SERVER_ID_FILE=$SERVER_ID_FILE"
+echo "ADMINLIST_FILE=$ADMINLIST_FILE"
+echo "WHITELIST_FILE=$WHITELIST_FILE"
+echo "BANLIST_FILE=$BANLIST_FILE"
+mkdir -p "$SERVER_SETTINGS_FILE"
+mkdir -p "$SERVER_ID_FILE"
+mkdir -p "$ADMINLIST_FILE"
+mkdir -p "$WHITELIST_FILE"
+mkdir -p "$BANLIST_FILE"
+
+
 if [[ ! -f $CONFIG/rconpw ]]; then
   # Generate a new RCON password if none exists
   pwgen 15 1 >"$CONFIG/rconpw"
@@ -78,14 +96,14 @@ fi
 
 FLAGS=(\
   --port "$PORT" \
-  --server-settings "$CONFIG/server-settings.json" \
-  --server-banlist "$CONFIG/server-banlist.json" \
+  --server-settings "$SERVER_SETTINGS_FILE" \
+  --server-banlist "$SERVER_ID_FILE" \
   --rcon-port "$RCON_PORT" \
-  --server-whitelist "$CONFIG/server-whitelist.json" \
+  --server-whitelist "$ADMINLIST_FILE" \
   --use-server-whitelist \
-  --server-adminlist "$CONFIG/server-adminlist.json" \
+  --server-adminlist "$WHITELIST_FILE" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id /factorio/config/server-id.json \
+  --server-id "$BANLIST_FILE" \
 )
 
 if [[ $LOAD_LATEST_SAVE == true ]]; then
