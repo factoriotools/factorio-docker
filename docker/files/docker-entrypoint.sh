@@ -13,18 +13,17 @@ mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 mkdir -p "$SCRIPTOUTPUT"
 
-# Initialize Factorio server configuration files location variables..."
+# Initialize Factorio server configuration files location variables...
 ADMINLIST_FILE="${ADMINLIST_FILE:-$CONFIG/server-adminlist.json}"
 BANLIST_FILE="${BANLIST_FILE:-$CONFIG/server-banlist.json}"
 SERVER_ID_FILE="${SERVER_ID_FILE:-$CONFIG/server-id.json}"
 SERVER_SETTINGS_FILE="${SERVER_SETTINGS_FILE:-$CONFIG/server-settings.json}"
 WHITELIST_FILE="${WHITELIST_FILE:-$CONFIG/server-whitelist.json}"
-mkdir -p "$ADMINLIST_FILE"
-mkdir -p "$BANLIST_FILE"
-mkdir -p "$SERVER_ID_FILE"
-mkdir -p "$SERVER_SETTINGS_FILE"
-mkdir -p "$WHITELIST_FILE"
-
+mkdir -p "$(dirname "$ADMINLIST_FILE")"
+mkdir -p "$(dirname "$BANLIST_FILE")"
+mkdir -p "$(dirname "$SERVER_ID_FILE")"
+mkdir -p "$(dirname "$SERVER_SETTINGS_FILE")"
+mkdir -p "$(dirname "$WHITELIST_FILE")"
 
 if [[ ! -f $CONFIG/rconpw ]]; then
   # Generate a new RCON password if none exists
