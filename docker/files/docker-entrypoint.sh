@@ -50,7 +50,7 @@ if [[ $(id -u) = 0 ]]; then
   # Take ownership of factorio data if running as root
   chown -R factorio:factorio "$FACTORIO_VOL"
   # Drop to the factorio user
-  SU_EXEC="su-exec factorio"
+  SU_EXEC="runuser -u factorio -g factorio --"
 else
   SU_EXEC=""
 fi
