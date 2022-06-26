@@ -37,7 +37,7 @@ RUN set -ox pipefail \
     && mkdir -p /opt /factorio \
     && apt-get -q update \
     && apt-get -qy install binutils curl file gettext jq pwgen xz-utils \
-    && rm -rf /var/cache/apt \
+    && rm -rf /var/lib/apt/lists/* \
     && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" \
     && echo "$SHA256  $archive" | sha256sum -c \
     || (sha256sum "$archive" && file "$archive" && exit 1) \
