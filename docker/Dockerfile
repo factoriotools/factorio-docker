@@ -1,20 +1,14 @@
 FROM debian:stable-slim
 
-LABEL maintainer="https://github.com/factoriotools/factorio-docker"
+LABEL maintainer="https://github.com/Doridian/factorio-docker"
 
 ARG USER=factorio
 ARG GROUP=factorio
 ARG PUID=845
 ARG PGID=845
 
-# version checksum of the archive to download
-ARG VERSION
-ARG SHA256
-
 ENV PORT=34197 \
     RCON_PORT=27015 \
-    VERSION=${VERSION} \
-    SHA256=${SHA256} \
     SAVES=/factorio/saves \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
@@ -24,6 +18,22 @@ ENV PORT=34197 \
     PGID="$PGID"
 
 SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
+
+RUN set -ox pipefail \
+    && mkdir -p /opt /factorio \
+    && apt-get -q update \
+    && apt-get -qy install binutils curl file gettext jq pwgen xz-utils python3 python3-dateutil python3-requests \
+    && rm -rf /var/lib/apt/lists/* \
+    && addgroup --system --gid "$PGID" "$GROUP" \
+    && adduser --system --uid "$PUID" --gid "$PGID" --no-create-home --disabled-password --shell /bin/sh "$USER"
+
+# version checksum of the archive to download
+ARG VERSION
+ARG SHA256
+
+ENV VERSION=${VERSION} \
+    SHA256=${SHA256}
+
 RUN set -ox pipefail \
     && if [[ "${VERSION}" == "" ]]; then \
         echo "build-arg VERSION is required" \
@@ -34,10 +44,6 @@ RUN set -ox pipefail \
         && exit 1; \
     fi \
     && archive="/tmp/factorio_headless_x64_$VERSION.tar.xz" \
-    && mkdir -p /opt /factorio \
-    && apt-get -q update \
-    && apt-get -qy install binutils curl file gettext jq pwgen xz-utils python3 python3-dateutil python3-requests \
-    && rm -rf /var/lib/apt/lists/* \
     && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" \
     && echo "$SHA256  $archive" | sha256sum -c \
     || (sha256sum "$archive" && file "$archive" && exit 1) \
@@ -47,8 +53,6 @@ RUN set -ox pipefail \
     && ln -s "$SCENARIOS" /opt/factorio/scenarios \
     && ln -s "$SAVES" /opt/factorio/saves \
     && mkdir -p /opt/factorio/config/ \
-    && addgroup --system --gid "$PGID" "$GROUP" \
-    && adduser --system --uid "$PUID" --gid "$PGID" --no-create-home --disabled-password --shell /bin/sh "$USER" \
     && chown -R "$USER":"$GROUP" /opt/factorio /factorio
 
 COPY files/*.sh /
