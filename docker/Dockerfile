@@ -27,6 +27,8 @@ RUN set -ox pipefail \
     && addgroup --system --gid "$PGID" "$GROUP" \
     && adduser --system --uid "$PUID" --gid "$PGID" --no-create-home --disabled-password --shell /bin/sh "$USER"
 
+COPY files/root /
+
 # version checksum of the archive to download
 ARG VERSION
 ARG SHA256
@@ -55,7 +57,6 @@ RUN set -ox pipefail \
     && mkdir -p /opt/factorio/config/ \
     && chown -R "$USER":"$GROUP" /opt/factorio /factorio
 
-COPY files/*.sh /
 COPY files/config.ini /opt/factorio/config/config.ini
 
 VOLUME /factorio
