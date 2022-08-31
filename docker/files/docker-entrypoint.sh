@@ -13,14 +13,26 @@ mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 mkdir -p "$SCRIPTOUTPUT"
 
+# Initialize Factorio server configuration files location variables...
+SERVER_ADMINLIST_FILE="${SERVER_ADMINLIST_FILE:-$CONFIG/server-adminlist.json}"
+SERVER_BANLIST_FILE="${SERVER_BANLIST_FILE:-$CONFIG/server-banlist.json}"
+SERVER_ID_FILE="${SERVER_ID_FILE:-$CONFIG/server-id.json}"
+SERVER_SETTINGS_FILE="${SERVER_SETTINGS_FILE:-$CONFIG/server-settings.json}"
+SERVER_WHITELIST_FILE="${SERVER_WHITELIST_FILE:-$CONFIG/server-whitelist.json}"
+mkdir -p "$(dirname "$SERVER_ADMINLIST_FILE")"
+mkdir -p "$(dirname "$SERVER_BANLIST_FILE")"
+mkdir -p "$(dirname "$SERVER_ID_FILE")"
+mkdir -p "$(dirname "$SERVER_SETTINGS_FILE")"
+mkdir -p "$(dirname "$SERVER_WHITELIST_FILE")"
+
 if [[ ! -f $CONFIG/rconpw ]]; then
   # Generate a new RCON password if none exists
   pwgen 15 1 >"$CONFIG/rconpw"
 fi
 
-if [[ ! -f $CONFIG/server-settings.json ]]; then
+if [[ ! -f $SERVER_SETTINGS_FILE ]]; then
   # Copy default settings if server-settings.json doesn't exist
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
+  cp /opt/factorio/data/server-settings.example.json "$SERVER_SETTINGS_FILE"
 fi
 
 if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
@@ -78,14 +90,14 @@ fi
 
 FLAGS=(\
   --port "$PORT" \
-  --server-settings "$CONFIG/server-settings.json" \
-  --server-banlist "$CONFIG/server-banlist.json" \
-  --rcon-port "$RCON_PORT" \
-  --server-whitelist "$CONFIG/server-whitelist.json" \
-  --use-server-whitelist \
-  --server-adminlist "$CONFIG/server-adminlist.json" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id /factorio/config/server-id.json \
+  --rcon-port "$RCON_PORT" \
+  --server-adminlist "$SERVER_ADMINLIST_FILE" \
+  --server-banlist "$SERVER_BANLIST_FILE" \
+  --server-id "$SERVER_ID_FILE" \
+  --server-settings "$SERVER_SETTINGS_FILE" \
+  --server-whitelist "$SERVER_WHITELIST_FILE" \
+  --use-server-whitelist \
 )
 
 if [[ $LOAD_LATEST_SAVE == true ]]; then

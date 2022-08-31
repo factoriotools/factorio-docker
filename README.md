@@ -257,16 +257,21 @@ The `server-settings.json` file may then contain the variable references like th
 
 These are the environment variables which can be specified at container run time.
 
-| Variable Name | Description | Default | Available in |
-| - | - | - | - |
-| GENERATE_NEW_SAVE | Generate a new save if one does not exist before starting the server  | false | 0.17+ |
-| LOAD_LATEST_SAVE | Load latest when true. Otherwise load SAVE_NAME | true | 0.17+ |
-| PORT | UDP port the server listens on | 34197 | 0.15+ |
-| RCON_PORT | TCP port the rcon server listens on | 27015 | 0.15+ |
-| SAVE_NAME | Name to use for the save file | _autosave1 | 0.17+ |
-| TOKEN | factorio.com token | | 0.17+ |
-| UPDATE_MODS_ON_START | If mods should be updated before starting the server | | 0.17+ |
-| USERNAME | factorio.com username | | 0.17+ | |
+| Variable Name        | Description                                                          | Default                              | Available in |
+| -------------------- | -------------------------------------------------------------------- | ------------------------------------ | ------------ |
+| GENERATE_NEW_SAVE    | Generate a new save if one does not exist before starting the server | `false`                              | 0.17+        |
+| LOAD_LATEST_SAVE     | Load latest when true. Otherwise load SAVE_NAME                      | `true`                               | 0.17+        |
+| PORT                 | UDP port the server listens on                                       | `34197`                              | 0.15+        |
+| RCON_PORT            | TCP port the rcon server listens on                                  | `27015`                              | 0.15+        |
+| SAVE_NAME            | Name to use for the save file                                        | `_autosave1`                         | 0.17+        |
+| TOKEN                | factorio.com token                                                   |                                      | 0.17+        |
+| UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |                                      | 0.17+        |
+| USERNAME             | factorio.com username                                                |                                      | 0.17+        |
+| ADMINLIST_FILE       | Path to server adminlist file                                        | `<config-dir>/server-adminlist.json` |              |
+| BANLIST_FILE         | Path to server banlist file                                          | `<config-dir>/server-banlist.json`   |              |
+| SERVER_ID_FILE       | Path to server ID file                                               | `<config-dir>/server-id.json`        |              |
+| SERVER_SETTINGS_FILE | Path to server settings file                                         | `<config-dir>/server-settings.json`  |              |
+| WHITELIST_FILE       | Path to server whitelist file                                        | `<config-dir>/server-whitelist.json` |              |
 
 **Note:** All environment variables are compared as strings
 
