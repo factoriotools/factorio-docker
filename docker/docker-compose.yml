@@ -20,3 +20,4 @@ services:
 #      - USERNAME=FactorioUsername
 #      - TOKEN=FactorioToken
 #      - PORT=34198
+#      - ADDR=::1
