@@ -41,6 +41,7 @@ Factorio的模组支持吸引了全世界的设计师参与到对游戏的完善
 sudo mkdir -p /opt/factorio
 sudo chown 845:845 /opt/factorio
 sudo docker run -d \
+  -it \
   -p 34197:34197/udp \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
@@ -54,6 +55,7 @@ sudo docker run -d \
 你一定想知道上面那些咒语是什么意思：
 
 * `-d` - 以守护进程方式运行 ("detached")。
+* `-it` - 交互式运行 ("interactive")。
 * `-p` - 暴露宿主机 (host) 某些端口。
 * `-v` - 将宿主机中 `/opt/factorio` 目录挂载到docker容器的 `/factorio` 目录。
 * `--restart` - 在宿主重启或服务端运行崩溃后重启服务端。
@@ -76,7 +78,24 @@ docker stop factorio
 在运行过服务端之后可以在 `/opt/factorio/config` 目录中找到 `server-settings.json` 文件，修改改文件以定制你自己的服务端。
 
 ```shell
-docker start factorio
+docker restart factorio
+```
+
+如果希望服务端能显示在正式Factorio服务清单, 请改写 `server-settings.json`, 改`public=true` 然后加入自己的用户名和密码或者授权令牌。
+
+```
+  "_comment_visibility": ["public: Game will be published on the official Factorio matching server",
+                          "lan: Game will be broadcast on LAN"],
+  "visibility":
+  {
+    "public": false,
+    "lan": true
+  },
+  "_comment_credentials": "Your factorio.com login credentials. Required for games with visibility public",
+  "username": "",
+  "password": "",
+  "_comment_token": "Authentication token. May be used instead of 'password' above.",
+  "token": "",
 ```
 
 现在试试连接服务端。如果没有正常运行的话请按照上面步骤查看日志。

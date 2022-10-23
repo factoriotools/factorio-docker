@@ -80,7 +80,7 @@ Now there's a `server-settings.json` file in the folder `/opt/factorio/config`. 
 docker restart factorio
 ```
 
-To get your server listed in the official Factorio matching server, remember to editt `server-settings.json` and set `public=true` and add your Factorio portal username and password, or auth token:
+To get your server listed in the official Factorio matching server, remember to edit `server-settings.json` and set `public=true` and add your Factorio portal username and password, or auth token:
 
 ```
   "_comment_visibility": ["public: Game will be published on the official Factorio matching server",
