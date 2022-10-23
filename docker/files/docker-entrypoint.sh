@@ -21,7 +21,8 @@ fi
 
 if [[ ! -f $CONFIG/server-settings.json ]]; then
   # Copy default settings if server-settings.json doesn't exist
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
+  # edit the default visibility setting from public: true to public: false
+  cat /opt/factorio/data/server-settings.example.json | sed 's/    "public": true/    "public": false/'  > "$CONFIG/server-settings.json"
 fi
 
 if [[ ! -f $CONFIG/map-gen-settings.json ]]; then

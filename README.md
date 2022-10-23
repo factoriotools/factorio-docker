@@ -42,6 +42,7 @@ Run the server to create the necessary folder structure and configuration files.
 sudo mkdir -p /opt/factorio
 sudo chown 845:845 /opt/factorio
 sudo docker run -d \
+  -it \
   -p 34197:34197/udp \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
@@ -53,6 +54,7 @@ sudo docker run -d \
 For those new to Docker, here is an explanation of the options:
 
 * `-d` - Run as a daemon ("detached").
+* `-it` - Interactive mode.
 * `-p` - Expose ports.
 * `-v` - Mount `/opt/factorio` on the local file system to `/factorio` in the container.
 * `--restart` - Restart the server if it crashes and at system start
@@ -75,20 +77,45 @@ docker stop factorio
 Now there's a `server-settings.json` file in the folder `/opt/factorio/config`. Modify this to your liking and restart the server:
 
 ```shell
-docker start factorio
+docker restart factorio
 ```
 
-Try to connect to the server. Check the logs if it isn't working.
+To get your server listed in the official Factorio matching server, remember to editt `server-settings.json` and set `public=true` and add your Factorio portal username and password, or auth token:
+
+```
+  "_comment_visibility": ["public: Game will be published on the official Factorio matching server",
+                          "lan: Game will be broadcast on LAN"],
+  "visibility":
+  {
+    "public": false,
+    "lan": true
+  },
+
+  "_comment_credentials": "Your factorio.com login credentials. Required for games with visibility public",
+  "username": "",
+  "password": "",
+
+  "_comment_token": "Authentication token. May be used instead of 'password' above.",
+  "token": "",
+```
+
+Now try to connect to the server. Check the logs if it isn't working.
 
 ### Console
 
-To issue console commands to the server, start the server in interactive mode with `-it`. Open the console with `docker attach` and then type commands.
+To issue console commands to the server, open the console with `docker attach` and then type commands.
 
-```shell
-docker run -d -it  \
-      --name factorio \
-      factoriotools/factorio
-docker attach factorio
+```
+> docker attach factorio
+
+/help
+- Server console commands.
+/quit - Terminates the server cleanly.
+/save <name> - Saves the current game with the specified name.
+
+hello everyone!
+2022-10-23 00:26:03 [CHAT] <server>: hello everyone!
+
 ```
 
 ### Upgrading
