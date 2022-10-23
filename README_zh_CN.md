@@ -91,9 +91,11 @@ docker restart factorio
     "public": false,
     "lan": true
   },
+
   "_comment_credentials": "Your factorio.com login credentials. Required for games with visibility public",
   "username": "",
   "password": "",
+
   "_comment_token": "Authentication token. May be used instead of 'password' above.",
   "token": "",
 ```
@@ -102,15 +104,22 @@ docker restart factorio
 
 ### Console-终端
 
-为了运行在服务端终端中运行命令，需要通过 `-it` 参数在交互模式下启动服务端。通过 `docker attach` 连接终端从而可以输入命令。
+为了运行在服务端终端中运行命令，通过 `docker attach` 连接终端从而可以输入命令。
 
-```shell
-docker run -d -it \
-  --name factorio \
-  factoriotools/factorio
-  
-docker attach factorio
+
 ```
+> docker attach factorio
+
+/help
+- Server console commands.
+/quit - Terminates the server cleanly.
+/save <name> - Saves the current game with the specified name.
+
+大家好!
+2022-10-23 00:26:03 [CHAT] <server>: 大家好!
+```
+
+如果需要退出，按键CTRL-P + CTRL-Q.
 
 ### 升级服务端
 
