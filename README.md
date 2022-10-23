@@ -118,6 +118,8 @@ hello everyone!
 
 ```
 
+To detach and return to outside docker, use Ctrl-P + CTRL-Q.
+
 ### Upgrading
 
 Before upgrading backup the save. It's easy to make a save in the client.
