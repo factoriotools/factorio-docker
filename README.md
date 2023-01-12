@@ -46,7 +46,7 @@ sudo docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always \
+  --restart=unless-stopped \
   factoriotools/factorio
 ```
 
