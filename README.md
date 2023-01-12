@@ -211,8 +211,8 @@ Create file `config/server-banlist.json` and add the banlisted users.
 
 ```json
 [
-    "bad_person",
-    "other_bad_person"
+"bad_person",
+"other_bad_person"
 ]
 ```
 
@@ -222,8 +222,8 @@ Create file `config/server-adminlist.json` and add the adminlisted users.
 
 ```json
 [
-  "you",
-  "friend"
+"you",
+"friend"
 ]
 ```
 
