@@ -129,7 +129,7 @@ sudo docker run -d \
   -e LOAD_LATEST_SAVE=false \
   -e SAVE_NAME=replaceme \
   --name factorio \
-  --restart=always \
+  --restart=unless-stopped \
   factoriotools/factorio
 ```
 
@@ -144,7 +144,7 @@ sudo docker run -d \
   -e GENERATE_NEW_SAVE=true \
   -e SAVE_NAME=replaceme \
   --name factorio \
-  --restart=always \
+  --restart=unless-stopped \
   factoriotools/factorio
 ```
 
@@ -164,7 +164,7 @@ docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always  \
+  --restart=unless-stopped  \
   --entrypoint "/scenario.sh" \
   factoriotools/factorio \
   MyScenarioName
@@ -180,7 +180,7 @@ docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always  \
+  --restart=unless-stopped  \
   --entrypoint "/scenario2map.sh" \
   factoriotools/factorio
   MyScenarioName
@@ -364,7 +364,7 @@ sudo docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always  \
+  --restart=unless-stopped  \
   factoriotools/factorio
 ```
 
