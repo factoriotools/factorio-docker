@@ -6,6 +6,7 @@ LOAD_LATEST_SAVE="${LOAD_LATEST_SAVE:-true}"
 GENERATE_NEW_SAVE="${GENERATE_NEW_SAVE:-false}"
 SAVE_NAME="${SAVE_NAME:-""}"
 BIND="${BIND:-""}"
+CONSOLE_LOG_LOCATION="${CONSOLE_LOG_LOCATION:-""}"
 
 mkdir -p "$FACTORIO_VOL"
 mkdir -p "$SAVES"
@@ -88,6 +89,10 @@ FLAGS=(\
   --rcon-password "$(cat "$CONFIG/rconpw")" \
   --server-id /factorio/config/server-id.json \
 )
+
+if [ -n "$CONSOLE_LOG_LOCATION" ]; then
+  FLAGS+=( --console-log "$CONSOLE_LOG_LOCATION" )
+fi
 
 if [ -n "$BIND" ]; then
   FLAGS+=( --bind "$BIND" )
