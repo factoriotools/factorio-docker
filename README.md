@@ -268,6 +268,7 @@ These are the environment variables which can be specified at container run time
 | TOKEN | factorio.com token | | 0.17+ |
 | UPDATE_MODS_ON_START | If mods should be updated before starting the server | | 0.17+ |
 | USERNAME | factorio.com username | | 0.17+ | |
+| CONSOLE_LOG_LOCATION | Saves the console log to the specifies location | |
 
 **Note:** All environment variables are compared as strings
 
