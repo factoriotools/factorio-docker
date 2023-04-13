@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository == 'factoriotools/factorio-docker')
 
     steps:
       - uses: actions/checkout@v3
