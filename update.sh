@@ -51,7 +51,7 @@ rm -f -- "$tmpfile"
 git config user.name github-actions[bot]
 git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 git add buildinfo.json
-git commit -a -m "Auto Update Factorio to version: "$version
+git commit -a -m "Auto Update Factorio to version: $version"
 git tag -f latest
 git push
 git push origin --tags -f
