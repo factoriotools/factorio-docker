@@ -1,0 +1,31 @@
+name: Check Update
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      desc:
+        description: "desc"
+        required: false
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
+
+      # Runs a single command using the runners shell
+      - name: Run update script
+        run: ./update.sh
+        shell: bash

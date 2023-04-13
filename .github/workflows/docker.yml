@@ -2,6 +2,9 @@ name: Docker build
 
 on:
   pull_request:
+  push:
+    tags:
+      - latest
 
 jobs:
   build:
