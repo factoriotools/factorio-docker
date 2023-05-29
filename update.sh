@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
 
 stable_online_version=$(curl 'https://factorio.com/api/latest-releases' | jq '.stable.headless' -r)
@@ -9,6 +10,9 @@ stable_current_version=$(jq 'with_entries(select(contains({value:{tags:["stable"
 latest_current_version=$(jq 'with_entries(select(contains({value:{tags:["latest"]}}))) | keys | .[0]' buildinfo.json -r)
 echo "stable_online_version=${stable_online_version} experimental_online_version=${experimental_online_version}"
 echo "stable_current_version=${stable_current_version} latest_current_version=${latest_current_version}"
+if [[ -z "${stable_online_version}" ]] || [[ -z "${experimental_online_version}" ]]; then
+    exit
+fi
 if [[ "${stable_current_version}" == "${stable_online_version}" ]] && [[ "${latest_current_version}" == "${experimental_online_version}" ]]; then
     exit
 fi
