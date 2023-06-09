@@ -39,7 +39,7 @@ RUN set -ox pipefail \
     && archive="/tmp/factorio_headless_x64_$VERSION.tar.xz" \
     && mkdir -p /opt /factorio \
     && apt-get -q update \
-    && apt-get -qy install binutils curl file gettext jq pwgen xz-utils \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qy install ca-certificates curl jq pwgen xz-utils --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" --retry $CURL_RETRIES\
     && echo "$SHA256  $archive" | sha256sum -c \
