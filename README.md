@@ -42,6 +42,8 @@ NOTE: This is only the server. The full game is available at [Factorio.com](http
 
 Run the server to create the necessary folder structure and configuration files. For this example data is stored in `/opt/factorio`.
 
+#### Linux
+
 ```shell
 sudo mkdir -p /opt/factorio
 sudo chown 845:845 /opt/factorio
@@ -54,15 +56,28 @@ sudo docker run -d \
   factoriotools/factorio
 ```
 
+#### macOS
+
+```shell
+mkdir -p ~/.factorio
+docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v ~/.factorio:/factorio \
+  --name factorio \
+  --restart=always \
+  factoriotools/factorio
+```
+
 For those new to Docker, here is an explanation of the options:
 
 * `-d` - Run as a daemon ("detached").
 * `-p` - Expose ports.
-* `-v` - Mount `/opt/factorio` on the local file system to `/factorio` in the container.
+* `-v` - Mount `/opt/factorio` (or `~/.factorio` for macOS) on the local file system to `/factorio` in the container.
 * `--restart` - Restart the server if it crashes and at system start
 * `--name` - Name the container "factorio" (otherwise it has a funny random name).
 
-The `chown` command is needed because in 0.16+, we no longer run the game server as root for security reasons, but rather as a 'factorio' user with user id 845. The host must therefore allow these files to be written by that user.
+The `chown` command is needed on Linux because in 0.16+, we no longer run the game server as root for security reasons, but rather as a 'factorio' user with user id 845. The host must therefore allow these files to be written by that user.
 
 Check the logs to see what happened:
 
