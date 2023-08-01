@@ -4,15 +4,15 @@ services:
     build:
       context: .
       args:
-      # Check buildinfo.json for supported versions and SHAs
-      # https://github.com/factoriotools/factorio-docker/blob/master/buildinfo.json
-      - VERSION=1.1.61
-      - SHA256=68e4ac8d33b195701c15a23e3d8e65676ef8be25f140657678122f211c60b659
+        # Check buildinfo.json for supported versions and SHAs
+        # https://github.com/factoriotools/factorio-docker/blob/master/buildinfo.json
+        - VERSION=1.1.87
+        - SHA256=60b3884b6dad1f4c7b30b7ef2b63619ff4a3204ac7fd894cf09d382b349857cc
     ports:
-     - "34197:34197/udp"
-     - "27015:27015/tcp"
+      - "34197:34197/udp"
+      - "27015:27015/tcp"
     volumes:
-     - /opt/factorio:/factorio
+      - /opt/factorio:/factorio
 #    environment:
 #      - PUID=1000
 #      - PGID=1000

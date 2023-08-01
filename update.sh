@@ -89,11 +89,17 @@ done && printf "%s\n\n" "$tags"))
 
 perl -i -0777 -pe "s/<!-- start autogeneration tags -->.+<!-- end autogeneration tags -->/<!-- start autogeneration tags -->$readme_tags<!-- end autogeneration tags -->/s" README.md
 
+# Replace VERSION and SHA256 args in docker-compose.yaml with latest stable values.
+docker_compose_path="docker/docker-compose.yml"
+sov="VERSION=${stable_online_version}" yq -i '.services.factorio.build.args[0] = env(sov)' "$docker_compose_path"
+sha="SHA256=${stable_sha256}" yq -i '.services.factorio.build.args[1] = env(sha)' "$docker_compose_path"
+
 git config user.name github-actions[bot]
 git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
 git add buildinfo.json
 git add README.md
+git add docker/docker-compose.yml
 git commit -a -m "Auto Update Factorio to stable version: ${stable_online_version} experimental version: ${experimental_online_version}"
 
 git tag -f latest
