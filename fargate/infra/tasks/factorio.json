@@ -1,0 +1,23 @@
+[
+  {
+    "name": "factorio",
+    "environment": [
+      { "name": "STORAGE", "value": "${storage}"},
+      { "name": "AUTOSAVE_RATE", "value": "${autosave_rate}"}
+    ],
+    "essential": true,
+    "image": "${image}",
+    "portMappings": [
+      {
+        "containerPort": 34197,
+        "hostPort": 34197,
+        "protocol": "udp"
+      },
+      {
+        "containerPort": 27015,
+        "hostPort": 27015,
+        "protocol": "tcp"
+      }
+    ]
+  }
+]
