@@ -152,7 +152,7 @@ sudo docker run -d \
 
 将模组拷贝至 `mods` 目录下，然后重启服务端即可。
 
-对于 `0.17` 及以上版本，新增 `UPDATE_MODES_ON_START` 环境变量，如果将其设置为 `true`，在服务端启动时将会更新所有的模组。请注意，应用此设置时，必须通过 docker secrets、环境变量或者在 `server-settings.json` 中填写相应字段来提供一个合法的 [Facotrio 用户名以及 Token](https://www.factorio.com/profile)，否则服务端就不会启动。
+对于 `0.17` 及以上版本，新增 `UPDATE_MODS_ON_START` 环境变量，如果将其设置为 `true`，在服务端启动时将会更新所有的模组。请注意，应用此设置时，必须通过 docker secrets、环境变量或者在 `server-settings.json` 中填写相应字段来提供一个合法的 [Facotrio 用户名以及 Token](https://www.factorio.com/profile)，否则服务端就不会启动。
 
 ### Scenarios-场景
 
