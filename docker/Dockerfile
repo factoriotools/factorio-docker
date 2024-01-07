@@ -8,6 +8,14 @@ ARG PUID=845
 ARG PGID=845
 ARG BOX64_VERSION=v0.2.4
 
+# optionally utilize a built-in map-gen-preset (see data/base/prototypes/map-gen-presets
+# if this is used, the preset will be used over any .json files supplied
+# vanilla factorio provides the following presets:
+# rich-resources, marathon, death-world, death-world-marathon, rail-world, ribbon-world, island
+# a modded factorio example for using this:
+# space-exploration
+ARG PRESET
+
 # version checksum of the archive to download
 ARG VERSION
 ARG SHA256
@@ -20,6 +28,7 @@ ENV PORT=34197 \
     VERSION=${VERSION} \
     SHA256=${SHA256} \
     SAVES=/factorio/saves \
+    PRESET="$PRESET" \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
     SCENARIOS=/factorio/scenarios \

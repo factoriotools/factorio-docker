@@ -20,4 +20,5 @@ services:
 #      - USERNAME=FactorioUsername
 #      - TOKEN=FactorioToken
 #      - PORT=34198
+#      - PRESET=deathworld
 #      - ADDR=::1

@@ -1,9 +1,9 @@
 #!/bin/bash
 set -eoux pipefail
-
 FACTORIO_VOL=/factorio
 LOAD_LATEST_SAVE="${LOAD_LATEST_SAVE:-true}"
 GENERATE_NEW_SAVE="${GENERATE_NEW_SAVE:-false}"
+PRESET="${PRESET:-""}"
 SAVE_NAME="${SAVE_NAME:-""}"
 BIND="${BIND:-""}"
 CONSOLE_LOG_LOCATION="${CONSOLE_LOG_LOCATION:-""}"
@@ -75,10 +75,18 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
     if [[ -f "$SAVES/$SAVE_NAME.zip" ]]; then
         echo "Map $SAVES/$SAVE_NAME.zip already exists, skipping map generation"
     else
-        $EXEC /opt/factorio/bin/x64/factorio \
-            --create "$SAVES/$SAVE_NAME.zip" \
-            --map-gen-settings "$CONFIG/map-gen-settings.json" \
-            --map-settings "$CONFIG/map-settings.json"
+        if [[ ! -z "$PRESET" ]]; then
+            $SU_EXEC /opt/factorio/bin/x64/factorio \
+                --create "$SAVES/$SAVE_NAME.zip" \
+                --preset "$PRESET" \
+                --map-gen-settings "$CONFIG/map-gen-settings.json" \
+                --map-settings "$CONFIG/map-settings.json"
+        else
+            $SU_EXEC /opt/factorio/bin/x64/factorio \
+                --create "$SAVES/$SAVE_NAME.zip" \
+                --map-gen-settings "$CONFIG/map-gen-settings.json" \
+                --map-settings "$CONFIG/map-settings.json"
+        fi
     fi
 fi
 
