@@ -6,6 +6,8 @@ if [[ -z ${1:-} ]]; then
 fi
 
 SERVER_SCENARIO="$1"
+PRESET="${PRESET:-""}"
+
 mkdir -p "$SAVES"
 mkdir -p "$CONFIG"
 mkdir -p "$MODS"
@@ -32,6 +34,7 @@ fi
 exec /opt/factorio/bin/x64/factorio \
   --port "$PORT" \
   --start-server-load-scenario "$SERVER_SCENARIO" \
+  --preset "$PRESET" \
   --map-gen-settings "$CONFIG/map-gen-settings.json" \
   --map-settings "$CONFIG/map-settings.json" \
   --server-settings "$CONFIG/server-settings.json" \
