@@ -43,6 +43,7 @@ if [[ ${UPDATE_MODS_ON_START:-} == "true" ]]; then
   ./docker-update-mods.sh
 fi
 
+EXEC=""
 if [[ $(id -u) = 0 ]]; then
   # Update the User and Group ID based on the PUID/PGID variables
   usermod -o -u "$PUID" factorio
@@ -50,9 +51,12 @@ if [[ $(id -u) = 0 ]]; then
   # Take ownership of factorio data if running as root
   chown -R factorio:factorio "$FACTORIO_VOL"
   # Drop to the factorio user
-  SU_EXEC="su-exec factorio"
-else
-  SU_EXEC=""
+  EXEC="runuser -u factorio -g factorio --"
+fi
+if [[ -f /bin/box64 ]]; then
+  # Use an emulator to run on ARM hosts
+  # this only gets installed when the target docker platform is linux/arm64
+  EXEC="$EXEC /bin/box64"
 fi
 
 sed -i '/write-data=/c\write-data=\/factorio/' /opt/factorio/config/config.ini
@@ -71,7 +75,7 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
     if [[ -f "$SAVES/$SAVE_NAME.zip" ]]; then
         echo "Map $SAVES/$SAVE_NAME.zip already exists, skipping map generation"
     else
-        $SU_EXEC /opt/factorio/bin/x64/factorio \
+        $EXEC /opt/factorio/bin/x64/factorio \
             --create "$SAVES/$SAVE_NAME.zip" \
             --map-gen-settings "$CONFIG/map-gen-settings.json" \
             --map-settings "$CONFIG/map-settings.json"
@@ -105,4 +109,4 @@ else
 fi
 
 # shellcheck disable=SC2086
-exec $SU_EXEC /opt/factorio/bin/x64/factorio "${FLAGS[@]}" "$@"
+exec $EXEC /opt/factorio/bin/x64/factorio "${FLAGS[@]}" "$@"
