@@ -92,7 +92,7 @@ def main(push_tags=False, multiarch=False):
     if push_tags:
         login()
 
-    for version, buildinfo in builddata.items():
+    for version, buildinfo in sorted(builddata.items(), key=lambda item: item[0], reverse=True):
         sha256 = buildinfo["sha256"]
         tags = buildinfo["tags"]
         build_and_push(sha256, version, tags, push_tags, multiarch)
