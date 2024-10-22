@@ -43,6 +43,8 @@ if [[ ${UPDATE_MODS_ON_START:-} == "true" ]]; then
   ./docker-update-mods.sh
 fi
 
+./docker-dlc.sh
+
 EXEC=""
 if [[ $(id -u) = 0 ]]; then
   # Update the User and Group ID based on the PUID/PGID variables
