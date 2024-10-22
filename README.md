@@ -272,7 +272,7 @@ These are the environment variables which can be specified at container run time
 | UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |            | 0.17+        |
 | USERNAME             | factorio.com username                                                |            | 0.17+        |
 | CONSOLE_LOG_LOCATION | Saves the console log to the specifies location                      |            |              |
-| DLC_SPACE_AGE        | Enables or disables the dlc mod-list.json                            | true       | 2.0.8+       |
+| DLC_SPACE_AGE        | Enables or disables the mods for DLC Space Age in mod-list.json      | true       | 2.0.8+       |
 
 **Note:** All environment variables are compared as strings
 
