@@ -4,9 +4,9 @@ set -eou pipefail
 # Path to the mod-list.json file
 MOD_LIST_FILE="$MODS/mod-list.json"
 
-if [[ ! -f $MODS/mod-list.json ]]; then
+if [[ ! -f "$MOD_LIST_FILE" ]]; then
   # Create the mod-list.json file if it doesn't exist
-  echo '{"mods":[{"name": "base","enabled": true}]}' > "$MOD_LIST_FILE"
+  echo '{"mods":[{"name":"base","enabled":true}]}' > "$MOD_LIST_FILE"
 fi
 
 enable_mod()
