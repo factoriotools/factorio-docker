@@ -4,15 +4,20 @@ on:
   schedule:
     - cron: "0 * * * *"
   workflow_dispatch:
+    inputs:
+      desc:
+        description: "desc"
+        required: false
 
 jobs:
-  check:
+  build:
     runs-on: ubuntu-latest
     if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository == 'factoriotools/factorio-docker')
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.REPO_TOKEN }}
 
       - name: Run update script
         run: ./update.sh

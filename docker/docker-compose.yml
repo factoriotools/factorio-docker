@@ -1,6 +1,7 @@
 version: '2'
 services:
   factorio:
+    restart: always
     build:
       context: .
       args:

@@ -4,16 +4,12 @@ SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
 
 stable_online_version=$(curl 'https://factorio.com/api/latest-releases' | jq '.stable.headless' -r)
 experimental_online_version=$(curl 'https://factorio.com/api/latest-releases' | jq '.experimental.headless' -r)
-
 stable_sha256=$(curl "https://factorio.com/download/sha256sums/" | grep -E "(factorio_headless_x64_|factorio-headless_linux_)${stable_online_version}.tar.xz" | awk '{print $1}')
 experimental_sha256=$(curl "https://factorio.com/download/sha256sums/" | grep -E "(factorio_headless_x64_|factorio-headless_linux_)${experimental_online_version}.tar.xz" | awk '{print $1}')
-
-stable_current_version=$(jq 'with_entries(select(.value.tags | index("stable"))) | keys | .[0]' buildinfo.json -r)
-latest_current_version=$(jq 'with_entries(select(.value.tags | index("latest"))) | keys | .[0]' buildinfo.json -r)
-
+stable_current_version=$(jq 'with_entries(select(contains({value:{tags:["stable"]}}))) | keys | .[0]' buildinfo.json -r)
+latest_current_version=$(jq 'with_entries(select(contains({value:{tags:["latest"]}}))) | keys | .[0]' buildinfo.json -r)
 echo "stable_online_version=${stable_online_version} experimental_online_version=${experimental_online_version}"
 echo "stable_current_version=${stable_current_version} latest_current_version=${latest_current_version}"
-
 if [[ -z "${stable_online_version}" ]] || [[ -z "${experimental_online_version}" ]]; then
     exit
 fi
@@ -60,11 +56,6 @@ echo "stableOnlineVersionShort=${stableOnlineVersionShort} experimentalOnlineVer
 echo "stableCurrentVersionShort=${stableCurrentVersionShort} latestCurrentVersionShort=${latestCurrentVersionShort}"
 
 tmpfile=$(mktemp)
-
-# Remove stable tag
-cp buildinfo.json "$tmpfile"
-jq --arg stable_current_version "$stable_current_version" 'with_entries(if .key == $stable_current_version then .value.tags |= . - ["stable"] else . end)' "$tmpfile" > buildinfo.json
-rm -f -- "$tmpfile"
 
 # Remove latest tag
 cp buildinfo.json "$tmpfile"
