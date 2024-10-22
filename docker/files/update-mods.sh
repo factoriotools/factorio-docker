@@ -28,7 +28,7 @@ update_mod()
   MOD_NAME="$1"
   MOD_NAME_ENCODED="${1// /%20}"
 
-  print_step "Checking for update of mod $MOD_NAME..."
+  print_step "Checking for update of mod $MOD_NAME for factorio $FACTORIO_VERSION ..."
 
   MOD_INFO_URL="$MOD_BASE_URL/api/mods/$MOD_NAME_ENCODED"
   MOD_INFO_JSON=$(curl --silent "$MOD_INFO_URL")
@@ -54,7 +54,7 @@ update_mod()
     return 0
   fi
 
-  print_step "Downloading..."
+  print_step "  Downloading $MOD_FILENAME"
   FULL_URL="$MOD_BASE_URL$MOD_URL?username=$USERNAME&token=$TOKEN"
   HTTP_STATUS=$(curl --silent -L -w "%{http_code}" -o "$MOD_DIR/$MOD_FILENAME" "$FULL_URL")
 
