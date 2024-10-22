@@ -102,6 +102,7 @@ FLAGS=(\
   --server-adminlist "$CONFIG/server-adminlist.json" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
   --server-id /factorio/config/server-id.json \
+  --mod-directory "$MODS" \
 )
 
 if [ -n "$CONSOLE_LOG_LOCATION" ]; then
