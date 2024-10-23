@@ -4,6 +4,8 @@ set -eou pipefail
 # Path to the mod-list.json file
 MOD_LIST_FILE="$MODS/mod-list.json"
 
+ALL_SPACE_AGE_MODS=("elevated-rails" "quality" "space-age")
+
 if [[ ! -f "$MOD_LIST_FILE" ]]; then
   # Create the mod-list.json file if it doesn't exist
   echo '{"mods":[{"name":"base","enabled":true}]}' > "$MOD_LIST_FILE"
@@ -26,18 +28,30 @@ disable_mod()
 # Enable or disable DLCs if configured
 if [[ ${DLC_SPACE_AGE:-} == "true" ]]; then
   # Define the DLC mods
-  DLC_MODS=("elevated-rails" "quality" "space-age")
-
-  # Iterate over each DLC mod
-  for MOD in "${DLC_MODS[@]}"; do
-    enable_mod "$MOD"
-  done
-else
+  ENABLE_MODS=(${ALL_SPACE_AGE_MODS[@]})
+elif [[ ${DLC_SPACE_AGE:-} == "false" ]]; then
   # Define the DLC mods
-  DLC_MODS=("elevated-rails" "quality" "space-age")
+  DISABLE_MODS=(${ALL_SPACE_AGE_MODS[@]})
+else
+  ENABLE_MODS=()
+  DISABLE_MODS=()
 
-  # Iterate over each DLC mod
-  for MOD in "${DLC_MODS[@]}"; do
-    disable_mod "$MOD"
+  for SPACE_AGE_MOD in "${ALL_SPACE_AGE_MODS[@]}"; do
+    REGEX="(^|\s)$SPACE_AGE_MOD($|\s)"
+    if [[ "$DLC_SPACE_AGE" =~ $REGEX ]]; then
+      ENABLE_MODS+=($SPACE_AGE_MOD)
+    else
+      DISABLE_MODS+=($SPACE_AGE_MOD)
+    fi
   done
 fi
+
+# Iterate over each DLC mod to enable
+for MOD in "${ENABLE_MODS[@]}"; do
+  enable_mod "$MOD"
+done
+
+# Iterate over each DLC mod to disable
+for MOD in "${DISABLE_MODS[@]}"; do
+  disable_mod "$MOD"
+done
