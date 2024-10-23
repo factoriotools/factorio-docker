@@ -432,6 +432,7 @@ Use the `PORT` environment variable to start the server on the a different port,
 * [jaredledvina](https://github.com/jaredledvina/docker_factorio_server) - Contributed version updates
 * [carlbennett](https://github.com/carlbennett) - Contributed version updates and bugfixes
 
-[^1]: Space Age mods can be individually enabled by using their name separated by space.  
-  Example 1: Enable all `space-age elevated-rails quality`  
-  Example 2: Enable only Elevated rails `elevated-rails`
+[^1]: Space Age mods can also be individually enabled by using their name separated by space.  
+  Example 1: Enable all by using `true`
+  Example 2: Enable all by listing the mod names `space-age elevated-rails quality`  
+  Example 3: Enable only Elevated rails `elevated-rails`
