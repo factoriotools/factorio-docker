@@ -70,12 +70,28 @@
   "2.0.8": {
     "sha256": "d9594c4d552a3e4f965b188a4774da8c8b010fc23ddb0efc63b1d94818dde1ca",
     "tags": [
-      "latest",
       "stable",
       "stable-2.0.8",
       "2",
       "2.0",
       "2.0.8"
+    ]
+  },
+  "2.0.9": {
+    "sha256": "f499077b3e2c1313452c350f1faf17db31cae2a0fa738f69166e97c3caa3c86d",
+    "tags": [
+      "stable",
+      "stable-2.0.9",
+      "2",
+      "2.0",
+      "2.0.9"
+    ]
+  },
+  "2.0.10": {
+    "sha256": "2d7dd212fa6f715218a5e33bad7d593af8998fa7bf7ce727343159ee1f8c23f4",
+    "tags": [
+      "latest",
+      "2.0.10"
     ]
   }
 }

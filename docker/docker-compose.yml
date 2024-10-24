@@ -1,15 +1,15 @@
 version: '2'
 services:
   factorio:
-    image: factoriotools/factorio
+    image: factoriotools/factorio:stable
     restart: always
     build:
       context: .
       args:
         # Check buildinfo.json for supported versions and SHAs
         # https://github.com/factoriotools/factorio-docker/blob/master/buildinfo.json
-        - VERSION=2.0.8
-        - SHA256=d9594c4d552a3e4f965b188a4774da8c8b010fc23ddb0efc63b1d94818dde1ca
+        - VERSION=2.0.9
+        - SHA256=f499077b3e2c1313452c350f1faf17db31cae2a0fa738f69166e97c3caa3c86d
     ports:
       - "34197:34197/udp"
       - "27015:27015/tcp"
