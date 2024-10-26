@@ -10,7 +10,7 @@
 * `0.x.y` - 具体的版本
 * `0.x-z` - 在该版本上的增量更新
 
-## 什么是 Facotrio？
+## 什么是 Factorio？
 
 > 摘录自 [steam factorio 页面](https://store.steampowered.com/app/427520/Factorio/)
 
