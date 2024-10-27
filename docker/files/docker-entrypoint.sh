@@ -1,5 +1,6 @@
 #!/bin/bash
 set -eoux pipefail
+INSTALLED_DIRECTORY=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 FACTORIO_VOL=/factorio
 LOAD_LATEST_SAVE="${LOAD_LATEST_SAVE:-true}"
 GENERATE_NEW_SAVE="${GENERATE_NEW_SAVE:-false}"
@@ -40,10 +41,10 @@ if [[ $NRTMPSAVES -gt 0 ]]; then
 fi
 
 if [[ ${UPDATE_MODS_ON_START:-} == "true" ]]; then
-  ./docker-update-mods.sh
+  ${INSTALLED_DIRECTORY}/docker-update-mods.sh
 fi
 
-./docker-dlc.sh
+${INSTALLED_DIRECTORY}/docker-dlc.sh
 
 EXEC=""
 if [[ $(id -u) == 0 ]]; then
