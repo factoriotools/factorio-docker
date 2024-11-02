@@ -22,3 +22,8 @@ services:
 #      - PORT=34198
 #      - PRESET=deathworld
 #      - ADDR=::1
+
+#    # Uncomment the following line to enable the use of the host's network stack,
+#    # which may be necessary for some setups like NAS.
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
