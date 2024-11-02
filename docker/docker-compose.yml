@@ -24,6 +24,6 @@ services:
 #      - ADDR=::1
 
 #    # Uncomment the following line to enable the use of the host's network stack,
-#    # which may be necessary for some setups like NAS.
+#    # which may be necessary for some setups like NAS or when using some proxy service like firewall rules.
 #    extra_hosts:
 #      - "host.docker.internal:host-gateway"
