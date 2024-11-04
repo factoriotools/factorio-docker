@@ -26,7 +26,12 @@ disable_mod()
 }
 
 # Enable or disable DLCs if configured
-if [[ ${DLC_SPACE_AGE:-} == "true" ]]; then
+if [[ -n "$MOD_LIST_MAP" ]]; then
+  # if MOD_LIST_MAP env variable is defined, then use it to determine the mods to enable
+  for mod in $MOD_LIST_MAP; do
+      ENABLE_MODS+=("$mod")
+  done
+elif [[ ${DLC_SPACE_AGE:-} == "true" ]]; then
   # Define the DLC mods
   ENABLE_MODS=(${ALL_SPACE_AGE_MODS[@]})
 elif [[ ${DLC_SPACE_AGE:-} == "false" ]]; then
