@@ -274,6 +274,7 @@ These are the environment variables which can be specified at container run time
 | USERNAME             | factorio.com username                                                |                | 0.17+        |
 | CONSOLE_LOG_LOCATION | Saves the console log to the specifies location                      |                |              |
 | DLC_SPACE_AGE        | Enables or disables the mods for DLC Space Age in mod-list.json[^1]  | true           | 2.0.8+       |
+| MOD_LIST_MAP         | String map of mod names to enable[^2]                                |                | 2.0.14+      |
 | MODS                 | Mod directory to use                                                 | /factorio/mods | 2.0.8+       |
 
 **Note:** All environment variables are compared as strings
@@ -437,3 +438,5 @@ Use the `PORT` environment variable to start the server on the a different port,
   Example 1: Enable all by using `true`
   Example 2: Enable all by listing the mod names `space-age elevated-rails quality`  
   Example 3: Enable only Elevated rails `elevated-rails`
+[^2]: All mods must be included in the string map (including wanted DLC mods).  
+  Example: "space-age elevated-rails quality flib helmod MaxRateCalculator RateCalculator"
