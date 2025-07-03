@@ -126,7 +126,7 @@ fi
 
 # Add major.minor tags (e.g., 2.0, 1.1) - only the latest version for each
 declare -A major_minor_seen
-jq -r 'keys[]' buildinfo.json | sort -V -r | while read -r version; do
+while IFS= read -r version; do
   if [[ "$version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
     major="${BASH_REMATCH[1]}"
     minor="${BASH_REMATCH[2]}"
@@ -146,7 +146,7 @@ jq -r 'keys[]' buildinfo.json | sort -V -r | while read -r version; do
       fi
     fi
   fi
-done
+done < <(jq -r 'keys[]' buildinfo.json | sort -V -r)
 
 readme_tags="${readme_tags}\n"
 
