@@ -203,6 +203,22 @@ sudo docker run -d \
   factoriotools/factorio
 ```
 
+To generate a new map with a specific preset (e.g., death-world):
+
+```shell
+sudo docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v /opt/factorio:/factorio \
+  -e LOAD_LATEST_SAVE=false \
+  -e GENERATE_NEW_SAVE=true \
+  -e SAVE_NAME=replaceme \
+  -e PRESET=death-world \
+  --name factorio \
+  --restart=unless-stopped \
+  factoriotools/factorio
+```
+
 ### Mods
 
 Copy mods into the mods folder and restart the server.
@@ -321,6 +337,7 @@ These are the environment variables which can be specified at container run time
 | BIND                 | IP address (v4 or v6) the server listens on (IP\[:PORT])             |                | 0.15+        |
 | RCON_PORT            | TCP port the rcon server listens on                                  | 27015          | 0.15+        |
 | SAVE_NAME            | Name to use for the save file                                        | _autosave1     | 0.17+        |
+| PRESET               | Map generation preset when GENERATE_NEW_SAVE is true                 |                | 0.17+        |
 | TOKEN                | factorio.com token                                                   |                | 0.17+        |
 | UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |                | 0.17+        |
 | USERNAME             | factorio.com username                                                |                | 0.17+        |
@@ -329,6 +346,20 @@ These are the environment variables which can be specified at container run time
 | MODS                 | Mod directory to use                                                 | /factorio/mods | 2.0.8+       |
 
 **Note:** All environment variables are compared as strings
+
+#### PRESET Values
+
+The `PRESET` environment variable is used when generating a new map (when `GENERATE_NEW_SAVE=true`). It corresponds to Factorio's built-in map generation presets. Common values include:
+
+- `default` - Normal settings
+- `rich-resources` - Resources are more abundant
+- `marathon` - Recipes and technologies are more expensive
+- `death-world` - Biters are more aggressive and numerous
+- `death-world-marathon` - Combines death-world and marathon settings
+- `rail-world` - Resources are further apart, encouraging train usage
+- `ribbon-world` - Map height is limited for a unique challenge
+
+If PRESET is not specified or left empty, the map will be generated using the settings from `map-gen-settings.json` and `map-settings.json` without a preset.
 
 ## Container Details
 
