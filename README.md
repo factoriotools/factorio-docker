@@ -439,6 +439,37 @@ stream {
 
 If your factorio host uses multiple IP addresses (very common with IPv6), you might additionally need to bind Factorio to a single IP (otherwise the UDP proxy might get confused with IP mismatches). To do that pass the `BIND` envvar to the container: `docker run --network=host -e BIND=2a02:1234::5678 ...`
 
+## Rootless Docker Support
+
+If you're experiencing permission issues or want better security, consider using the rootless images. These images are designed to work seamlessly with rootless Docker installations and avoid common permission problems.
+
+### Rootless Image Tags
+
+Each regular tag has a corresponding rootless version with the `-rootless` suffix:
+- `latest-rootless`
+- `stable-rootless`  
+- `2.0.55-rootless`
+
+### Quick Start with Rootless
+
+```shell
+docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v ~/factorio:/factorio \
+  --name factorio \
+  --restart=unless-stopped \
+  factoriotools/factorio:stable-rootless
+```
+
+Key differences:
+- No `chown` command needed
+- No PUID/PGID environment variables
+- Runs as UID 1000 by default
+- No permission issues with volumes
+
+For more information, see the [Rootless Docker documentation](README-ROOTLESS.md).
+
 ## Troubleshooting
 
 ### My server is listed in the server browser, but nobody can connect
