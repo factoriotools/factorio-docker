@@ -91,10 +91,64 @@ if [[ $experimental_online_version != "$stable_online_version" ]]; then
 fi
 rm -f -- "$tmpfile"
 
-readme_tags=$(jq --sort-keys 'keys[]' buildinfo.json | tac | (while read -r line
-do
-  tags="$tags\n* "$(jq --sort-keys ".$line.tags | sort | .[]" buildinfo.json | sed 's/"/`/g' | sed ':a; /$/N; s/\n/, /; ta')
-done && printf "%s\n\n" "$tags"))
+# Generate README tags with logical sorting and de-duplication
+# First, collect all unique tags with their versions
+declare -A tag_versions
+while IFS= read -r version; do
+  while IFS= read -r tag; do
+    # If this tag is already seen, compare versions to keep the latest
+    if [[ -n "${tag_versions[$tag]}" ]]; then
+      # Compare version strings - keep the higher one
+      if [[ "$version" > "${tag_versions[$tag]}" ]]; then
+        tag_versions[$tag]="$version"
+      fi
+    else
+      tag_versions[$tag]="$version"
+    fi
+  done < <(jq -r ".\"$version\".tags[]" buildinfo.json)
+done < <(jq -r 'keys[]' buildinfo.json | sort -V -r)
+
+# Build the tags list for README
+readme_tags=""
+# First add the current latest and stable tags
+latest_version=$(jq -r 'to_entries | map(select(.value.tags | contains(["latest"]))) | .[0].key' buildinfo.json)
+stable_version=$(jq -r 'to_entries | map(select(.value.tags | index("stable"))) | .[0].key' buildinfo.json)
+
+if [[ -n "$latest_version" ]]; then
+  latest_tags=$(jq -r ".\"$latest_version\".tags | map(select(. == \"latest\" or . == \"$latest_version\")) | join(\", \")" buildinfo.json | sed 's/"/`/g')
+  readme_tags="${readme_tags}\n* \`${latest_tags}\`"
+fi
+
+if [[ -n "$stable_version" ]] && [[ "$stable_version" != "$latest_version" ]]; then
+  stable_tags=$(jq -r ".\"$stable_version\".tags | sort | join(\", \")" buildinfo.json | sed 's/"/`/g')
+  readme_tags="${readme_tags}\n* \`${stable_tags}\`"
+fi
+
+# Add major.minor tags (e.g., 2.0, 1.1) - only the latest version for each
+declare -A major_minor_seen
+jq -r 'keys[]' buildinfo.json | sort -V -r | while read -r version; do
+  if [[ "$version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+    major="${BASH_REMATCH[1]}"
+    minor="${BASH_REMATCH[2]}"
+    major_minor="$major.$minor"
+    
+    # Skip if this is the latest or stable version (already added above)
+    if [[ "$version" == "$latest_version" ]] || [[ "$version" == "$stable_version" ]]; then
+      continue
+    fi
+    
+    # Only add if we haven't seen this major.minor yet
+    if [[ -z "${major_minor_seen[$major_minor]}" ]]; then
+      major_minor_seen[$major_minor]=1
+      tags=$(jq -r ".\"$version\".tags | join(\", \")" buildinfo.json | sed 's/"/`/g')
+      if [[ -n "$tags" ]]; then
+        readme_tags="${readme_tags}\n* \`${tags}\`"
+      fi
+    fi
+  fi
+done
+
+readme_tags="${readme_tags}\n"
 
 perl -i -0777 -pe "s/<!-- start autogeneration tags -->.+<!-- end autogeneration tags -->/<!-- start autogeneration tags -->$readme_tags<!-- end autogeneration tags -->/s" README.md
 
