@@ -23,24 +23,33 @@ print_failure()
   echo "$1"
 }
 
-# Checks game version vs version in mod.
-# Returns 0 if major version differs or mod minor version is less than game version, 1 if ok
+# Checks if the current game version satisfies the mod's minimum required version.
+# Returns 1 if the game version is compatible with the mod, 0 if not
 check_game_version() {
-  local game_version="$1"
-  local mod_version="$2"
+  local mod_required_version="$1"  # The minimum Factorio version required by the mod
+  local current_game_version="$2"  # The current Factorio version
 
-  local game_major mod_major game_minor mod_minor
-  game_major=$(echo "$game_version" | cut -d '.' -f1)
-  game_minor=$(echo "$game_version" | cut -d '.' -f2)
-  mod_major=$(echo "$mod_version" | cut -d '.' -f1)
-  mod_minor=$(echo "$mod_version" | cut -d '.' -f2)
+  local mod_major mod_minor game_major game_minor
+  mod_major=$(echo "$mod_required_version" | cut -d '.' -f1)
+  mod_minor=$(echo "$mod_required_version" | cut -d '.' -f2)
+  game_major=$(echo "$current_game_version" | cut -d '.' -f1)
+  game_minor=$(echo "$current_game_version" | cut -d '.' -f2)
 
-  if [[ "$game_major" -ne "$mod_major" ]]; then
+  # If game major version is greater than mod's required major version, it's compatible
+  if [[ "$game_major" -gt "$mod_major" ]]; then
+    echo 1
+    return
+  fi
+
+  # If game major version is less than mod's required major version, it's not compatible
+  if [[ "$game_major" -lt "$mod_major" ]]; then
     echo 0
     return
   fi
 
-  if [[ "$mod_minor" -ge "$game_minor" ]]; then
+  # Major versions are equal, check minor versions
+  # Game minor version must be >= mod's required minor version
+  if [[ "$game_minor" -ge "$mod_minor" ]]; then
     echo 1
   else
     echo 0
@@ -79,7 +88,7 @@ check_dependency_version()
       fi
       ;;
     ">")
-      if [[ "$(printf '%s\n%s\n' "$required_version" "$mod_version" | sort -V | head -n1)" == "$required_version" && "$required_version" != "$FACTORIO_VERSION" ]]; then
+      if [[ "$(printf '%s\n%s\n' "$required_version" "$mod_version" | sort -V | head -n1)" == "$required_version" && "$required_version" != "$mod_version" ]]; then
         echo 1
       else
         echo 0
@@ -93,7 +102,7 @@ check_dependency_version()
       fi
       ;;
     "<")
-      if [[ "$(printf '%s\n%s\n' "$required_version" "$mod_version" | sort -V | tail -n1)" == "$required_version" && "$required_version" != "$FACTORIO_VERSION" ]]; then
+      if [[ "$(printf '%s\n%s\n' "$required_version" "$mod_version" | sort -V | tail -n1)" == "$required_version" && "$required_version" != "$mod_version" ]]; then
         echo 1
       else
         echo 0
@@ -116,11 +125,15 @@ get_mod_info()
 {
   local mod_info_json="$1"
 
+  # Process mod releases from newest to oldest, looking for a compatible version
   while IFS= read -r mod_release_info; do
     local mod_version mod_factorio_version
     mod_version=$(echo "$mod_release_info" | jq -r ".version")
     mod_factorio_version=$(echo "$mod_release_info" | jq -r ".info_json.factorio_version")
 
+    # Check if this mod version is compatible with our Factorio version
+    # This prevents downloading mods that require a newer Factorio version (fixes #468)
+    # and ensures backward compatibility (e.g., Factorio 2.0 can use 1.x mods) (fixes #517)
     if [[ $(check_game_version "$mod_factorio_version" "$FACTORIO_VERSION") == 0 ]]; then
       echo "  Skipping mod version $mod_version because of factorio version mismatch"  >&2
       continue
