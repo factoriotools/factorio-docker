@@ -44,11 +44,11 @@ fi
 
 # Update mods if requested
 if [[ ${UPDATE_MODS_ON_START:-} == "true" ]]; then
-  ${INSTALLED_DIRECTORY}/docker-update-mods.sh
+  "${INSTALLED_DIRECTORY}"/docker-update-mods.sh
 fi
 
 # Handle DLC
-${INSTALLED_DIRECTORY}/docker-dlc.sh
+"${INSTALLED_DIRECTORY}"/docker-dlc.sh
 
 # In rootless mode, we don't need to handle user switching or chown
 # The container runs as the specified user from the start
@@ -76,7 +76,7 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
     if [[ -f "$SAVES/$SAVE_NAME.zip" ]]; then
         echo "Map $SAVES/$SAVE_NAME.zip already exists, skipping map generation"
     else
-        if [[ ! -z "$PRESET" ]]; then
+        if [[ -n "$PRESET" ]]; then
             $EXEC /opt/factorio/bin/x64/factorio \
                 --create "$SAVES/$SAVE_NAME.zip" \
                 --preset "$PRESET" \

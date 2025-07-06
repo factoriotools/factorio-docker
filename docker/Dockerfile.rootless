@@ -1,7 +1,7 @@
 # build rcon client
 FROM debian:stable-slim AS rcon-builder
 RUN apt-get -q update \
-    && DEBIAN_FRONTEND=noninteractive apt-get -qy install build-essential
+    && DEBIAN_FRONTEND=noninteractive apt-get -qy install build-essential --no-install-recommends
 
 WORKDIR /src
 COPY rcon/ /src
@@ -78,11 +78,9 @@ COPY files/docker-entrypoint-rootless.sh /docker-entrypoint.sh
 COPY files/config.ini /opt/factorio/config/config.ini
 COPY --from=rcon-builder /src/rcon /bin/rcon
 
-# Make all scripts executable
-RUN chmod +x /*.sh
-
-# Set proper permissions for the factorio directory
-RUN chmod -R 777 /opt/factorio /factorio
+# Make all scripts executable and set proper permissions for the factorio directory
+RUN chmod +x /*.sh \
+    && chmod -R 777 /opt/factorio /factorio
 
 VOLUME /factorio
 EXPOSE $PORT/udp $RCON_PORT/tcp
