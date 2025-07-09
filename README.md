@@ -184,6 +184,8 @@ Copy mods into the mods folder and restart the server.
 
 As of 0.17 a new environment variable was added ``UPDATE_MODS_ON_START`` which if set to ``true`` will cause the mods get to updated on server start. If set a valid [Factorio Username and Token](https://www.factorio.com/profile) must be supplied or else the server will not start. They can either be set as docker secrets, environment variables, or pulled from the server-settings.json file.
 
+**Note:** When using the Space Age DLC, the built-in mods (`elevated-rails`, `quality`, and `space-age`) are automatically skipped during mod updates to prevent conflicts. These mods are included with the DLC and should not be downloaded separately.
+
 ### Scenarios
 
 If you want to launch a scenario from a clean start (not from a saved map) you'll need to start the docker image from an alternate entrypoint. To do this, use the example entrypoint file stored in the /factorio/entrypoints directory in the volume, and launch the image with the following syntax. Note that this is the normal syntax with the addition of the --entrypoint setting AND the additional argument at the end, which is the name of the Scenario in the Scenarios folder.

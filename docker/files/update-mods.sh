@@ -227,9 +227,12 @@ update_mod()
   return 0
 }
 
+# Process all enabled mods from mod-list.json, but skip built-in mods
+# The Space Age DLC includes built-in mods (elevated-rails, quality, space-age) that should not be downloaded
 if [[ -f $MOD_DIR/mod-list.json ]]; then
   jq -r ".mods|map(select(.enabled))|.[].name" "$MOD_DIR/mod-list.json" | while read -r mod; do
-    if [[ $mod != base ]]; then
+    # Skip base mod and DLC built-in mods
+    if [[ $mod != base ]] && [[ $mod != elevated-rails ]] && [[ $mod != quality ]] && [[ $mod != space-age ]]; then
       update_mod "$mod" || true
     fi
   done
