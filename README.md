@@ -439,16 +439,26 @@ stream {
 
 If your factorio host uses multiple IP addresses (very common with IPv6), you might additionally need to bind Factorio to a single IP (otherwise the UDP proxy might get confused with IP mismatches). To do that pass the `BIND` envvar to the container: `docker run --network=host -e BIND=2a02:1234::5678 ...`
 
-## Rootless Docker Support
+## Rootless Docker Support (Experimental)
+
+> **Note**: Rootless support is currently experimental. Please report any issues you encounter.
 
 If you're experiencing permission issues or want better security, consider using the rootless images. These images are designed to work seamlessly with rootless Docker installations and avoid common permission problems.
+
+### What are Rootless Images?
+
+The rootless images differ from regular images in several ways:
+- Run as UID 1000 (non-root) by default
+- No dynamic UID/GID mapping (PUID/PGID not supported)
+- No runtime chown operations
+- All directories created with open permissions during build
 
 ### Rootless Image Tags
 
 Each regular tag has a corresponding rootless version with the `-rootless` suffix:
-- `latest-rootless`
-- `stable-rootless`  
-- `2.0.55-rootless`
+- `latest-rootless` (experimental)
+- `stable-rootless` (experimental)
+- `2.0.55-rootless` (experimental)
 
 ### Quick Start with Rootless
 
@@ -468,7 +478,19 @@ Key differences:
 - Runs as UID 1000 by default
 - No permission issues with volumes
 
-For more information, see the [Rootless Docker documentation](README-ROOTLESS.md).
+### When to Use Rootless Images
+
+Consider using rootless images if you:
+- Are running Docker in rootless mode
+- Experience permission issues with volume mounts
+- Want to avoid containers running as root
+- Don't need dynamic UID/GID mapping via PUID/PGID
+
+### Limitations
+
+- PUID/PGID environment variables are not supported
+- Fixed to UID 1000 (may not match your host user)
+- Experimental feature - may have undiscovered issues
 
 ## Troubleshooting
 
