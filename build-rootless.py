@@ -1,128 +1,15 @@
 #!/usr/bin/env python3
+"""
+Legacy wrapper script for backwards compatibility.
+This script now calls build-unified.py to build rootless images.
+"""
 
-import os
-import json
 import subprocess
-import shutil
 import sys
-import tempfile
 
+# Convert arguments and pass to unified script with --rootless flag
+args = ["./build-unified.py", "--rootless", "--only-stable-latest"]
+args.extend(sys.argv[1:])
 
-PLATFORMS = [
-    "linux/arm64",
-    "linux/amd64",
-]
-
-
-def create_builder(build_dir, builder_name, platform):
-    check_exists_command = ["docker", "buildx", "inspect", builder_name]
-    if subprocess.run(check_exists_command, stderr=subprocess.DEVNULL).returncode != 0:
-        create_command = ["docker", "buildx", "create", "--platform", platform, "--name", builder_name]
-        try:
-            subprocess.run(create_command, cwd=build_dir, check=True)
-        except subprocess.CalledProcessError:
-            print("Creating builder failed")
-            exit(1)
-
-
-def build_and_push_multiarch(build_dir, build_args, push):
-    builder_name = "factoriotools-rootless-multiarch"
-    platform=",".join(PLATFORMS)
-    create_builder(build_dir, builder_name, platform)
-    build_command = ["docker", "buildx", "build", "--platform", platform, "--builder", builder_name] + build_args
-    if push:
-        build_command.append("--push")
-    try:
-        subprocess.run(build_command, cwd=build_dir, check=True)
-    except subprocess.CalledProcessError:
-        print("Build and push of rootless image failed")
-        exit(1)
-
-
-def build_singlearch(build_dir, build_args):
-    build_command = ["docker", "build"] + build_args
-    try:
-        subprocess.run(build_command, cwd=build_dir, check=True)
-    except subprocess.CalledProcessError:
-        print("Build of rootless image failed")
-        exit(1)
-
-
-def push_singlearch(tags):
-    for tag in tags:
-        try:
-            subprocess.run(["docker", "push", f"factoriotools/factorio:{tag}"],
-                            check=True)
-        except subprocess.CalledProcessError:
-            print("Docker push failed")
-            exit(1)
-
-
-def build_and_push(sha256, version, tags, push, multiarch):
-    build_dir = tempfile.mktemp()
-    shutil.copytree("docker", build_dir)
-    # Use the rootless Dockerfile
-    build_args = ["-f", "Dockerfile.rootless", "--build-arg", f"VERSION={version}", "--build-arg", f"SHA256={sha256}", "."]
-    for tag in tags:
-        build_args.extend(["-t", f"factoriotools/factorio:{tag}"])
-    if multiarch:
-        build_and_push_multiarch(build_dir, build_args, push)
-    else:
-        build_singlearch(build_dir, build_args)
-        if push:
-            push_singlearch(tags)
-
-
-def login():
-    try:
-        username = os.environ["DOCKER_USERNAME"]
-        password = os.environ["DOCKER_PASSWORD"]
-        subprocess.run(["docker", "login", "-u", username, "-p", password], check=True)
-    except KeyError:
-        print("Username and password need to be given")
-        exit(1)
-    except subprocess.CalledProcessError:
-        print("Docker login failed")
-        exit(1)
-
-
-def generate_rootless_tags(original_tags):
-    """Generate rootless-specific tags from original tags"""
-    rootless_tags = []
-    for tag in original_tags:
-        # Add -rootless suffix to each tag
-        rootless_tags.append(f"{tag}-rootless")
-    return rootless_tags
-
-
-def main(push_tags=False, multiarch=False):
-    with open(os.path.join(os.path.dirname(__file__), "buildinfo.json")) as file_handle:
-        builddata = json.load(file_handle)
-
-    if push_tags:
-        login()
-
-    # Build only the latest stable and experimental versions for rootless
-    versions_to_build = []
-    
-    # Find latest stable and experimental versions
-    for version, buildinfo in builddata.items():
-        if "stable" in buildinfo["tags"] or "latest" in buildinfo["tags"]:
-            versions_to_build.append((version, buildinfo))
-    
-    for version, buildinfo in versions_to_build:
-        sha256 = buildinfo["sha256"]
-        original_tags = buildinfo["tags"]
-        rootless_tags = generate_rootless_tags(original_tags)
-        build_and_push(sha256, version, rootless_tags, push_tags, multiarch)
-
-
-if __name__ == '__main__':
-    push_tags = False
-    multiarch = False
-    for arg in sys.argv[1:]:
-        if arg == "--push-tags":
-            push_tags = True
-        elif arg == "--multiarch":
-            multiarch = True
-    main(push_tags, multiarch)
+# Execute the unified build script
+sys.exit(subprocess.call(args))
