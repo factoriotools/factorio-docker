@@ -505,6 +505,19 @@ Consider using rootless images if you:
 
 ## Troubleshooting
 
+### Permission Issues
+
+If you're experiencing permission errors such as:
+- `chown: Operation not permitted`
+- `Permission denied [/factorio/saves]`
+- `Util.cpp:81: Operation not permitted`
+- Files owned by unexpected UIDs (like 100844 instead of 845)
+
+Please refer to our comprehensive [Permission Issues Guide](./PERMISSION_ISSUES_GUIDE.md) for detailed solutions. Common fixes include:
+- **Updating Docker** to version 20.x or newer (this resolves many issues)
+- **Using the rootless image** variants (e.g., `factoriotools/factorio:stable-rootless`)
+- **Setting correct ownership** for your specific Docker configuration
+
 ### My server is listed in the server browser, but nobody can connect
 
 Check the logs. If there is the line `Own address is RIGHT IP:WRONG PORT`, then this could be caused by the Docker proxy. If the the IP and port is correct it's probably a port forwarding or firewall issue instead.
