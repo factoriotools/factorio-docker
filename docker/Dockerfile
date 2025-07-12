@@ -43,7 +43,7 @@ ENV PORT=34197 \
 SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 
 RUN apt-get -q update \
-    && DEBIAN_FRONTEND=noninteractive apt-get -qy install ca-certificates curl jq pwgen xz-utils procps gettext-base --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qy install ca-certificates curl jq pwgen xz-utils procps gettext-base file --no-install-recommends \
     && if [[ "$(uname -m)" == "aarch64" ]]; then \
         echo "installing ARM compatability layer" \
         && DEBIAN_FRONTEND=noninteractive apt-get -qy install unzip --no-install-recommends \ 
