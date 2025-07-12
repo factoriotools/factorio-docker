@@ -120,11 +120,14 @@ docker run -d \
 To build rootless images locally:
 
 ```bash
-# Build for current architecture
-python3 build-rootless.py
+# Build rootless images for current architecture
+python3 build.py --rootless
 
-# Build and push multi-arch images
-python3 build-rootless.py --multiarch --push-tags
+# Build and push multi-arch rootless images
+python3 build.py --rootless --multiarch --push-tags
+
+# Build both regular and rootless images
+python3 build.py --both --multiarch --push-tags
 ```
 
 ## Why Use Rootless Images?

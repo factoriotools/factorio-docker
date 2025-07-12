@@ -26,4 +26,4 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          ./build-unified.py --push-tags --multiarch --both
+          ./build.py --push-tags --multiarch --both

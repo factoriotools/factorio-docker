@@ -11,8 +11,9 @@ This is a Docker image for running a Factorio headless server. It provides autom
 ### Key Components
 
 1. **Docker Image Build System**
-   - `build.py` - Python script that builds Docker images from `buildinfo.json`
+   - `build.py` - Unified Python script that builds both regular and rootless Docker images from `buildinfo.json`
    - `docker/Dockerfile` - Main Dockerfile that creates the Factorio server image
+   - `docker/Dockerfile.rootless` - Dockerfile for rootless variant (runs as UID 1000)
    - `buildinfo.json` - Contains version info, SHA256 checksums, and tags for all supported versions
    - Supports multi-architecture builds (linux/amd64, linux/arm64) using Docker buildx
 
@@ -38,11 +39,20 @@ This is a Docker image for running a Factorio headless server. It provides autom
 ### Building Images
 
 ```bash
-# Build a single architecture image locally
+# Build regular images locally (single architecture)
 python3 build.py
 
-# Build and push multi-architecture images
+# Build rootless images only
+python3 build.py --rootless
+
+# Build both regular and rootless images
+python3 build.py --both
+
+# Build and push multi-architecture images (regular only)
 python3 build.py --multiarch --push-tags
+
+# Build and push both regular and rootless multi-architecture images
+python3 build.py --multiarch --push-tags --both
 ```
 
 ### Running the Container
@@ -109,6 +119,8 @@ Version updates are automated via GitHub Actions that run `update.sh` periodical
 ## Testing Changes
 
 1. Modify `buildinfo.json` to test specific versions
-2. Run `python3 build.py` to build locally
+2. Run `python3 build.py` to build regular images locally
+   - Use `python3 build.py --rootless` for rootless images
+   - Use `python3 build.py --both` to build both variants
 3. Test the container with your local data volume
 4. For production changes, ensure `update.sh` handles version transitions correctly
