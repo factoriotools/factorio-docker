@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -107,7 +108,8 @@ char* read_password(const char* conf_dir) {
     fseek(fptr, 0, SEEK_SET);  /* same as rewind(f); */
 
     char *password = malloc(fsize + 1);
-    fread(password, fsize, 1, fptr);
+    size_t bytes_read = fread(password, fsize, 1, fptr);
+    (void)bytes_read; // Suppress unused warning
     fclose(fptr);
 
     password[fsize] = 0;
