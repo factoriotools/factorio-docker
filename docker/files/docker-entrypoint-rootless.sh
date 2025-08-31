@@ -54,6 +54,7 @@ fi
 # The container runs as the specified user from the start
 EXEC=""
 # Setup ARM64 emulation support
+# shellcheck disable=SC1091
 source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
 # Update config path

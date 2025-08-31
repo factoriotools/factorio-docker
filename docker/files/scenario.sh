@@ -34,6 +34,7 @@ fi
 
 # Setup ARM64 emulation support
 EXEC=""
+# shellcheck disable=SC1091
 source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
 exec $EXEC /opt/factorio/bin/x64/factorio \

@@ -41,10 +41,10 @@ if [[ $NRTMPSAVES -gt 0 ]]; then
 fi
 
 if [[ ${UPDATE_MODS_ON_START:-} == "true" ]]; then
-  ${INSTALLED_DIRECTORY}/docker-update-mods.sh
+  "${INSTALLED_DIRECTORY}"/docker-update-mods.sh
 fi
 
-${INSTALLED_DIRECTORY}/docker-dlc.sh
+"${INSTALLED_DIRECTORY}"/docker-dlc.sh
 
 EXEC=""
 if [[ $(id -u) == 0 ]]; then
@@ -58,6 +58,7 @@ if [[ $(id -u) == 0 ]]; then
 fi
 
 # Setup ARM64 emulation support
+# shellcheck disable=SC1091
 source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
 sed -i '/write-data=/c\write-data=\/factorio/' /opt/factorio/config/config.ini
