@@ -53,10 +53,8 @@ fi
 # In rootless mode, we don't need to handle user switching or chown
 # The container runs as the specified user from the start
 EXEC=""
-if [[ -f /bin/box64 ]]; then
-  # Use emulator for ARM hosts
-  EXEC="/bin/box64"
-fi
+# Setup ARM64 emulation support
+source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
 # Update config path
 sed -i '/write-data=/c\write-data=\/factorio/' /opt/factorio/config/config.ini

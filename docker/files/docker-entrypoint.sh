@@ -56,11 +56,9 @@ if [[ $(id -u) == 0 ]]; then
   # Drop to the factorio user
   EXEC="runuser -u factorio -g factorio --"
 fi
-if [[ -f /bin/box64 ]]; then
-  # Use an emulator to run on ARM hosts
-  # this only gets installed when the target docker platform is linux/arm64
-  EXEC="$EXEC /bin/box64"
-fi
+
+# Setup ARM64 emulation support
+source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
 sed -i '/write-data=/c\write-data=\/factorio/' /opt/factorio/config/config.ini
 

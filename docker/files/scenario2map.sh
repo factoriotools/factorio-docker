@@ -1,5 +1,6 @@
 #!/bin/bash
 set -eoux pipefail
+INSTALLED_DIRECTORY=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 
 if [[ -z ${1:-} ]]; then
   echo "No argument supplied"
@@ -23,5 +24,9 @@ if [[ ! -f $CONFIG/map-settings.json ]]; then
   cp /opt/factorio/data/map-settings.example.json "$CONFIG/map-settings.json"
 fi
 
-exec /opt/factorio/bin/x64/factorio \
+# Setup ARM64 emulation support
+EXEC=""
+source "${INSTALLED_DIRECTORY}/setup-exec.sh"
+
+exec $EXEC /opt/factorio/bin/x64/factorio \
   --scenario2map "$SERVER_SCENARIO"
