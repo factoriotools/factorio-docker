@@ -175,6 +175,8 @@ Copy mods into the mods folder and restart the server.
 
 As of 0.17 a new environment variable was added ``UPDATE_MODS_ON_START`` which if set to ``true`` will cause the mods get to updated on server start. If set a valid [Factorio Username and Token](https://www.factorio.com/profile) must be supplied or else the server will not start. They can either be set as docker secrets, environment variables, or pulled from the server-settings.json file.
 
+To prevent specific mods from being automatically updated, you can use the ``UPDATE_IGNORE`` environment variable with a comma-separated list of mod names. For example: ``UPDATE_IGNORE=mod1,mod2,mod3`` will skip updates for those three mods. This can be useful to prevent compatibility issues when certain mods should remain at specific versions. Be warned that it can also create compatibility issues.
+
 **Note:** When using the Space Age DLC, the built-in mods (`elevated-rails`, `quality`, and `space-age`) are automatically skipped during mod updates to prevent conflicts. These mods are included with the DLC and should not be downloaded separately.
 
 ### Scenarios
@@ -292,6 +294,7 @@ These are the environment variables which can be specified at container run time
 | PRESET               | Map generation preset when GENERATE_NEW_SAVE is true                 |                | 0.17+        |
 | TOKEN                | factorio.com token                                                   |                | 0.17+        |
 | UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |                | 0.17+        |
+| UPDATE_IGNORE        | Comma-separated list of mod names to skip during automatic updates   |                | 0.17+        |
 | USERNAME             | factorio.com username                                                |                | 0.17+        |
 | CONSOLE_LOG_LOCATION | Saves the console log to the specifies location                      |                |              |
 | DLC_SPACE_AGE        | Enables or disables the mods for DLC Space Age in mod-list.json[^1]  | true           | 2.0.8+       |

@@ -11,6 +11,8 @@ services:
       - ./data:/factorio
     environment:
       - UPDATE_MODS_ON_START=true
+      # Uncomment to skip updating specific mods
+      # - UPDATE_IGNORE=mod1,mod2,mod3
     
     # Uncomment to enable autoupdate via watchtower
     #labels:

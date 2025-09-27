@@ -17,6 +17,7 @@ services:
       #      - PUID=1000
       #      - PGID=1000
       #      - UPDATE_MODS_ON_START=true
+      #      - UPDATE_IGNORE=mod1,mod2,mod3
       #      - USERNAME=FactorioUsername
       #      - TOKEN=FactorioToken
       #      - PORT=34198

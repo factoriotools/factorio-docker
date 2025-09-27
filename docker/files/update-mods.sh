@@ -5,6 +5,7 @@ FACTORIO_VERSION=$1
 MOD_DIR=$2
 USERNAME=$3
 TOKEN=$4
+UPDATE_IGNORE=$5
 
 MOD_BASE_URL="https://mods.factorio.com"
 
@@ -158,6 +159,28 @@ get_mod_info()
   done < <(echo "$mod_info_json" | jq -c ".releases|sort_by(.released_at)|reverse|.[]")
 }
 
+# Check if a mod should be ignored based on UPDATE_IGNORE environment variable
+is_mod_ignored() {
+  local mod_name="$1"
+  
+  # If UPDATE_IGNORE is not set or empty, don't ignore any mods
+  if [[ -z "${UPDATE_IGNORE:-}" ]]; then
+    return 1
+  fi
+  
+  # Split the comma-separated list and check if mod_name is in it
+  IFS=',' read -ra ignored_mods <<< "$UPDATE_IGNORE"
+  for ignored_mod in "${ignored_mods[@]}"; do
+    # Trim whitespace from ignored_mod
+    ignored_mod=$(echo "$ignored_mod" | xargs)
+    if [[ "$mod_name" == "$ignored_mod" ]]; then
+      return 0
+    fi
+  done
+  
+  return 1
+}
+
 update_mod()
 {
   MOD_NAME="$1"
@@ -233,7 +256,11 @@ if [[ -f $MOD_DIR/mod-list.json ]]; then
   jq -r ".mods|map(select(.enabled))|.[].name" "$MOD_DIR/mod-list.json" | while read -r mod; do
     # Skip base mod and DLC built-in mods
     if [[ $mod != base ]] && [[ $mod != elevated-rails ]] && [[ $mod != quality ]] && [[ $mod != space-age ]]; then
-      update_mod "$mod" || true
+      if is_mod_ignored "$mod"; then
+        print_success "Skipping mod $mod (listed in UPDATE_IGNORE)"
+      else
+        update_mod "$mod" || true
+      fi
     fi
   done
 fi
