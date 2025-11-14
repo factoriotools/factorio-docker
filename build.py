@@ -52,7 +52,7 @@ def build_singlearch(build_dir, build_args, image_type="regular"):
 def push_singlearch(tags):
     for tag in tags:
         try:
-            subprocess.run(["docker", "push", f"factoriotools/factorio:{tag}"],
+            subprocess.run(["docker", "push", f"putn4m/factorio:{tag}"],
                             check=True)
         except subprocess.CalledProcessError:
             print("Docker push failed")
@@ -64,7 +64,7 @@ def build_and_push(sha256, version, tags, push, multiarch, dockerfile="Dockerfil
     shutil.copytree("docker", build_dir)
     build_args = ["-f", dockerfile, "--build-arg", f"VERSION={version}", "--build-arg", f"SHA256={sha256}", "."]
     for tag in tags:
-        build_args.extend(["-t", f"factoriotools/factorio:{tag}"])
+        build_args.extend(["-t", f"putn4m/factorio:{tag}"])
     
     image_type = "rootless" if "rootless" in dockerfile.lower() else "regular"
     
