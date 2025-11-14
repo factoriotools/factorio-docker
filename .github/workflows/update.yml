@@ -8,7 +8,7 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository == 'factoriotools/factorio-docker')
+    if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository == 'putnam/factorio-docker')
 
     steps:
       - name: Checkout
