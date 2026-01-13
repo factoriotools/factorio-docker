@@ -32,6 +32,8 @@ if [[ ! -f $CONFIG/map-settings.json ]]; then
   cp /opt/factorio/data/map-settings.example.json "$CONFIG/map-settings.json"
 fi
 
+"${INSTALLED_DIRECTORY}"/docker-dlc.sh
+
 # Setup ARM64 emulation support
 EXEC=""
 # shellcheck disable=SC1091
