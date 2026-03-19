@@ -7,7 +7,6 @@
 
 <!-- start autogeneration tags -->
 * `latest, 2.0.76`
-* `2, 2.0, 2.0.73, stable, stable-2.0.73`
 <!-- end autogeneration tags -->
 
 ## Tag descriptions
