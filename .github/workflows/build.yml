@@ -1,0 +1,40 @@
+name: Build Factorio Image
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./docker
+          file: ./docker/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/saucymanwich/factorio:2.0.76
+            ghcr.io/saucymanwich/factorio:latest
+          build-args: |
+            VERSION=2.0.76
+            SHA256=ef3663f66146d76342f7c09a3f743792636f8cd95c39ea26cfca5bd2e0e92430
