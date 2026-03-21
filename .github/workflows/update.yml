@@ -9,11 +9,32 @@ jobs:
   check:
     runs-on: ubuntu-latest
     if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository == 'factoriotools/factorio-docker')
+    outputs:
+      updated: ${{ steps.changes.outputs.updated }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Save current HEAD
+        id: before
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Run update script
         run: ./update.sh
         shell: bash
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ "$(git rev-parse HEAD)" != "${{ steps.before.outputs.sha }}" ]; then
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.updated == 'true'
+    uses: ./.github/workflows/docker-build.yml
+    secrets: inherit
