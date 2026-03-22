@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - buildinfo.json
+  workflow_call:
   # workaround for #526
   workflow_dispatch:
 
