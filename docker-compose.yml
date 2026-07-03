@@ -2,7 +2,7 @@ version: "2"
 services:
   factorio:
     container_name: factorio
-    image: factoriotools/factorio:stable
+    image: ghcr.io/saucymanwich/factorio:latest
     restart: unless-stopped
     ports:
       - "34197:34197/udp"
