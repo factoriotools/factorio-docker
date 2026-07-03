@@ -33,8 +33,8 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: |
-            ghcr.io/saucymanwich/factorio:2.0.76
+            ghcr.io/saucymanwich/factorio:2.0.77
             ghcr.io/saucymanwich/factorio:latest
           build-args: |
-            VERSION=2.0.76
-            SHA256=ef3663f66146d76342f7c09a3f743792636f8cd95c39ea26cfca5bd2e0e92430
+            VERSION=2.0.77
+            SHA256=c4efc11529f74d37c96933e291e0db73fd9f5aa4738913d9301b24680b3e947f
