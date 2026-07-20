@@ -4,7 +4,7 @@ set -eou pipefail
 # Path to the mod-list.json file
 MOD_LIST_FILE="$MODS/mod-list.json"
 
-ALL_SPACE_AGE_MODS=("elevated-rails" "quality" "space-age")
+ALL_SPACE_AGE_MODS=("elevated-rails" "quality" "space-age" "recycler")
 
 if [[ ! -f "$MOD_LIST_FILE" ]]; then
   # Create the mod-list.json file if it doesn't exist
