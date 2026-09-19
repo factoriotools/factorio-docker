@@ -11,6 +11,7 @@
   },
   "2.1.19": {
     "sha256": "e6b607da1d68aee85d1796dbc20e57360a70a66e4d997437ce25534c4ced2ab3",
+    "sha256_arm64": "6f051154b7d48bc7ae1cc2ad9e1aa05eae5724020fd9876e11d7ebba70de1be1",
     "tags": [
       "latest",
       "2",
