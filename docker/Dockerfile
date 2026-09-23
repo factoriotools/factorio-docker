@@ -16,6 +16,8 @@ ARG GROUP=factorio
 ARG PUID=845
 ARG PGID=845
 ARG BOX64_VERSION=v0.2.4
+# sha256 of the native linux-arm64 archive (2.1+); empty means x64 build under box64
+ARG SHA256_ARM64
 
 # optionally utilize a built-in map-gen-preset (see data/base/prototypes/map-gen-presets
 # if this is used, the preset will be used over any .json files supplied
@@ -44,7 +46,7 @@ SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 
 RUN apt-get -q update \
     && DEBIAN_FRONTEND=noninteractive apt-get -qy install ca-certificates curl jq pwgen xz-utils procps gettext-base file --no-install-recommends \
-    && if [[ "$(uname -m)" == "aarch64" ]]; then \
+    && if [[ "$(uname -m)" == "aarch64" && -z "${SHA256_ARM64}" ]]; then \
         echo "installing ARM compatability layer" \
         && DEBIAN_FRONTEND=noninteractive apt-get -qy install unzip --no-install-recommends \ 
         && curl -LO https://github.com/ptitSeb/box64/releases/download/${BOX64_VERSION}/box64-GENERIC_ARM-RelWithDebInfo.zip \
@@ -75,14 +77,21 @@ RUN set -ox pipefail \
         echo "build-arg SHA256 is required" \
         && exit 1; \
     fi \
-    && archive="/tmp/factorio_headless_x64_$VERSION.tar.xz" \
+    && if [[ "$(uname -m)" == "aarch64" && -n "${SHA256_ARM64}" ]]; then \
+        platform="linux-arm64" && sha256="${SHA256_ARM64}"; \
+    else \
+        platform="linux64" && sha256="${SHA256}"; \
+    fi \
+    && archive="/tmp/factorio_headless_${platform}_$VERSION.tar.xz" \
     && mkdir -p /opt /factorio \
-    && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" --retry $CURL_RETRIES \
-    && echo "$SHA256  $archive" | sha256sum -c \
+    && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/$platform" -o "$archive" --retry $CURL_RETRIES \
+    && echo "$sha256  $archive" | sha256sum -c \
     || (sha256sum "$archive" && file "$archive" && exit 1) \
     && tar xf "$archive" --directory /opt \
     && chmod ugo=rwx /opt/factorio \
     && rm "$archive" \
+    # the native arm64 archive ships bin/arm64; keep the bin/x64 path the scripts use
+    && if [[ -d /opt/factorio/bin/arm64 && ! -e /opt/factorio/bin/x64 ]]; then ln -s arm64 /opt/factorio/bin/x64; fi \
     && ln -s "$SCENARIOS" /opt/factorio/scenarios \
     && ln -s "$SAVES" /opt/factorio/saves \
     && mkdir -p /opt/factorio/config/ \

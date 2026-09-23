@@ -7,6 +7,9 @@ experimental_online_version=$(curl 'https://factorio.com/api/latest-releases' | 
 
 stable_sha256=$(curl "https://factorio.com/download/sha256sums/" | grep -E "(factorio_headless_x64_|factorio-headless_linux_)${stable_online_version}.tar.xz" | awk '{print $1}')
 experimental_sha256=$(curl "https://factorio.com/download/sha256sums/" | grep -E "(factorio_headless_x64_|factorio-headless_linux_)${experimental_online_version}.tar.xz" | awk '{print $1}')
+# Native ARM64 headless builds exist from 2.1 on; older versions have no arm64 archive and the value stays empty.
+stable_sha256_arm64=$(curl "https://factorio.com/download/sha256sums/" | grep -E "factorio-headless_linux-arm64_${stable_online_version}.tar.xz" | awk '{print $1}')
+experimental_sha256_arm64=$(curl "https://factorio.com/download/sha256sums/" | grep -E "factorio-headless_linux-arm64_${experimental_online_version}.tar.xz" | awk '{print $1}')
 
 stable_current_version=$(jq 'with_entries(select(.value.tags | index("stable"))) | keys | .[0]' buildinfo.json -r)
 latest_current_version=$(jq 'with_entries(select(.value.tags | index("latest"))) | keys | .[0]' buildinfo.json -r)
@@ -68,22 +71,22 @@ echo '{}' > "$tmpfile"
 # Add stable version
 if [[ "$stable_online_version" == "$experimental_online_version" ]]; then
     # Stable and experimental are the same version
-    jq --arg stable_online_version "$stable_online_version" --arg sha256 "$stable_sha256" --arg stableOnlineVersionShort "$stableOnlineVersionShort" --arg stableOnlineVersionMajor "$stableOnlineVersionMajor" \
-        '. + {($stable_online_version): {sha256: $sha256, tags: ["latest", "stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]}}' "$tmpfile" > buildinfo.json
+    jq --arg stable_online_version "$stable_online_version" --arg sha256 "$stable_sha256" --arg sha256_arm64 "$stable_sha256_arm64" --arg stableOnlineVersionShort "$stableOnlineVersionShort" --arg stableOnlineVersionMajor "$stableOnlineVersionMajor" \
+        '. + {($stable_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", "stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]}}' "$tmpfile" > buildinfo.json
 else
     # Different stable and experimental versions
     # First add stable
-    jq --arg stable_online_version "$stable_online_version" --arg sha256 "$stable_sha256" --arg stableOnlineVersionShort "$stableOnlineVersionShort" --arg stableOnlineVersionMajor "$stableOnlineVersionMajor" \
-        '. + {($stable_online_version): {sha256: $sha256, tags: ["stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]}}' "$tmpfile" > buildinfo.json.tmp
+    jq --arg stable_online_version "$stable_online_version" --arg sha256 "$stable_sha256" --arg sha256_arm64 "$stable_sha256_arm64" --arg stableOnlineVersionShort "$stableOnlineVersionShort" --arg stableOnlineVersionMajor "$stableOnlineVersionMajor" \
+        '. + {($stable_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]}}' "$tmpfile" > buildinfo.json.tmp
     mv buildinfo.json.tmp "$tmpfile"
     
     # Then add experimental
     if [[ $stableOnlineVersionShort == "$experimentalOnlineVersionShort" ]]; then
-        jq --arg experimental_online_version "$experimental_online_version" --arg sha256 "$experimental_sha256" \
-            '. + {($experimental_online_version): {sha256: $sha256, tags: ["latest", $experimental_online_version]}}' "$tmpfile" > buildinfo.json
+        jq --arg experimental_online_version "$experimental_online_version" --arg sha256 "$experimental_sha256" --arg sha256_arm64 "$experimental_sha256_arm64" \
+            '. + {($experimental_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", $experimental_online_version]}}' "$tmpfile" > buildinfo.json
     else
-        jq --arg experimental_online_version "$experimental_online_version" --arg sha256 "$experimental_sha256" --arg experimentalOnlineVersionShort "$experimentalOnlineVersionShort" --arg experimentalOnlineVersionMajor "$experimentalOnlineVersionMajor" \
-            '. + {($experimental_online_version): {sha256: $sha256, tags: ["latest", $experimentalOnlineVersionMajor, $experimentalOnlineVersionShort, $experimental_online_version]}}' "$tmpfile" > buildinfo.json
+        jq --arg experimental_online_version "$experimental_online_version" --arg sha256 "$experimental_sha256" --arg sha256_arm64 "$experimental_sha256_arm64" --arg experimentalOnlineVersionShort "$experimentalOnlineVersionShort" --arg experimentalOnlineVersionMajor "$experimentalOnlineVersionMajor" \
+            '. + {($experimental_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", $experimentalOnlineVersionMajor, $experimentalOnlineVersionShort, $experimental_online_version]}}' "$tmpfile" > buildinfo.json
     fi
 fi
 
