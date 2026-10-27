@@ -2,12 +2,18 @@
   "2.1.23": {
     "sha256": "4633250f7747676279fb210a1717ba34caed6b9890c951fb3e469eefe43c46b9",
     "tags": [
-      "latest",
       "stable",
       "stable-2.1.23",
       "2",
       "2.1",
       "2.1.23"
+    ]
+  },
+  "2.1.24": {
+    "sha256": "c49b66cff90aceff87b30f2973af0df7f51712cb2ee3153e0169d9bed46a964f",
+    "tags": [
+      "latest",
+      "2.1.24"
     ]
   }
 }
