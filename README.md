@@ -65,8 +65,10 @@ docker logs factorio
 Stop the server:
 
 ```shell
-docker stop factorio
+docker stop --timeout 120 factorio
 ```
+
+Allow enough time for the world to save before Docker sends SIGKILL. Increase the timeout for large saves; with Compose, configure `stop_grace_period` instead.
 
 Now there's a `server-settings.json` file in the folder `/opt/factorio/config`. Modify this to your liking and restart the server:
 
@@ -114,7 +116,7 @@ Now run the server as before. In about a minute the new version of Factorio shou
 
 ### Saves
 
-A new map named `_autosave1.zip` is generated the first time the server is started. The `map-gen-settings.json` and `map-settings.json` files in `/opt/factorio/config` are used for the map settings. On subsequent runs the newest save is used.
+A new map named `_autosave1.zip` (or `SAVE_NAME` when set) is generated the first time the server is started. The `map-gen-settings.json` and `map-settings.json` files in `/opt/factorio/config` are used for the map settings. On subsequent runs the newest save is used.
 
 To load an old save stop the server and run the command `touch oldsave.zip`. This resets the date. Then restart the server. Another option is to delete all saves except one.
 
@@ -124,7 +126,7 @@ To generate a new map stop the server, delete all of the saves and restart the s
 
 You can specify a specific save to load by configuring the server through a set of environment variables:
 
-To load an existing save set `SAVE_NAME` to the name of your existing save file located within the `saves` directory, without the `.zip` extension:
+To load an existing save, set `SAVE_NAME` to its name in the `saves` directory, with or without `.zip`, or to an absolute file path. The same path is used for generation and subsequent starts. A missing selected save produces an error rather than loading another world:
 
 ```shell
 sudo docker run -d \
@@ -311,6 +313,8 @@ These are the environment variables which can be specified at container run time
 | SERVER_WHITELIST_FILE | Absolute path to the server whitelist                                     | `$CONFIG/server-whitelist.json` | New builds     |
 
 **Note:** All environment variables are compared as strings. Quote YAML mapping values, for example `DLC_SPACE_AGE: "false"`. In list syntax, quote the whole item (`- "DLC_SPACE_AGE=elevated-rails"`), not only the value: `- DLC_SPACE_AGE="elevated-rails"` passes literal quotation marks to the container.
+
+An explicit port in `BIND` overrides `PORT`, for example `127.0.0.1:34201` or `[::1]:34201`. A bare IPv6 address still uses `PORT`.
 
 #### Host file ownership
 

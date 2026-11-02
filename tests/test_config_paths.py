@@ -163,7 +163,8 @@ if '--create' in sys.argv:
         settings = self.work / "conversion" / "settings.json"
         self.run_script("scenario2map.sh", {"SERVER_SETTINGS_FILE": str(settings)})
         self.assertEqual(json.loads(settings.read_text()), self.example)
-        self.assertEqual(json.loads(self.calls.read_text()), ["--scenario2map", "freeplay"])
+        self.assertEqual(json.loads(self.calls.read_text()),
+                         ["--scenario2map", "freeplay", "--mod-directory", self.env["MODS"]])
 
 
 if __name__ == "__main__":
