@@ -328,6 +328,12 @@ The `PRESET` environment variable is used when generating a new map (when `GENER
 
 If PRESET is not specified or left empty, the map will be generated using the settings from `map-gen-settings.json` and `map-settings.json` without a preset.
 
+## Building images
+
+Normal deployments should pull published images rather than build them. For development, run `python3 build.py --both` from the repository root to build regular and rootless variants. Add `--multiarch --push-tags` only when you intend to publish images and have registry credentials configured.
+
+`--changed-from GIT_REF` compares release metadata with an earlier commit and builds only new versions, changed archive checksums, or versions gaining tags. Removing an alias alone does not rebuild its previous owner. The scheduled updater passes its before/after commit IDs so an experimental-only release does not republish unchanged stable images. Runtime/build-source changes and manually dispatched builds still rebuild all current versions. To retry a failed publication or deliberately refresh base layers, run a full build without `--changed-from`.
+
 ## Container Details
 
 The philosophy is to [keep it simple](http://wiki.c2.com/?KeepItSimple).
