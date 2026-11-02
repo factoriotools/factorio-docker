@@ -1,0 +1,40 @@
+version: "2"
+services:
+  factorio:
+    container_name: factorio
+    image: factoriotools/factorio:stable
+    restart: unless-stopped
+    ports:
+      - "34197:34197/udp"
+      - "27015:27015/tcp"
+    volumes:
+      - ./data:/factorio
+    environment:
+      - UPDATE_MODS_ON_START=true
+      # Uncomment to skip updating specific mods
+      # - UPDATE_IGNORE=mod1,mod2,mod3
+    
+    # Uncomment to enable autoupdate via watchtower
+    #labels:
+    #  # Labels to allow watchtower autoupdate only if no players are online
+    #  - com.centurylinklabs.watchtower.enable=true
+    #  - com.centurylinklabs.watchtower.scope=factorio
+    #  - com.centurylinklabs.watchtower.lifecycle.pre-update="/players-online.sh"
+
+  # Uncomment the following files to use watchtower for updating the factorio container
+  # Full documentation of watchtower: https://github.com/containrrr/watchtower
+  #watchtower:
+  #  container_name: watchtower_factorio
+  #  image: ghcr.io/nicholas-fedor/watchtower:latest
+  #  restart: unless-stopped
+  #  volumes:
+  #   - /var/run/docker.sock:/var/run/docker.sock
+  #  environment:
+  #    # Only update containers which have the option 'watchtower.enable=true' set
+  #    - WATCHTOWER_TIMEOUT=30s
+  #    - WATCHTOWER_LABEL_ENABLE=true
+  #    - WATCHTOWER_POLL_INTERVAL=3600
+  #    - WATCHTOWER_LIFECYCLE_HOOKS=true
+  #    - WATCHTOWER_SCOPE=factorio
+  #  labels:
+  #    - com.centurylinklabs.watchtower.scope=factorio

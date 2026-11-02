@@ -10,16 +10,31 @@
             }
         },
         "dnsPrefix": {
-            "defaultValue": "<uniquePrefix>",
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat('factorio-', uniqueString(resourceGroup().id, parameters('containerGroupsName')))]",
+            "minLength": 1,
+            "maxLength": 63,
+            "metadata": {
+                "description": "DNS label: lowercase letters, numbers and hyphens. Read the assigned FQDN from the deployment outputs."
+            }
         },
         "containerGroupsName": {
+            "type": "string",
             "defaultValue": "factorio",
-            "type": "string"
+            "minLength": 1,
+            "maxLength": 63,
+            "metadata": {
+                "description": "Container group name. Use lowercase letters, numbers and hyphens."
+            }
         },
         "storageAccountName": {
             "type": "string",
-            "defaultValue": "factorio"
+            "defaultValue": "[concat('factorio', uniqueString(resourceGroup().id, parameters('containerGroupsName')))]",
+            "minLength": 3,
+            "maxLength": 24,
+            "metadata": {
+                "description": "Globally unique storage account name: lowercase letters and numbers only. Keep this name unchanged when recreating the container."
+            }
         },
         "storageAccountType": {
             "type": "string",
@@ -30,19 +45,44 @@
                 "Standard_ZRS"
             ],
             "metadata": {
-                "description": "Storage account for game"
+                "description": "Storage redundancy for the game data. Availability varies by region."
+            }
+        },
+        "cpuCores": {
+            "type": "int",
+            "defaultValue": 2,
+            "minValue": 1,
+            "maxValue": 31,
+            "metadata": {
+                "description": "CPU cores requested. The selected region and subscription must have sufficient ACI quota."
+            }
+        },
+        "memoryInGb": {
+            "type": "int",
+            "defaultValue": 4,
+            "minValue": 1,
+            "maxValue": 240,
+            "metadata": {
+                "description": "Memory requested in GiB. Large or modded saves may require more memory."
+            }
+        },
+        "factorioVersion": {
+            "type": "string",
+            "defaultValue": "stable",
+            "minLength": 1,
+            "maxLength": 128,
+            "metadata": {
+                "description": "Regular factoriotools/factorio image tag. Pin a version matching your clients for controlled upgrades; rootless tags are not supported with this Azure Files mount."
             }
         }
     },
     "variables": {
-        "fileShareName": "factorio",
-        "cpuCores": 2,
-        "memoryInGb": 4
+        "fileShareName": "factorio"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2021-04-01",
+            "apiVersion": "2025-06-01",
             "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
             "sku": {
@@ -50,44 +90,58 @@
                 "tier": "Standard"
             },
             "kind": "StorageV2",
-            "properties": {}
+            "properties": {
+                "minimumTlsVersion": "TLS1_2",
+                "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false
+            }
         },
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2025-06-01",
             "name": "[concat(parameters('storageAccountName'), '/default/', variables('fileShareName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
-            ]
-        },  
+            ],
+            "properties": {
+                "enabledProtocols": "SMB"
+            }
+        },
         {
             "type": "Microsoft.ContainerInstance/containerGroups",
-            "apiVersion": "2021-03-01",
+            "apiVersion": "2025-09-01",
             "name": "[parameters('containerGroupsName')]",
             "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/fileServices/shares', parameters('storageAccountName'), 'default', variables('fileShareName'))]"
+            ],
             "properties": {
                 "sku": "Standard",
                 "containers": [
                     {
                         "name": "[parameters('containerGroupsName')]",
                         "properties": {
-                            "image": "factoriotools/factorio:stable",
-                            "command": [ ],
+                            "image": "[concat('factoriotools/factorio:', parameters('factorioVersion'))]",
                             "ports": [
                                 {
                                     "protocol": "UDP",
                                     "port": 34197
-                                },
-                                {
-                                    "protocol": "TCP",
-                                    "port": 27015
                                 }
                             ],
-                            "environmentVariables": [],
+                            "environmentVariables": [
+                                {
+                                    "name": "PUID",
+                                    "value": "0"
+                                },
+                                {
+                                    "name": "PGID",
+                                    "value": "0"
+                                }
+                            ],
                             "resources": {
                                 "requests": {
-                                    "cpu": "[variables('cpuCores')]",
-                                    "memoryInGB": "[variables('memoryInGb')]"
+                                    "cpu": "[parameters('cpuCores')]",
+                                    "memoryInGB": "[parameters('memoryInGb')]"
                                 }
                             },
                             "volumeMounts": [
@@ -100,22 +154,17 @@
                         }
                     }
                 ],
-                "initContainers": [],
                 "restartPolicy": "OnFailure",
                 "ipAddress": {
                     "ports": [
                         {
                             "protocol": "UDP",
                             "port": 34197
-                        },
-                        {
-                            "protocol": "TCP",
-                            "port": 27015
                         }
                     ],
-                    "ip": "20.81.71.43",
                     "type": "Public",
-                    "dnsNameLabel": "[concat(parameters('dnsPrefix'), '-', parameters('containerGroupsName'))]"
+                    "dnsNameLabel": "[parameters('dnsPrefix')]",
+                    "autoGeneratedDomainNameLabelScope": "ResourceGroupReuse"
                 },
                 "osType": "Linux",
                 "volumes": [
@@ -125,11 +174,25 @@
                           "readOnly": false,
                           "shareName": "[variables('fileShareName')]",
                           "storageAccountName": "[parameters('storageAccountName')]",
-                          "storageAccountKey": "[listKeys(parameters('storageAccountName'),'2021-04-01').keys[0].value]"
+                          "storageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2025-06-01').keys[0].value]"
                       }
                     }
                 ]
             }
         }
-    ]
+    ],
+    "outputs": {
+        "serverAddress": {
+            "type": "string",
+            "value": "[concat(reference(resourceId('Microsoft.ContainerInstance/containerGroups', parameters('containerGroupsName')), '2025-09-01').ipAddress.fqdn, ':34197')]"
+        },
+        "storageAccountName": {
+            "type": "string",
+            "value": "[parameters('storageAccountName')]"
+        },
+        "fileShareName": {
+            "type": "string",
+            "value": "[variables('fileShareName')]"
+        }
+    }
 }

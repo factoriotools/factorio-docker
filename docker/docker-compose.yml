@@ -1,16 +1,30 @@
 version: '2'
 services:
   factorio:
-    build: .
+    build:
+      context: .
+      args:
+        # Check buildinfo.json for supported versions and SHAs
+        # https://github.com/factoriotools/factorio-docker/blob/master/buildinfo.json
+        - VERSION=2.1.24
+        - SHA256=c49b66cff90aceff87b30f2973af0df7f51712cb2ee3153e0169d9bed46a964f
+        - SHA256_ARM64=141bd7aaa199fcf7e223dcaca8877aec1d6deaa9c4ac03b7a8c60ef37b6afb98
     ports:
-     - "34197:34197/udp"
-     - "27015:27015/tcp"
+      - "34197:34197/udp"
+      - "27015:27015/tcp"
     volumes:
-     - /opt/factorio:/factorio
-#    environment:
-#      - PUID=1000
-#      - PGID=1000
-#      - UPDATE_MODS_ON_START=true
-#      - USERNAME=FactorioUsername
-#      - TOKEN=FactorioToken
-#      - PORT=34198
+      - /opt/factorio:/factorio
+      #    environment:
+      #      - PUID=1000
+      #      - PGID=1000
+      #      - UPDATE_MODS_ON_START=true
+      #      - UPDATE_IGNORE=mod1,mod2,mod3
+      #      - USERNAME=FactorioUsername
+      #      - TOKEN=FactorioToken
+      #      - PORT=34198
+      #      - PRESET=deathworld
+      #      - ADDR=::1
+#    # Uncomment the following line to enable the use of the host's network stack,
+#    # which may be necessary for some setups like NAS or when using some proxy service like firewall rules.
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
