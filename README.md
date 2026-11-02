@@ -13,6 +13,7 @@
 
 * `latest` - most up-to-date version (may be experimental).
 * `stable` - version declared stable on [factorio.com](https://www.factorio.com) ([FFF-435 Since 2.0 versions gets released as experimental first, once stable it will be marked as stable](https://factorio.com/blog/post/fff-435)).
+* `stable-x.y.z` - a specific stable release; constrain update tools to this prefix to exclude experimental releases. Rootless equivalents end in `-rootless`.
 * `0.x`    - latest version in a branch.
 * `0.x.y` - a specific version.
 * `0.x-z` - incremental fix for that version.
@@ -64,8 +65,10 @@ docker logs factorio
 Stop the server:
 
 ```shell
-docker stop factorio
+docker stop --timeout 120 factorio
 ```
+
+Allow enough time for the world to save before Docker sends SIGKILL. Increase the timeout for large saves; with Compose, configure `stop_grace_period` instead.
 
 Now there's a `server-settings.json` file in the folder `/opt/factorio/config`. Modify this to your liking and restart the server:
 
@@ -95,6 +98,18 @@ This does not require the RCON connection to be exposed.
 docker exec factorio rcon /h
 ```
 
+### Server health
+
+Regular and rootless images check server responsiveness using the read-only `rcon /players count` command, with a five-second timeout. RCON does not need to be published, and the check does not affect achievements.
+
+```shell
+docker inspect --format '{{.State.Health.Status}}' factorio
+```
+
+The default interval is 30 seconds, with three retries and a five-minute startup grace period. For large saves or heavy mod sets, adjust Compose `healthcheck.start_period`, `interval` and `retries` to allow for loading and save pauses. Use `healthcheck.disable: true` (or `docker run --no-healthcheck`) if you intentionally disable or replace RCON.
+
+Docker reports `starting`, `healthy` or `unhealthy`; it does not automatically restart unhealthy containers. Use this status with your monitoring tool. The check does not test external UDP connectivity or provide an HTTP endpoint. Keep the Docker API and RCON private.
+
 ### Upgrading
 
 Before upgrading backup the save. It's easy to make a save in the client.
@@ -113,7 +128,7 @@ Now run the server as before. In about a minute the new version of Factorio shou
 
 ### Saves
 
-A new map named `_autosave1.zip` is generated the first time the server is started. The `map-gen-settings.json` and `map-settings.json` files in `/opt/factorio/config` are used for the map settings. On subsequent runs the newest save is used.
+A new map named `_autosave1.zip` (or `SAVE_NAME` when set) is generated the first time the server is started. The `map-gen-settings.json` and `map-settings.json` files in `/opt/factorio/config` are used for the map settings. On subsequent runs the newest save is used.
 
 To load an old save stop the server and run the command `touch oldsave.zip`. This resets the date. Then restart the server. Another option is to delete all saves except one.
 
@@ -123,7 +138,7 @@ To generate a new map stop the server, delete all of the saves and restart the s
 
 You can specify a specific save to load by configuring the server through a set of environment variables:
 
-To load an existing save set `SAVE_NAME` to the name of your existing save file located within the `saves` directory, without the `.zip` extension:
+To load an existing save, set `SAVE_NAME` to its name in the `saves` directory, with or without `.zip`, or to an absolute file path. The same path is used for generation and subsequent starts. A missing selected save produces an error rather than loading another world:
 
 ```shell
 sudo docker run -d \
@@ -194,21 +209,11 @@ docker run -d \
   MyScenarioName
 ```
 
-### Converting Scenarios to Regular Maps
+### Converting Scenarios to Regular Maps (deprecated)
 
-If you would like to export your scenario to a saved map, you can use the example entrypoint similar to the Scenario usage above. Factorio will run once, converting the Scenario to a saved Map in your saves directory. A restart of the docker image using the standard options will then load that map, just as if the scenario were just started by the Scenarios example noted above.
+The legacy `/scenario2map.sh` wrapper is retained for compatibility, but is deprecated for new deployments. Factorio's `--scenario2map` operation does not apply `map-gen-settings.json` or `map-settings.json`; copying those files does not make conversion honor them. See the [upstream explanation](https://forums.factorio.com/viewtopic.php?f=23&t=69377&p=422321#p422321).
 
-```shell
-docker run -d \
-  -p 34197:34197/udp \
-  -p 27015:27015/tcp \
-  -v /opt/factorio:/factorio \
-  --name factorio \
-  --restart=unless-stopped  \
-  --entrypoint "/scenario2map.sh" \
-  factoriotools/factorio
-  MyScenarioName
-```
+Instead, use `/scenario.sh` as described above to start a scenario with the desired map settings, then save the running world through the console or RCON (`/server-save`). After confirming the save completed, stop the container and use the normal entrypoint to load that save. Keep a backup before changing an existing world.
 
 ### RCON
 
@@ -253,58 +258,81 @@ Create file `config/server-adminlist.json` and add the adminlisted users.
 
 ### Customize configuration files (0.17.x+)
 
-Out-of-the box, factorio does not support environment variables inside the configuration files. A workaround is the usage of `envsubst` which generates the configuration files dynamically during startup from environment variables set in docker-compose:
+Factorio does not expand environment variables inside JSON. Prefer mounting a complete settings file (see `SERVER_SETTINGS_FILE` below). If you need per-instance values from Compose, the image already includes `jq`, which safely encodes quotes, backslashes and newlines instead of doing raw text substitution.
 
-Example which replaces the server-settings.json:
+First create a **complete, valid** `server-settings.json` template, for example by copying `data/config/server-settings.json` after the initial startup. The following example mounts that template read-only and renders a separate settings file on every start. Supplied variables override the template; unset variables preserve its values. This intentionally regenerates the output file: edit the template, not the generated copy.
 
+<!-- start settings provisioning example -->
 ```yaml
-factorio_1:
-  image: factoriotools/factorio
-  ports:
-    - "34197:34197/udp"
-  volumes:
-   - /opt/factorio:/factorio
-   - ./server-settings.json:/server-settings.json
-  environment:
-    - INSTANCE_NAME=Your Instance's Name
-    - INSTANCE_DESC=Your Instance's Description
-  entrypoint: /bin/sh -c "mkdir -p /factorio/config && envsubst < /server-settings.json > /factorio/config/server-settings.json && exec /docker-entrypoint.sh"
+services:
+  factorio:
+    image: factoriotools/factorio:stable
+    ports:
+      - "34197:34197/udp"
+    volumes:
+      - ./data:/factorio
+      - ./server-settings.json:/server-settings.template.json:ro
+    environment:
+      INSTANCE_NAME: "My Factorio server"
+      INSTANCE_DESC: "A server configured through Compose"
+      # Optional: USERNAME, TOKEN and GAME_PASSWORD override the matching fields.
+      # Keep credentials out of version control.
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        mkdir -p /factorio/config
+        jq '
+          .name = (env.INSTANCE_NAME // .name) |
+          .description = (env.INSTANCE_DESC // .description) |
+          .username = (env.USERNAME // .username) |
+          .token = (env.TOKEN // .token) |
+          .game_password = (env.GAME_PASSWORD // .game_password)
+        ' /server-settings.template.json > /factorio/config/server-settings.json.tmp
+        mv /factorio/config/server-settings.json.tmp /factorio/config/server-settings.json
+        exec /docker-entrypoint.sh
 ```
+<!-- end settings provisioning example -->
 
-The `server-settings.json` file may then contain the variable references like this:
-
-```json
-"name": "${INSTANCE_NAME}",
-"description": "${INSTANCE_DESC}",
-```
+These settings variables are consumed by this example wrapper, not by the normal entrypoint. Set `visibility.public` explicitly in the template; public listing also needs valid Factorio credentials. For rootless images, the generated file's directory must already be writable by the container UID.
 
 ### Environment Variables
 
 These are the environment variables which can be specified at container run time.
 
-| Variable Name        | Description                                                          | Default        | Available in |
-|----------------------|----------------------------------------------------------------------|----------------|--------------|
-| GENERATE_NEW_SAVE    | Generate a new save if one does not exist before starting the server | false          | 0.17+        |
-| LOAD_LATEST_SAVE     | Load latest when true. Otherwise load SAVE_NAME                      | true           | 0.17+        |
-| PORT                 | UDP port the server listens on                                       | 34197          | 0.15+        |
-| BIND                 | IP address (v4 or v6) the server listens on (IP\[:PORT])             |                | 0.15+        |
-| RCON_PORT            | TCP port the rcon server listens on                                  | 27015          | 0.15+        |
-| SAVE_NAME            | Name to use for the save file                                        | _autosave1     | 0.17+        |
-| PRESET               | Map generation preset when GENERATE_NEW_SAVE is true                 |                | 0.17+        |
-| TOKEN                | factorio.com token                                                   |                | 0.17+        |
-| UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |                | 0.17+        |
-| UPDATE_IGNORE        | Comma-separated list of mod names to skip during automatic updates   |                | 0.17+        |
-| USERNAME             | factorio.com username                                                |                | 0.17+        |
-| CONSOLE_LOG_LOCATION | Saves the console log to the specifies location                      |                |              |
-| DLC_SPACE_AGE        | Enables or disables the mods for DLC Space Age in mod-list.json[^1]  | true           | 2.0.8+       |
-| MODS                 | Mod directory to use                                                 | /factorio/mods | 2.0.8+       |
-| SERVER_SETTINGS_FILE | Absolute path to server settings                                     | `$CONFIG/server-settings.json` | New builds |
-| SERVER_ID_FILE       | Absolute path to server identity                                     | `$CONFIG/server-id.json` | New builds |
-| SERVER_ADMINLIST_FILE | Absolute path to the server admin list                              | `$CONFIG/server-adminlist.json` | New builds |
-| SERVER_BANLIST_FILE   | Absolute path to the server ban list                                | `$CONFIG/server-banlist.json` | New builds |
-| SERVER_WHITELIST_FILE | Absolute path to the server whitelist                               | `$CONFIG/server-whitelist.json` | New builds |
+| Variable Name         | Description                                                               | Default                         | Available in   |
+|-----------------------|---------------------------------------------------------------------------|---------------------------------|----------------|
+| PUID                  | Server user ID in regular images; use `id -u` to find your host user ID   | 845                             | Regular images |
+| PGID                  | Server group ID in regular images; use `id -g` to find your host group ID | 845                             | Regular images |
+| GENERATE_NEW_SAVE     | Generate a new save if one does not exist before starting the server      | false                           | 0.17+          |
+| LOAD_LATEST_SAVE      | Load latest when true. Otherwise load SAVE_NAME                           | true                            | 0.17+          |
+| PORT                  | UDP port the server listens on                                            | 34197                           | 0.15+          |
+| BIND                  | IP address (v4 or v6) the server listens on (IP\[:PORT])                  |                                 | 0.15+          |
+| RCON_PORT             | TCP port the rcon server listens on                                       | 27015                           | 0.15+          |
+| SAVE_NAME             | Name to use for the save file                                             | _autosave1                      | 0.17+          |
+| PRESET                | Map generation preset when GENERATE_NEW_SAVE is true                      |                                 | 0.17+          |
+| TOKEN                 | factorio.com token for mod updates (server listing uses settings JSON)    |                                 | 0.17+          |
+| UPDATE_MODS_ON_START  | If mods should be updated before starting the server                      |                                 | 0.17+          |
+| UPDATE_IGNORE         | Comma-separated list of mod names to skip during automatic updates        |                                 | 0.17+          |
+| USERNAME              | factorio.com username for mod updates (server listing uses settings JSON) |                                 | 0.17+          |
+| CONSOLE_LOG_LOCATION  | Saves the console log to the specifies location                           |                                 |                |
+| DLC_SPACE_AGE         | Enables or disables the mods for DLC Space Age in mod-list.json[^1]       | true                            | 2.0.8+         |
+| MODS                  | Mod directory to use                                                      | /factorio/mods                  | 2.0.8+         |
+| SERVER_SETTINGS_FILE  | Absolute path to server settings                                          | `$CONFIG/server-settings.json`  | New builds     |
+| SERVER_ID_FILE        | Absolute path to server identity                                          | `$CONFIG/server-id.json`        | New builds     |
+| SERVER_ADMINLIST_FILE | Absolute path to the server admin list                                    | `$CONFIG/server-adminlist.json` | New builds     |
+| SERVER_BANLIST_FILE   | Absolute path to the server ban list                                      | `$CONFIG/server-banlist.json`   | New builds     |
+| SERVER_WHITELIST_FILE | Absolute path to the server whitelist                                     | `$CONFIG/server-whitelist.json` | New builds     |
 
-**Note:** All environment variables are compared as strings
+**Note:** All environment variables are compared as strings. Quote YAML mapping values, for example `DLC_SPACE_AGE: "false"`. In list syntax, quote the whole item (`- "DLC_SPACE_AGE=elevated-rails"`), not only the value: `- DLC_SPACE_AGE="elevated-rails"` passes literal quotation marks to the container.
+
+An explicit port in `BIND` overrides `PORT`, for example `127.0.0.1:34201` or `[::1]:34201`. A bare IPv6 address still uses `PORT`.
+
+#### Host file ownership
+
+The regular image starts as root, adjusts ownership inside `/factorio`, and runs the server as `PUID:PGID` (845:845 by default). To keep a bind-mounted data directory owned by your host user, set these to the numeric output of `id -u` and `id -g`. Changing them changes ownership of the mounted data, so use a dedicated directory—not your entire home directory.
+
+Relative bind paths such as `./data:/factorio` are convenient but do not bypass filesystem permissions. With `--user`, a rootless container engine, or a rootless image, prepare the host directory for the actual container UID/GID and any user-namespace mapping. `PUID`/`PGID` do not change identity in the rootless image; its default is 1000:1000.
 
 #### Server configuration paths
 
@@ -332,7 +360,9 @@ If PRESET is not specified or left empty, the map will be generated using the se
 
 Normal deployments should pull published images rather than build them. For development, run `python3 build.py --both` from the repository root to build regular and rootless variants. Add `--multiarch --push-tags` only when you intend to publish images and have registry credentials configured.
 
-`--changed-from GIT_REF` compares release metadata with an earlier commit and builds only new versions, changed archive checksums, or versions gaining tags. Removing an alias alone does not rebuild its previous owner. The scheduled updater passes its before/after commit IDs so an experimental-only release does not republish unchanged stable images. Runtime/build-source changes and manually dispatched builds still rebuild all current versions. To retry a failed publication or deliberately refresh base layers, run a full build without `--changed-from`.
+Use `--changed-from GIT_REF` to build only releases with new versions, changed archive checksums or added tags. Removing a tag alone does not trigger a rebuild. Automatic release updates use this mode; runtime/build-source changes and manual workflow runs rebuild all current versions.
+
+Omit `--changed-from` to retry a failed publication or refresh base layers.
 
 ## Container Details
 
@@ -366,39 +396,32 @@ The files in this volume should be owned by the factorio user, uid 845.
 
 ## Docker Compose
 
-[Docker Compose](https://docs.docker.com/compose/install/) is an easy way to run Docker containers.
-
-* docker-engine >= 1.10.0 is required
-* docker-compose >=1.6.0 is required
-
-First get a [docker-compose.yml](https://github.com/factoriotools/factorio-docker/blob/master/docker/docker-compose.yml) file. To get it from this repository:
+Use the current [Docker Compose plugin](https://docs.docker.com/compose/install/) (`docker compose`) and the repository-root [docker-compose.yml](docker-compose.yml). It runs the published `factoriotools/factorio:stable` image and stores data in `./data` alongside the Compose file. No source build, `VERSION` build argument or download checksum is needed.
 
 ```shell
 git clone https://github.com/factoriotools/factorio-docker.git
-cd factorio-docker/docker
+cd factorio-docker
+docker compose up -d
+docker compose logs factorio
+docker compose stop factorio
 ```
 
-Or make your own:
-
-```yaml
-version: '2'
-services:
-  factorio:
-    image: factoriotools/factorio
-    ports:
-     - "34197:34197/udp"
-     - "27015:27015/tcp"
-    volumes:
-     - /opt/factorio:/factorio
-```
-
-Now cd to the directory with docker-compose.yml and run:
+Before restarting, configure `data/config/server-settings.json`: set `visibility.public` to `false` for an unlisted server, or supply valid Factorio `username` and `token` for public listing. Set a game password or whitelist as appropriate. `USERNAME` and `TOKEN` environment variables normally configure the **mod updater**, not public listing; use the JSON file or the explicit provisioning wrapper above for server settings. See host file ownership above if you cannot edit the generated files.
 
 ```shell
-sudo mkdir -p /opt/factorio
-sudo chown 845:845 /opt/factorio
-sudo docker-compose up -d
+docker compose up -d factorio
 ```
+
+To update, back up `data` first, then pull and recreate the service **in the same Compose directory with the same volume mapping**:
+
+```shell
+docker compose pull factorio
+docker compose up -d factorio
+```
+
+The image tag selects the game version. Use `stable` for the current stable release or pin a version compatible with your clients; `latest` may be experimental. Pulling a new image alone does not replace an existing container. Do not delete the data directory during an update.
+
+[`docker/docker-compose.yml`](docker/docker-compose.yml) is a **developer source-build example**, not the normal installation path. Its `VERSION`, `SHA256` and optional `SHA256_ARM64` arguments verify downloaded game archives. Keep checksum verification enabled when building from source; use the published-image example if you do not want to maintain build arguments.
 
 ### Ports
 
@@ -465,6 +488,19 @@ stream {
 ```
 
 If your factorio host uses multiple IP addresses (very common with IPv6), you might additionally need to bind Factorio to a single IP (otherwise the UDP proxy might get confused with IP mismatches). To do that pass the `BIND` envvar to the container: `docker run --network=host -e BIND=2a02:1234::5678 ...`
+
+### Rootless Podman networking
+
+For rootless Podman using **slirp4netns**, incorrect address or port discovery may be resolved by selecting the slirp4netns port handler:
+
+```shell
+podman run --network=slirp4netns:port_handler=slirp4netns \
+  -p 34197:34197/udp \
+  -v ./data:/factorio \
+  factoriotools/factorio:stable
+```
+
+This selects the slirp4netns backend explicitly and requires it to be installed. According to [Podman's network documentation](https://docs.podman.io/en/latest/markdown/podman-run.1.html#network-mode-net), this handler preserves source IPs but is slower than the rootlesskit handler and cannot be used with user-defined networks. It is not a setting for the `pasta` backend, Docker Desktop, or your router. Host permissions, port forwarding and firewall rules still need to be correct; this workaround is not a guarantee for every NAT setup.
 
 ## Rootless Docker Support (Experimental)
 

@@ -45,6 +45,7 @@ source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 exec $EXEC /opt/factorio/bin/x64/factorio \
   --port "$PORT" \
   --start-server-load-scenario "$SERVER_SCENARIO" \
+  --mod-directory "$MODS" \
   --preset "$PRESET" \
   --map-gen-settings "$CONFIG/map-gen-settings.json" \
   --map-settings "$CONFIG/map-settings.json" \

@@ -1,16 +1,23 @@
-version: "2"
+# Normal deployment: pull the published image; no build arguments/checksums needed.
 services:
   factorio:
     container_name: factorio
     image: factoriotools/factorio:stable
     restart: unless-stopped
+    stop_grace_period: 2m
     ports:
       - "34197:34197/udp"
-      - "27015:27015/tcp"
+      # Optional remote RCON; local administration works with docker compose exec.
+      # - "127.0.0.1:27015:27015/tcp"
     volumes:
       - ./data:/factorio
     environment:
-      - UPDATE_MODS_ON_START=true
+      # Enable only after providing mod-portal credentials (see README).
+      - UPDATE_MODS_ON_START=false
+      # Optional host ownership: use the numeric output of id -u / id -g.
+      # - PUID=1000
+      # - PGID=1000
+      # - DLC_SPACE_AGE=false
       # Uncomment to skip updating specific mods
       # - UPDATE_IGNORE=mod1,mod2,mod3
     
@@ -21,7 +28,7 @@ services:
     #  - com.centurylinklabs.watchtower.scope=factorio
     #  - com.centurylinklabs.watchtower.lifecycle.pre-update="/players-online.sh"
 
-  # Uncomment the following files to use watchtower for updating the factorio container
+  # Uncomment the following service to use watchtower for updating the factorio container
   # Full documentation of watchtower: https://github.com/containrrr/watchtower
   #watchtower:
   #  container_name: watchtower_factorio
@@ -31,7 +38,7 @@ services:
   #   - /var/run/docker.sock:/var/run/docker.sock
   #  environment:
   #    # Only update containers which have the option 'watchtower.enable=true' set
-  #    - WATCHTOWER_TIMEOUT=30s
+  #    - WATCHTOWER_TIMEOUT=120s
   #    - WATCHTOWER_LABEL_ENABLE=true
   #    - WATCHTOWER_POLL_INTERVAL=3600
   #    - WATCHTOWER_LIFECYCLE_HOOKS=true
