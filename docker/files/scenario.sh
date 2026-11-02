@@ -14,14 +14,17 @@ mkdir -p "$CONFIG"
 mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 
+# shellcheck disable=SC1091
+source "${INSTALLED_DIRECTORY}/server-config.sh"
+
 #chown -R factorio /factorio
 
 if [[ ! -f $CONFIG/rconpw ]]; then
   pwgen 15 1 >"$CONFIG/rconpw"
 fi
 
-if [[ ! -f $CONFIG/server-settings.json ]]; then
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
+if [[ ! -f $SERVER_SETTINGS_FILE ]]; then
+  cp /opt/factorio/data/server-settings.example.json "$SERVER_SETTINGS_FILE"
 fi
 
 if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
@@ -45,11 +48,11 @@ exec $EXEC /opt/factorio/bin/x64/factorio \
   --preset "$PRESET" \
   --map-gen-settings "$CONFIG/map-gen-settings.json" \
   --map-settings "$CONFIG/map-settings.json" \
-  --server-settings "$CONFIG/server-settings.json" \
-  --server-banlist "$CONFIG/server-banlist.json" \
-  --server-whitelist "$CONFIG/server-whitelist.json" \
+  --server-settings "$SERVER_SETTINGS_FILE" \
+  --server-banlist "$SERVER_BANLIST_FILE" \
+  --server-whitelist "$SERVER_WHITELIST_FILE" \
   --use-server-whitelist \
-  --server-adminlist "$CONFIG/server-adminlist.json" \
+  --server-adminlist "$SERVER_ADMINLIST_FILE" \
   --rcon-port "$RCON_PORT" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id /factorio/config/server-id.json
+  --server-id "$SERVER_ID_FILE"

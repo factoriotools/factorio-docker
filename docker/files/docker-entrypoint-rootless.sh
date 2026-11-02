@@ -16,6 +16,9 @@ mkdir -p "$SAVES"
 mkdir -p "$CONFIG"
 mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
+
+# shellcheck disable=SC1091
+source "${INSTALLED_DIRECTORY}/server-config.sh"
 mkdir -p "$SCRIPTOUTPUT"
 
 # Generate RCON password if needed
@@ -24,8 +27,8 @@ if [[ ! -f $CONFIG/rconpw ]]; then
 fi
 
 # Copy default configs if they don't exist
-if [[ ! -f $CONFIG/server-settings.json ]]; then
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
+if [[ ! -f $SERVER_SETTINGS_FILE ]]; then
+  cp /opt/factorio/data/server-settings.example.json "$SERVER_SETTINGS_FILE"
 fi
 
 if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
@@ -93,14 +96,14 @@ fi
 # Build command flags
 FLAGS=(\
   --port "$PORT" \
-  --server-settings "$CONFIG/server-settings.json" \
-  --server-banlist "$CONFIG/server-banlist.json" \
+  --server-settings "$SERVER_SETTINGS_FILE" \
+  --server-banlist "$SERVER_BANLIST_FILE" \
   --rcon-port "$RCON_PORT" \
-  --server-whitelist "$CONFIG/server-whitelist.json" \
+  --server-whitelist "$SERVER_WHITELIST_FILE" \
   --use-server-whitelist \
-  --server-adminlist "$CONFIG/server-adminlist.json" \
+  --server-adminlist "$SERVER_ADMINLIST_FILE" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id /factorio/config/server-id.json \
+  --server-id "$SERVER_ID_FILE" \
   --mod-directory "$MODS" \
 )
 

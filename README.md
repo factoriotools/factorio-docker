@@ -298,8 +298,21 @@ These are the environment variables which can be specified at container run time
 | CONSOLE_LOG_LOCATION | Saves the console log to the specifies location                      |                |              |
 | DLC_SPACE_AGE        | Enables or disables the mods for DLC Space Age in mod-list.json[^1]  | true           | 2.0.8+       |
 | MODS                 | Mod directory to use                                                 | /factorio/mods | 2.0.8+       |
+| SERVER_SETTINGS_FILE | Absolute path to server settings                                     | `$CONFIG/server-settings.json` | New builds |
+| SERVER_ID_FILE       | Absolute path to server identity                                     | `$CONFIG/server-id.json` | New builds |
+| SERVER_ADMINLIST_FILE | Absolute path to the server admin list                              | `$CONFIG/server-adminlist.json` | New builds |
+| SERVER_BANLIST_FILE   | Absolute path to the server ban list                                | `$CONFIG/server-banlist.json` | New builds |
+| SERVER_WHITELIST_FILE | Absolute path to the server whitelist                               | `$CONFIG/server-whitelist.json` | New builds |
 
 **Note:** All environment variables are compared as strings
+
+#### Server configuration paths
+
+The `SERVER_*_FILE` overrides apply to regular and rootless images, including scenario startup. Upgrade or rebuild older images to use this feature. Unset or empty values use the defaults above; `$CONFIG` defaults to `/factorio/config`. The mod updater also reads credentials from `SERVER_SETTINGS_FILE` unless credentials are supplied explicitly or through Docker secrets.
+
+Use absolute file paths, not directory paths. Existing settings are preserved; if `SERVER_SETTINGS_FILE` is missing, the default settings are copied there. For example, `-e SERVER_SETTINGS_FILE=/factorio/config/private/settings.json` selects a separate settings file.
+
+Parent directories are created when possible. Custom settings files must be readable by the server user. Files that Factorio updates (including its server ID and player lists), and their parent directories, must be writable by that user. For paths outside `/factorio`, pre-create directories with the appropriate permissions: the regular image only adjusts ownership inside `/factorio`, and the rootless image does not adjust ownership. An existing read-only settings-file mount is supported; a missing settings file in a read-only directory is not.
 
 #### PRESET Values
 

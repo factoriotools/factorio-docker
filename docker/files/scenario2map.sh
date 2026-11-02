@@ -12,8 +12,11 @@ mkdir -p "$CONFIG"
 mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 
-if [[ ! -f $CONFIG/server-settings.json ]]; then
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
+# shellcheck disable=SC1091
+source "${INSTALLED_DIRECTORY}/server-config.sh"
+
+if [[ ! -f $SERVER_SETTINGS_FILE ]]; then
+  cp /opt/factorio/data/server-settings.example.json "$SERVER_SETTINGS_FILE"
 fi
 
 if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
