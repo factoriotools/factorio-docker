@@ -15,3 +15,31 @@ jobs:
 
       - name: Run regression tests
         run: python3 -m unittest discover -s tests -v
+
+  azure-template:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Checkout ARM Template Toolkit
+        uses: actions/checkout@v6
+        with:
+          repository: Azure/arm-ttk
+          ref: 2aa61e7b9d4eb764c4e3bce7f07973adf633eeff
+          path: .arm-ttk
+          persist-credentials: false
+
+      - name: Validate Azure template
+        shell: pwsh
+        run: |
+          Import-Module ./.arm-ttk/arm-ttk/arm-ttk.psd1 -ErrorAction Stop
+          $results = @(Test-AzTemplate -TemplatePath ./configs/Azure/CreateContainer.json -Test deploymentTemplate)
+          $results | Format-Table -Property Group, Passed -AutoSize
+          $failed = @($results | Where-Object { -not $_.Passed })
+          if ($failed.Count -or -not $results.Count) {
+            $failed | Format-List *
+            throw "Azure template validation failed"
+          }

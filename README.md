@@ -441,6 +441,10 @@ For LAN games the VM needs an internal IP in order for clients to connect. One w
 
 If you're looking for a simple way to deploy this to the Amazon Web Services Cloud, check out the [Factorio Server Deployment (CloudFormation) repository](https://github.com/m-chandler/factorio-spot-pricing). This repository contains a CloudFormation template that will get you up and running in AWS in a matter of minutes. Optionally it uses Spot Pricing so the server is very cheap, and you can easily turn it off when not in use.
 
+### Azure Deployment
+
+See [Factorio on Azure Container Instances](configs/Azure/README.md) for an ARM template and deployment instructions using Azure Files for persistent saves and configuration.
+
 ## Using a reverse proxy
 
 If you need to use a reverse proxy you can use the following nginx snippet:
