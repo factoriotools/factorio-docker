@@ -103,4 +103,6 @@ COPY --from=rcon-builder /src/rcon /bin/rcon
 
 VOLUME /factorio
 EXPOSE $PORT/udp $RCON_PORT/tcp
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5m --retries=3 CMD ["/docker-healthcheck.sh"]
+
 ENTRYPOINT ["/docker-entrypoint.sh"]

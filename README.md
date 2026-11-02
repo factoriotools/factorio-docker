@@ -95,6 +95,18 @@ This does not require the RCON connection to be exposed.
 docker exec factorio rcon /h
 ```
 
+### Server health
+
+Newly built regular and rootless images include a Docker health check. It runs the read-only `rcon /players count` command locally and requires a valid response within five seconds; an open TCP port alone is not considered healthy. No RCON port needs to be published, and no Lua command is used or achievements changed.
+
+```shell
+docker inspect --format '{{.State.Health.Status}}' factorio
+```
+
+The default interval is 30 seconds, with three retries and a five-minute startup grace period. For large saves or heavy mod sets, adjust Compose `healthcheck.start_period`, `interval` and `retries` to allow for loading and save pauses. Use `healthcheck.disable: true` (or `docker run --no-healthcheck`) if you intentionally disable or replace RCON.
+
+Docker reports `starting`, `healthy` or `unhealthy`; it does **not** automatically restart an unhealthy container. Monitoring tools can observe the Docker health state instead of depending on a changing public-lobby game ID. This does not provide an HTTP endpoint or test internet/UDP reachability. Do not expose the Docker API or RCON publicly just to monitor health.
+
 ### Upgrading
 
 Before upgrading backup the save. It's easy to make a save in the client.
