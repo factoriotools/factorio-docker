@@ -29,8 +29,8 @@ print_failure()
 check_game_version() {
   local mod_required_version="$1"
   local current_game_version="$2"
-  local game_major game_minor remainder
-  IFS='.' read -r game_major game_minor remainder <<< "$current_game_version"
+  local game_major game_minor
+  IFS='.' read -r game_major game_minor _ <<< "$current_game_version"
 
   if [[ "$mod_required_version" == "$game_major.$game_minor" ]] ||
      [[ "$game_major.$game_minor" == "1.0" && "$mod_required_version" == "0.18" ]]; then
