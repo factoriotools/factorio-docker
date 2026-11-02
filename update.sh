@@ -72,21 +72,21 @@ echo '{}' > "$tmpfile"
 if [[ "$stable_online_version" == "$experimental_online_version" ]]; then
     # Stable and experimental are the same version
     jq --arg stable_online_version "$stable_online_version" --arg sha256 "$stable_sha256" --arg sha256_arm64 "$stable_sha256_arm64" --arg stableOnlineVersionShort "$stableOnlineVersionShort" --arg stableOnlineVersionMajor "$stableOnlineVersionMajor" \
-        '. + {($stable_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", "stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]}}' "$tmpfile" > buildinfo.json
+        '. + {($stable_online_version): ({sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", "stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]})}' "$tmpfile" > buildinfo.json
 else
     # Different stable and experimental versions
     # First add stable
     jq --arg stable_online_version "$stable_online_version" --arg sha256 "$stable_sha256" --arg sha256_arm64 "$stable_sha256_arm64" --arg stableOnlineVersionShort "$stableOnlineVersionShort" --arg stableOnlineVersionMajor "$stableOnlineVersionMajor" \
-        '. + {($stable_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]}}' "$tmpfile" > buildinfo.json.tmp
+        '. + {($stable_online_version): ({sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["stable", ("stable-" + $stable_online_version), $stableOnlineVersionMajor, $stableOnlineVersionShort, $stable_online_version]})}' "$tmpfile" > buildinfo.json.tmp
     mv buildinfo.json.tmp "$tmpfile"
     
     # Then add experimental
     if [[ $stableOnlineVersionShort == "$experimentalOnlineVersionShort" ]]; then
         jq --arg experimental_online_version "$experimental_online_version" --arg sha256 "$experimental_sha256" --arg sha256_arm64 "$experimental_sha256_arm64" \
-            '. + {($experimental_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", $experimental_online_version]}}' "$tmpfile" > buildinfo.json
+            '. + {($experimental_online_version): ({sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", $experimental_online_version]})}' "$tmpfile" > buildinfo.json
     else
         jq --arg experimental_online_version "$experimental_online_version" --arg sha256 "$experimental_sha256" --arg sha256_arm64 "$experimental_sha256_arm64" --arg experimentalOnlineVersionShort "$experimentalOnlineVersionShort" --arg experimentalOnlineVersionMajor "$experimentalOnlineVersionMajor" \
-            '. + {($experimental_online_version): {sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", $experimentalOnlineVersionMajor, $experimentalOnlineVersionShort, $experimental_online_version]}}' "$tmpfile" > buildinfo.json
+            '. + {($experimental_online_version): ({sha256: $sha256} + (if $sha256_arm64 != "" then {sha256_arm64: $sha256_arm64} else {} end) + {tags: ["latest", $experimentalOnlineVersionMajor, $experimentalOnlineVersionShort, $experimental_online_version]})}' "$tmpfile" > buildinfo.json
     fi
 fi
 
@@ -94,8 +94,8 @@ rm -f -- "$tmpfile"
 
 # Generate README tags with logical sorting and de-duplication
 # First, collect all unique tags with their versions
-# Use regular arrays for bash compatibility
-declare tag_versions
+# Tags contain dots and hyphens, so they must be string keys.
+declare -A tag_versions
 while IFS= read -r version; do
   while IFS= read -r tag; do
     # If this tag is already seen, compare versions to keep the latest
@@ -158,6 +158,7 @@ perl -i -0777 -pe "s/<!-- start autogeneration tags -->.+<!-- end autogeneration
 docker_compose_path="docker/docker-compose.yml"
 sov="VERSION=${stable_online_version}" yq -i '.services.factorio.build.args[0] = env(sov)' "$docker_compose_path"
 sha="SHA256=${stable_sha256}" yq -i '.services.factorio.build.args[1] = env(sha)' "$docker_compose_path"
+sha_arm64="SHA256_ARM64=${stable_sha256_arm64}" yq -i '.services.factorio.build.args[2] = env(sha_arm64)' "$docker_compose_path"
 
 git config user.name github-actions[bot]
 git config user.email 41898282+github-actions[bot]@users.noreply.github.com

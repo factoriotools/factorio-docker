@@ -1,7 +1,7 @@
 # build rcon client
 FROM debian:stable-slim AS rcon-builder
 RUN apt-get -q update \
-    && DEBIAN_FRONTEND=noninteractive apt-get -qy install build-essential
+    && DEBIAN_FRONTEND=noninteractive apt-get -qy install build-essential --no-install-recommends
 
 WORKDIR /src
 COPY rcon/ /src
