@@ -4,15 +4,20 @@ on:
   push:
     branches:
       - master
+    paths:
+      - README.md
+  # workaround for #526
+  workflow_dispatch:
 
 jobs:
   docker-description:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
+
       - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v2.4.1
+        uses: peter-evans/dockerhub-description@v5.0.0
         if: ${{ env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != '' }}
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

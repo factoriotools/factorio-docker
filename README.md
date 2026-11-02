@@ -1,22 +1,18 @@
-# Factorio ![Updater status](https://img.shields.io/endpoint?label=Updater%20status&logo=a&url=https%3A%2F%2Fhealthchecks.supersandro.de%2Fbadge%2F1a0a7698-445d-4e54-9e4b-f61a1544e01f%2FBO8VukOA%2Fmaintainer.shields) [![Docker Version](https://img.shields.io/docker/v/factoriotools/factorio?sort=semver)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Pulls](https://img.shields.io/docker/pulls/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/)
+# Factorio [![Docker Version](https://img.shields.io/docker/v/factoriotools/factorio?sort=semver)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Pulls](https://img.shields.io/docker/pulls/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/)
+
+> [!NOTE]
+> Support for ARM is experimental. Expect crashes and lag if you try to run this on a raspberry pi.
 
 [中文](./README_zh_CN.md)
 
 <!-- start autogeneration tags -->
-* `1.1.42`, `1`, `1.1`, `latest`, `stable`
-* `1.0.0`, `1.0`
-* `0.17.79`, `0.17`
-* `0.16.51`, `0.16`
-* `0.15.40`, `0.15`
-* `0.14.23`, `0.14`
-* `0.13.20`, `0.13`
-* `0.12.35`, `0.12`
+* `latest, 2.1.24`
 <!-- end autogeneration tags -->
 
 ## Tag descriptions
 
 * `latest` - most up-to-date version (may be experimental).
-* `stable` - version declared stable on [factorio.com](https://www.factorio.com).
+* `stable` - version declared stable on [factorio.com](https://www.factorio.com) ([FFF-435 Since 2.0 versions gets released as experimental first, once stable it will be marked as stable](https://factorio.com/blog/post/fff-435)).
 * `0.x`    - latest version in a branch.
 * `0.x.y` - a specific version.
 * `0.x-z` - incremental fix for that version.
@@ -45,7 +41,7 @@ sudo docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always \
+  --restart=unless-stopped \
   factoriotools/factorio
 ```
 
@@ -90,11 +86,20 @@ docker run -d -it  \
 docker attach factorio
 ```
 
+### RCON (2.0.18+)
+
+Alternativly (e.g. for scripting) the RCON connection can be used to send commands to the running factorio server.
+This does not require the RCON connection to be exposed.
+
+```shell
+docker exec factorio rcon /h
+```
+
 ### Upgrading
 
 Before upgrading backup the save. It's easy to make a save in the client.
 
-Ensure `-v` was used to run the server so the save is outside of the Docker container. The `docker rm` command completely destroys the container, which includes the save if it isn't stored in an data volume.
+Ensure `-v` was used to run the server so the save is outside of the Docker container. The `docker rm` command completely destroys the container, which includes the save if it isn't stored in a data volume.
 
 Delete the container and refresh the image:
 
@@ -128,7 +133,7 @@ sudo docker run -d \
   -e LOAD_LATEST_SAVE=false \
   -e SAVE_NAME=replaceme \
   --name factorio \
-  --restart=always \
+  --restart=unless-stopped \
   factoriotools/factorio
 ```
 
@@ -143,7 +148,23 @@ sudo docker run -d \
   -e GENERATE_NEW_SAVE=true \
   -e SAVE_NAME=replaceme \
   --name factorio \
-  --restart=always \
+  --restart=unless-stopped \
+  factoriotools/factorio
+```
+
+To generate a new map with a specific preset (e.g., death-world):
+
+```shell
+sudo docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v /opt/factorio:/factorio \
+  -e LOAD_LATEST_SAVE=false \
+  -e GENERATE_NEW_SAVE=true \
+  -e SAVE_NAME=replaceme \
+  -e PRESET=death-world \
+  --name factorio \
+  --restart=unless-stopped \
   factoriotools/factorio
 ```
 
@@ -152,6 +173,10 @@ sudo docker run -d \
 Copy mods into the mods folder and restart the server.
 
 As of 0.17 a new environment variable was added ``UPDATE_MODS_ON_START`` which if set to ``true`` will cause the mods get to updated on server start. If set a valid [Factorio Username and Token](https://www.factorio.com/profile) must be supplied or else the server will not start. They can either be set as docker secrets, environment variables, or pulled from the server-settings.json file.
+
+To prevent specific mods from being automatically updated, you can use the ``UPDATE_IGNORE`` environment variable with a comma-separated list of mod names. For example: ``UPDATE_IGNORE=mod1,mod2,mod3`` will skip updates for those three mods. This can be useful to prevent compatibility issues when certain mods should remain at specific versions. Be warned that it can also create compatibility issues.
+
+**Note:** When using the Space Age DLC, the built-in mods (`elevated-rails`, `quality`, and `space-age`) are automatically skipped during mod updates to prevent conflicts. These mods are included with the DLC and should not be downloaded separately.
 
 ### Scenarios
 
@@ -163,7 +188,7 @@ docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always  \
+  --restart=unless-stopped  \
   --entrypoint "/scenario.sh" \
   factoriotools/factorio \
   MyScenarioName
@@ -179,7 +204,7 @@ docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always  \
+  --restart=unless-stopped  \
   --entrypoint "/scenario2map.sh" \
   factoriotools/factorio
   MyScenarioName
@@ -210,8 +235,8 @@ Create file `config/server-banlist.json` and add the banlisted users.
 
 ```json
 [
-    "bad_person",
-    "other_bad_person"
+"bad_person",
+"other_bad_person"
 ]
 ```
 
@@ -221,8 +246,8 @@ Create file `config/server-adminlist.json` and add the adminlisted users.
 
 ```json
 [
-  "you",
-  "friend"
+"you",
+"friend"
 ]
 ```
 
@@ -257,23 +282,51 @@ The `server-settings.json` file may then contain the variable references like th
 
 These are the environment variables which can be specified at container run time.
 
-| Variable Name        | Description                                                          | Default                              | Available in |
-| -------------------- | -------------------------------------------------------------------- | ------------------------------------ | ------------ |
-| GENERATE_NEW_SAVE    | Generate a new save if one does not exist before starting the server | `false`                              | 0.17+        |
-| LOAD_LATEST_SAVE     | Load latest when true. Otherwise load SAVE_NAME                      | `true`                               | 0.17+        |
-| PORT                 | UDP port the server listens on                                       | `34197`                              | 0.15+        |
-| RCON_PORT            | TCP port the rcon server listens on                                  | `27015`                              | 0.15+        |
-| SAVE_NAME            | Name to use for the save file                                        | `_autosave1`                         | 0.17+        |
-| TOKEN                | factorio.com token                                                   |                                      | 0.17+        |
-| UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |                                      | 0.17+        |
-| USERNAME             | factorio.com username                                                |                                      | 0.17+        |
-| ADMINLIST_FILE       | Path to server adminlist file                                        | `<config-dir>/server-adminlist.json` |              |
-| BANLIST_FILE         | Path to server banlist file                                          | `<config-dir>/server-banlist.json`   |              |
-| SERVER_ID_FILE       | Path to server ID file                                               | `<config-dir>/server-id.json`        |              |
-| SERVER_SETTINGS_FILE | Path to server settings file                                         | `<config-dir>/server-settings.json`  |              |
-| WHITELIST_FILE       | Path to server whitelist file                                        | `<config-dir>/server-whitelist.json` |              |
+| Variable Name        | Description                                                          | Default        | Available in |
+|----------------------|----------------------------------------------------------------------|----------------|--------------|
+| GENERATE_NEW_SAVE    | Generate a new save if one does not exist before starting the server | false          | 0.17+        |
+| LOAD_LATEST_SAVE     | Load latest when true. Otherwise load SAVE_NAME                      | true           | 0.17+        |
+| PORT                 | UDP port the server listens on                                       | 34197          | 0.15+        |
+| BIND                 | IP address (v4 or v6) the server listens on (IP\[:PORT])             |                | 0.15+        |
+| RCON_PORT            | TCP port the rcon server listens on                                  | 27015          | 0.15+        |
+| SAVE_NAME            | Name to use for the save file                                        | _autosave1     | 0.17+        |
+| PRESET               | Map generation preset when GENERATE_NEW_SAVE is true                 |                | 0.17+        |
+| TOKEN                | factorio.com token                                                   |                | 0.17+        |
+| UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |                | 0.17+        |
+| UPDATE_IGNORE        | Comma-separated list of mod names to skip during automatic updates   |                | 0.17+        |
+| USERNAME             | factorio.com username                                                |                | 0.17+        |
+| CONSOLE_LOG_LOCATION | Saves the console log to the specifies location                      |                |              |
+| DLC_SPACE_AGE        | Enables or disables the mods for DLC Space Age in mod-list.json[^1]  | true           | 2.0.8+       |
+| MODS                 | Mod directory to use                                                 | /factorio/mods | 2.0.8+       |
+| SERVER_SETTINGS_FILE | Absolute path to server settings                                     | `$CONFIG/server-settings.json` | New builds |
+| SERVER_ID_FILE       | Absolute path to server identity                                     | `$CONFIG/server-id.json` | New builds |
+| SERVER_ADMINLIST_FILE | Absolute path to the server admin list                              | `$CONFIG/server-adminlist.json` | New builds |
+| SERVER_BANLIST_FILE   | Absolute path to the server ban list                                | `$CONFIG/server-banlist.json` | New builds |
+| SERVER_WHITELIST_FILE | Absolute path to the server whitelist                               | `$CONFIG/server-whitelist.json` | New builds |
 
 **Note:** All environment variables are compared as strings
+
+#### Server configuration paths
+
+The `SERVER_*_FILE` overrides apply to regular and rootless images, including scenario startup. Upgrade or rebuild older images to use this feature. Unset or empty values use the defaults above; `$CONFIG` defaults to `/factorio/config`. The mod updater also reads credentials from `SERVER_SETTINGS_FILE` unless credentials are supplied explicitly or through Docker secrets.
+
+Use absolute file paths, not directory paths. Existing settings are preserved; if `SERVER_SETTINGS_FILE` is missing, the default settings are copied there. For example, `-e SERVER_SETTINGS_FILE=/factorio/config/private/settings.json` selects a separate settings file.
+
+Parent directories are created when possible. Custom settings files must be readable by the server user. Files that Factorio updates (including its server ID and player lists), and their parent directories, must be writable by that user. For paths outside `/factorio`, pre-create directories with the appropriate permissions: the regular image only adjusts ownership inside `/factorio`, and the rootless image does not adjust ownership. An existing read-only settings-file mount is supported; a missing settings file in a read-only directory is not.
+
+#### PRESET Values
+
+The `PRESET` environment variable is used when generating a new map (when `GENERATE_NEW_SAVE=true`). It corresponds to Factorio's built-in map generation presets. Common values include:
+
+- `default` - Normal settings
+- `rich-resources` - Resources are more abundant
+- `marathon` - Recipes and technologies are more expensive
+- `death-world` - Biters are more aggressive and numerous
+- `death-world-marathon` - Combines death-world and marathon settings
+- `rail-world` - Resources are further apart, encouraging train usage
+- `ribbon-world` - Map height is limited for a unique challenge
+
+If PRESET is not specified or left empty, the map will be generated using the settings from `map-gen-settings.json` and `map-settings.json` without a preset.
 
 ## Container Details
 
@@ -367,7 +420,7 @@ sudo docker run -d \
   -p 27015:27015/tcp \
   -v /opt/factorio:/factorio \
   --name factorio \
-  --restart=always  \
+  --restart=unless-stopped  \
   factoriotools/factorio
 ```
 
@@ -388,7 +441,88 @@ For LAN games the VM needs an internal IP in order for clients to connect. One w
 
 If you're looking for a simple way to deploy this to the Amazon Web Services Cloud, check out the [Factorio Server Deployment (CloudFormation) repository](https://github.com/m-chandler/factorio-spot-pricing). This repository contains a CloudFormation template that will get you up and running in AWS in a matter of minutes. Optionally it uses Spot Pricing so the server is very cheap, and you can easily turn it off when not in use.
 
+## Using a reverse proxy
+
+If you need to use a reverse proxy you can use the following nginx snippet:
+
+```
+stream {
+  server {
+      listen 34197 udp reuseport;
+      proxy_pass my.upstream.host:34197;
+  }
+}
+```
+
+If your factorio host uses multiple IP addresses (very common with IPv6), you might additionally need to bind Factorio to a single IP (otherwise the UDP proxy might get confused with IP mismatches). To do that pass the `BIND` envvar to the container: `docker run --network=host -e BIND=2a02:1234::5678 ...`
+
+## Rootless Docker Support (Experimental)
+
+> **Note**: Rootless support is currently experimental. Please report any issues you encounter.
+
+If you're experiencing permission issues or want better security, consider using the rootless images. These images are designed to work seamlessly with rootless Docker installations and avoid common permission problems.
+
+### What are Rootless Images?
+
+The rootless images differ from regular images in several ways:
+- Run as UID 1000 (non-root) by default
+- No dynamic UID/GID mapping (PUID/PGID not supported)
+- No runtime chown operations
+- All directories created with open permissions during build
+
+### Rootless Image Tags
+
+Each regular tag has a corresponding rootless version with the `-rootless` suffix:
+- `latest-rootless` (experimental)
+- `stable-rootless` (experimental)
+- `2.0.55-rootless` (experimental)
+
+### Quick Start with Rootless
+
+```shell
+docker run -d \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  -v ~/factorio:/factorio \
+  --name factorio \
+  --restart=unless-stopped \
+  factoriotools/factorio:stable-rootless
+```
+
+Key differences:
+- No `chown` command needed
+- No PUID/PGID environment variables
+- Runs as UID 1000 by default
+- No permission issues with volumes
+
+### When to Use Rootless Images
+
+Consider using rootless images if you:
+- Are running Docker in rootless mode
+- Experience permission issues with volume mounts
+- Want to avoid containers running as root
+- Don't need dynamic UID/GID mapping via PUID/PGID
+
+### Limitations
+
+- PUID/PGID environment variables are not supported
+- Fixed to UID 1000 (may not match your host user)
+- Experimental feature - may have undiscovered issues
+
 ## Troubleshooting
+
+### Permission Issues
+
+If you're experiencing permission errors such as:
+- `chown: Operation not permitted`
+- `Permission denied [/factorio/saves]`
+- `Util.cpp:81: Operation not permitted`
+- Files owned by unexpected UIDs (like 100844 instead of 845)
+
+Please refer to our comprehensive [Permission Issues Guide](./PERMISSION_ISSUES_GUIDE.md) for detailed solutions. Common fixes include:
+- **Updating Docker** to version 20.x or newer (this resolves many issues)
+- **Using the rootless image** variants (e.g., `factoriotools/factorio:stable-rootless`)
+- **Setting correct ownership** for your specific Docker configuration
 
 ### My server is listed in the server browser, but nobody can connect
 
@@ -414,3 +548,8 @@ Use the `PORT` environment variable to start the server on the a different port,
 * [bplein](https://github.com/bplein/docker_factorio_server) - Coded scenario support
 * [jaredledvina](https://github.com/jaredledvina/docker_factorio_server) - Contributed version updates
 * [carlbennett](https://github.com/carlbennett) - Contributed version updates and bugfixes
+
+[^1]: Space Age mods can also be individually enabled by using their name separated by space.  
+  Example 1: Enable all by using `true`
+  Example 2: Enable all by listing the mod names `space-age elevated-rails quality`  
+  Example 3: Enable only Elevated rails `elevated-rails`

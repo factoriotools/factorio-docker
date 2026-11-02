@@ -4,17 +4,29 @@ on:
   push:
     branches:
       - master
+    paths:
+      - buildinfo.json
+  workflow_call:
+  # workaround for #526
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: build and push
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: build and push all images
         if: ${{ env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != '' }}
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          ./build.py --push-tags
+          ./build.py --push-tags --multiarch --both

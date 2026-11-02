@@ -1,29 +1,23 @@
 #!/bin/bash
 set -eoux pipefail
-
+INSTALLED_DIRECTORY=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
 FACTORIO_VOL=/factorio
 LOAD_LATEST_SAVE="${LOAD_LATEST_SAVE:-true}"
 GENERATE_NEW_SAVE="${GENERATE_NEW_SAVE:-false}"
+PRESET="${PRESET:-""}"
 SAVE_NAME="${SAVE_NAME:-""}"
+BIND="${BIND:-""}"
+CONSOLE_LOG_LOCATION="${CONSOLE_LOG_LOCATION:-""}"
 
 mkdir -p "$FACTORIO_VOL"
 mkdir -p "$SAVES"
 mkdir -p "$CONFIG"
 mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
-mkdir -p "$SCRIPTOUTPUT"
 
-# Initialize Factorio server configuration files location variables...
-SERVER_ADMINLIST_FILE="${SERVER_ADMINLIST_FILE:-$CONFIG/server-adminlist.json}"
-SERVER_BANLIST_FILE="${SERVER_BANLIST_FILE:-$CONFIG/server-banlist.json}"
-SERVER_ID_FILE="${SERVER_ID_FILE:-$CONFIG/server-id.json}"
-SERVER_SETTINGS_FILE="${SERVER_SETTINGS_FILE:-$CONFIG/server-settings.json}"
-SERVER_WHITELIST_FILE="${SERVER_WHITELIST_FILE:-$CONFIG/server-whitelist.json}"
-mkdir -p "$(dirname "$SERVER_ADMINLIST_FILE")"
-mkdir -p "$(dirname "$SERVER_BANLIST_FILE")"
-mkdir -p "$(dirname "$SERVER_ID_FILE")"
-mkdir -p "$(dirname "$SERVER_SETTINGS_FILE")"
-mkdir -p "$(dirname "$SERVER_WHITELIST_FILE")"
+# shellcheck disable=SC1091
+source "${INSTALLED_DIRECTORY}/server-config.sh"
+mkdir -p "$SCRIPTOUTPUT"
 
 if [[ ! -f $CONFIG/rconpw ]]; then
   # Generate a new RCON password if none exists
@@ -50,20 +44,25 @@ if [[ $NRTMPSAVES -gt 0 ]]; then
 fi
 
 if [[ ${UPDATE_MODS_ON_START:-} == "true" ]]; then
-  ./docker-update-mods.sh
+  "${INSTALLED_DIRECTORY}"/docker-update-mods.sh
 fi
 
-if [[ $(id -u) = 0 ]]; then
+"${INSTALLED_DIRECTORY}"/docker-dlc.sh
+
+EXEC=""
+if [[ $(id -u) == 0 ]]; then
   # Update the User and Group ID based on the PUID/PGID variables
   usermod -o -u "$PUID" factorio
   groupmod -o -g "$PGID" factorio
   # Take ownership of factorio data if running as root
   chown -R factorio:factorio "$FACTORIO_VOL"
   # Drop to the factorio user
-  SU_EXEC="su-exec factorio"
-else
-  SU_EXEC=""
+  EXEC="runuser -u factorio -g factorio --"
 fi
+
+# Setup ARM64 emulation support
+# shellcheck disable=SC1091
+source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
 sed -i '/write-data=/c\write-data=\/factorio/' /opt/factorio/config/config.ini
 
@@ -81,24 +80,41 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
     if [[ -f "$SAVES/$SAVE_NAME.zip" ]]; then
         echo "Map $SAVES/$SAVE_NAME.zip already exists, skipping map generation"
     else
-        $SU_EXEC /opt/factorio/bin/x64/factorio \
-            --create "$SAVES/$SAVE_NAME.zip" \
-            --map-gen-settings "$CONFIG/map-gen-settings.json" \
-            --map-settings "$CONFIG/map-settings.json"
+        if [[ -n "$PRESET" ]]; then
+            $EXEC /opt/factorio/bin/x64/factorio \
+                --create "$SAVES/$SAVE_NAME.zip" \
+                --preset "$PRESET" \
+                --map-gen-settings "$CONFIG/map-gen-settings.json" \
+                --map-settings "$CONFIG/map-settings.json"
+        else
+            $EXEC /opt/factorio/bin/x64/factorio \
+                --create "$SAVES/$SAVE_NAME.zip" \
+                --map-gen-settings "$CONFIG/map-gen-settings.json" \
+                --map-settings "$CONFIG/map-settings.json"
+        fi
     fi
 fi
 
 FLAGS=(\
   --port "$PORT" \
-  --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --rcon-port "$RCON_PORT" \
-  --server-adminlist "$SERVER_ADMINLIST_FILE" \
-  --server-banlist "$SERVER_BANLIST_FILE" \
-  --server-id "$SERVER_ID_FILE" \
   --server-settings "$SERVER_SETTINGS_FILE" \
+  --server-banlist "$SERVER_BANLIST_FILE" \
+  --rcon-port "$RCON_PORT" \
   --server-whitelist "$SERVER_WHITELIST_FILE" \
   --use-server-whitelist \
+  --server-adminlist "$SERVER_ADMINLIST_FILE" \
+  --rcon-password "$(cat "$CONFIG/rconpw")" \
+  --server-id "$SERVER_ID_FILE" \
+  --mod-directory "$MODS" \
 )
+
+if [ -n "$CONSOLE_LOG_LOCATION" ]; then
+  FLAGS+=( --console-log "$CONSOLE_LOG_LOCATION" )
+fi
+
+if [ -n "$BIND" ]; then
+  FLAGS+=( --bind "$BIND" )
+fi
 
 if [[ $LOAD_LATEST_SAVE == true ]]; then
     FLAGS+=( --start-server-load-latest )
@@ -107,4 +123,4 @@ else
 fi
 
 # shellcheck disable=SC2086
-exec $SU_EXEC /opt/factorio/bin/x64/factorio "${FLAGS[@]}" "$@"
+exec $EXEC /opt/factorio/bin/x64/factorio "${FLAGS[@]}" "$@"
