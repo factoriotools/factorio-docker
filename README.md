@@ -64,8 +64,10 @@ docker logs factorio
 Stop the server:
 
 ```shell
-docker stop factorio
+docker stop --timeout 120 factorio
 ```
+
+Allow enough time for the world to save before Docker sends SIGKILL. Increase the timeout for large saves; with Compose, configure `stop_grace_period` instead.
 
 Now there's a `server-settings.json` file in the folder `/opt/factorio/config`. Modify this to your liking and restart the server:
 
@@ -113,7 +115,7 @@ Now run the server as before. In about a minute the new version of Factorio shou
 
 ### Saves
 
-A new map named `_autosave1.zip` is generated the first time the server is started. The `map-gen-settings.json` and `map-settings.json` files in `/opt/factorio/config` are used for the map settings. On subsequent runs the newest save is used.
+A new map named `_autosave1.zip` (or `SAVE_NAME` when set) is generated the first time the server is started. The `map-gen-settings.json` and `map-settings.json` files in `/opt/factorio/config` are used for the map settings. On subsequent runs the newest save is used.
 
 To load an old save stop the server and run the command `touch oldsave.zip`. This resets the date. Then restart the server. Another option is to delete all saves except one.
 
@@ -123,7 +125,7 @@ To generate a new map stop the server, delete all of the saves and restart the s
 
 You can specify a specific save to load by configuring the server through a set of environment variables:
 
-To load an existing save set `SAVE_NAME` to the name of your existing save file located within the `saves` directory, without the `.zip` extension:
+To load an existing save set `SAVE_NAME` to the name of your existing save file located within the `saves` directory, with or without the `.zip` extension. An absolute save-file path is also supported. The same path is used for initial generation and later starts; a missing selected save is reported instead of silently loading another world:
 
 ```shell
 sudo docker run -d \
@@ -287,7 +289,7 @@ These are the environment variables which can be specified at container run time
 | GENERATE_NEW_SAVE    | Generate a new save if one does not exist before starting the server | false          | 0.17+        |
 | LOAD_LATEST_SAVE     | Load latest when true. Otherwise load SAVE_NAME                      | true           | 0.17+        |
 | PORT                 | UDP port the server listens on                                       | 34197          | 0.15+        |
-| BIND                 | IP address (v4 or v6) the server listens on (IP\[:PORT])             |                | 0.15+        |
+| BIND                 | Listen address; an explicit port overrides PORT (e.g. `127.0.0.1:34201` or `[::1]:34201`) |                | 0.15+        |
 | RCON_PORT            | TCP port the rcon server listens on                                  | 27015          | 0.15+        |
 | SAVE_NAME            | Name to use for the save file                                        | _autosave1     | 0.17+        |
 | PRESET               | Map generation preset when GENERATE_NEW_SAVE is true                 |                | 0.17+        |
