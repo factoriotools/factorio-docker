@@ -24,33 +24,16 @@ print_failure()
   echo "$1"
 }
 
-# Checks if the current game version satisfies the mod's minimum required version.
-# Returns 1 if the game version is compatible with the mod, 0 if not
+# factorio_version selects one major.minor, not a minimum supported version.
+# Print 1 for compatibility, 0 otherwise (the caller consumes this as data).
 check_game_version() {
-  local mod_required_version="$1"  # The minimum Factorio version required by the mod
-  local current_game_version="$2"  # The current Factorio version
+  local mod_required_version="$1"
+  local current_game_version="$2"
+  local game_major game_minor remainder
+  IFS='.' read -r game_major game_minor remainder <<< "$current_game_version"
 
-  local mod_major mod_minor game_major game_minor
-  mod_major=$(echo "$mod_required_version" | cut -d '.' -f1)
-  mod_minor=$(echo "$mod_required_version" | cut -d '.' -f2)
-  game_major=$(echo "$current_game_version" | cut -d '.' -f1)
-  game_minor=$(echo "$current_game_version" | cut -d '.' -f2)
-
-  # If game major version is greater than mod's required major version, it's compatible
-  if [[ "$game_major" -gt "$mod_major" ]]; then
-    echo 1
-    return
-  fi
-
-  # If game major version is less than mod's required major version, it's not compatible
-  if [[ "$game_major" -lt "$mod_major" ]]; then
-    echo 0
-    return
-  fi
-
-  # Major versions are equal, check minor versions
-  # Game minor version must be >= mod's required minor version
-  if [[ "$game_minor" -ge "$mod_minor" ]]; then
+  if [[ "$mod_required_version" == "$game_major.$game_minor" ]] ||
+     [[ "$game_major.$game_minor" == "1.0" && "$mod_required_version" == "0.18" ]]; then
     echo 1
   else
     echo 0
@@ -130,11 +113,9 @@ get_mod_info()
   while IFS= read -r mod_release_info; do
     local mod_version mod_factorio_version
     mod_version=$(echo "$mod_release_info" | jq -r ".version")
-    mod_factorio_version=$(echo "$mod_release_info" | jq -r ".info_json.factorio_version")
+    mod_factorio_version=$(echo "$mod_release_info" | jq -r '.info_json.factorio_version // "0.12"')
 
-    # Check if this mod version is compatible with our Factorio version
-    # This prevents downloading mods that require a newer Factorio version (fixes #468)
-    # and ensures backward compatibility (e.g., Factorio 2.0 can use 1.x mods) (fixes #517)
+    # Older and newer game branches are both incompatible, except 0.18 mods on 1.0.
     if [[ $(check_game_version "$mod_factorio_version" "$FACTORIO_VERSION") == 0 ]]; then
       echo "  Skipping mod version $mod_version because of factorio version mismatch"  >&2
       continue
