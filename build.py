@@ -59,10 +59,15 @@ def push_singlearch(tags):
             exit(1)
 
 
-def build_and_push(sha256, version, tags, push, multiarch, dockerfile="Dockerfile", builder_suffix=""):
+def build_and_push(sha256, version, tags, push, multiarch, dockerfile="Dockerfile", builder_suffix="",
+                   sha256_arm64=None):
     build_dir = tempfile.mktemp()
     shutil.copytree("docker", build_dir)
-    build_args = ["-f", dockerfile, "--build-arg", f"VERSION={version}", "--build-arg", f"SHA256={sha256}", "."]
+    build_args = ["-f", dockerfile, "--build-arg", f"VERSION={version}", "--build-arg", f"SHA256={sha256}"]
+    if sha256_arm64:
+        # Native ARM64 archive available: the arm64 image runs it instead of the x64 build under box64
+        build_args.extend(["--build-arg", f"SHA256_ARM64={sha256_arm64}"])
+    build_args.append(".")
     for tag in tags:
         build_args.extend(["-t", f"factoriotools/factorio:{tag}"])
     
@@ -131,7 +136,8 @@ def main():
         for version, buildinfo in versions_to_build:
             sha256 = buildinfo["sha256"]
             tags = buildinfo["tags"]
-            build_and_push(sha256, version, tags, args.push_tags, args.multiarch)
+            build_and_push(sha256, version, tags, args.push_tags, args.multiarch,
+                           sha256_arm64=buildinfo.get("sha256_arm64"))
     
     # Build rootless images
     if build_rootless:
@@ -150,7 +156,8 @@ def main():
             original_tags = buildinfo["tags"]
             rootless_tags = generate_rootless_tags(original_tags)
             build_and_push(sha256, version, rootless_tags, args.push_tags, args.multiarch, 
-                         dockerfile="Dockerfile.rootless", builder_suffix="-rootless")
+                         dockerfile="Dockerfile.rootless", builder_suffix="-rootless",
+                         sha256_arm64=buildinfo.get("sha256_arm64"))
 
 
 if __name__ == '__main__':

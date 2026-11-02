@@ -1,7 +1,7 @@
 # Factorio [![Docker Version](https://img.shields.io/docker/v/factoriotools/factorio?sort=semver)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Pulls](https://img.shields.io/docker/pulls/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/) [![Docker Stars](https://img.shields.io/docker/stars/factoriotools/factorio.svg?maxAge=600)](https://hub.docker.com/r/factoriotools/factorio/)
 
 > [!NOTE]
-> Support for ARM is experimental. Expect crashes and lag if you try to run this on a raspberry pi.
+> ARM64 images for Factorio 2.1 and newer run the native `linux-arm64` headless build. Older versions have no native build and run the x64 build under box64 emulation, which is experimental: expect crashes and lag if you try to run those on a raspberry pi.
 
 [中文](./README_zh_CN.md)
 
