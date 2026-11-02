@@ -99,6 +99,27 @@ def generate_rootless_tags(original_tags):
     return [f"{tag}-rootless" for tag in original_tags]
 
 
+def load_previous_buildinfo(ref):
+    """Read release metadata at a git ref without changing the checkout."""
+    contents = subprocess.check_output(
+        ["git", "show", "--end-of-options", f"{ref}:buildinfo.json"],
+        cwd=os.path.dirname(os.path.abspath(__file__)), text=True,
+    )
+    data = json.loads(contents)
+    if not isinstance(data, dict):
+        raise ValueError("Previous buildinfo.json must be an object")
+    return data
+
+
+def release_changed(version, info, previous):
+    old = previous.get(version)
+    if old is None:
+        return True
+    # Removing an alias needs no rebuild: the new owner will publish that tag.
+    return (any(info.get(key) != old.get(key) for key in ("sha256", "sha256_arm64"))
+            or bool(set(info["tags"]) - set(old["tags"])))
+
+
 def main():
     parser = argparse.ArgumentParser(description='Build Factorio Docker images')
     parser.add_argument('--push-tags', action='store_true', help='Push images to Docker Hub')
@@ -108,6 +129,8 @@ def main():
     parser.add_argument('--only-stable-latest', action='store_true', 
                         help='Build only stable and latest versions (for rootless by default)')
     
+    parser.add_argument('--changed-from', metavar='GIT_REF',
+                        help='Build only versions with new archives or added tags since this ref')
     args = parser.parse_args()
     
     # Default behavior: build regular images unless specified otherwise
@@ -117,12 +140,18 @@ def main():
     with open(os.path.join(os.path.dirname(__file__), "buildinfo.json")) as file_handle:
         builddata = json.load(file_handle)
 
-    if args.push_tags:
-        login()
+    previous = None
+    if args.changed_from:
+        try:
+            previous = load_previous_buildinfo(args.changed_from)
+        except (subprocess.CalledProcessError, OSError, ValueError) as error:
+            parser.error(f"Cannot read previous release metadata: {error}")
 
     # Filter versions if needed
     versions_to_build = []
     for version, buildinfo in sorted(builddata.items(), key=lambda item: item[0], reverse=True):
+        if previous is not None and not release_changed(version, buildinfo, previous):
+            continue
         if args.only_stable_latest or (build_rootless and not build_regular):
             # For rootless-only builds, default to stable/latest only
             if "stable" in buildinfo["tags"] or "latest" in buildinfo["tags"]:
@@ -130,6 +159,13 @@ def main():
         else:
             versions_to_build.append((version, buildinfo))
     
+    if not versions_to_build:
+        print("No changed releases to build.")
+        return
+
+    if args.push_tags:
+        login()
+
     # Build regular images
     if build_regular:
         print("Building regular images...")
@@ -142,16 +178,7 @@ def main():
     # Build rootless images
     if build_rootless:
         print("Building rootless images...")
-        # For rootless, only build stable and latest unless building both
-        rootless_versions = []
-        if not build_regular or args.only_stable_latest:
-            for version, buildinfo in builddata.items():
-                if "stable" in buildinfo["tags"] or "latest" in buildinfo["tags"]:
-                    rootless_versions.append((version, buildinfo))
-        else:
-            rootless_versions = versions_to_build
-            
-        for version, buildinfo in rootless_versions:
+        for version, buildinfo in versions_to_build:
             sha256 = buildinfo["sha256"]
             original_tags = buildinfo["tags"]
             rootless_tags = generate_rootless_tags(original_tags)

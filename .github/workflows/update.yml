@@ -11,6 +11,8 @@ jobs:
     if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository == 'factoriotools/factorio-docker')
     outputs:
       updated: ${{ steps.changes.outputs.updated }}
+      before_sha: ${{ steps.before.outputs.sha }}
+      head_sha: ${{ steps.changes.outputs.sha }}
 
     steps:
       - name: Checkout
@@ -27,6 +29,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           if [ "$(git rev-parse HEAD)" != "${{ steps.before.outputs.sha }}" ]; then
             echo "updated=true" >> "$GITHUB_OUTPUT"
           else
@@ -37,4 +40,7 @@ jobs:
     needs: check
     if: needs.check.outputs.updated == 'true'
     uses: ./.github/workflows/docker-build.yml
+    with:
+      previous_sha: ${{ needs.check.outputs.before_sha }}
+      checkout_ref: ${{ needs.check.outputs.head_sha }}
     secrets: inherit
