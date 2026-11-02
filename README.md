@@ -286,29 +286,29 @@ These settings variables are consumed by this example wrapper, not by the normal
 
 These are the environment variables which can be specified at container run time.
 
-| Variable Name        | Description                                                          | Default        | Available in |
-|----------------------|----------------------------------------------------------------------|----------------|--------------|
-| PUID                 | Server user ID in regular images; use `id -u` to find your host user ID | 845          | Regular images |
-| PGID                 | Server group ID in regular images; use `id -g` to find your host group ID | 845        | Regular images |
-| GENERATE_NEW_SAVE    | Generate a new save if one does not exist before starting the server | false          | 0.17+        |
-| LOAD_LATEST_SAVE     | Load latest when true. Otherwise load SAVE_NAME                      | true           | 0.17+        |
-| PORT                 | UDP port the server listens on                                       | 34197          | 0.15+        |
-| BIND                 | IP address (v4 or v6) the server listens on (IP\[:PORT])             |                | 0.15+        |
-| RCON_PORT            | TCP port the rcon server listens on                                  | 27015          | 0.15+        |
-| SAVE_NAME            | Name to use for the save file                                        | _autosave1     | 0.17+        |
-| PRESET               | Map generation preset when GENERATE_NEW_SAVE is true                 |                | 0.17+        |
-| TOKEN                | factorio.com token for mod updates (server listing uses settings JSON) |               | 0.17+        |
-| UPDATE_MODS_ON_START | If mods should be updated before starting the server                 |                | 0.17+        |
-| UPDATE_IGNORE        | Comma-separated list of mod names to skip during automatic updates   |                | 0.17+        |
-| USERNAME             | factorio.com username for mod updates (server listing uses settings JSON) |            | 0.17+        |
-| CONSOLE_LOG_LOCATION | Saves the console log to the specifies location                      |                |              |
-| DLC_SPACE_AGE        | Enables or disables the mods for DLC Space Age in mod-list.json[^1]  | true           | 2.0.8+       |
-| MODS                 | Mod directory to use                                                 | /factorio/mods | 2.0.8+       |
-| SERVER_SETTINGS_FILE | Absolute path to server settings                                     | `$CONFIG/server-settings.json` | New builds |
-| SERVER_ID_FILE       | Absolute path to server identity                                     | `$CONFIG/server-id.json` | New builds |
-| SERVER_ADMINLIST_FILE | Absolute path to the server admin list                              | `$CONFIG/server-adminlist.json` | New builds |
-| SERVER_BANLIST_FILE   | Absolute path to the server ban list                                | `$CONFIG/server-banlist.json` | New builds |
-| SERVER_WHITELIST_FILE | Absolute path to the server whitelist                               | `$CONFIG/server-whitelist.json` | New builds |
+| Variable Name         | Description                                                               | Default                         | Available in   |
+|-----------------------|---------------------------------------------------------------------------|---------------------------------|----------------|
+| PUID                  | Server user ID in regular images; use `id -u` to find your host user ID   | 845                             | Regular images |
+| PGID                  | Server group ID in regular images; use `id -g` to find your host group ID | 845                             | Regular images |
+| GENERATE_NEW_SAVE     | Generate a new save if one does not exist before starting the server      | false                           | 0.17+          |
+| LOAD_LATEST_SAVE      | Load latest when true. Otherwise load SAVE_NAME                           | true                            | 0.17+          |
+| PORT                  | UDP port the server listens on                                            | 34197                           | 0.15+          |
+| BIND                  | IP address (v4 or v6) the server listens on (IP\[:PORT])                  |                                 | 0.15+          |
+| RCON_PORT             | TCP port the rcon server listens on                                       | 27015                           | 0.15+          |
+| SAVE_NAME             | Name to use for the save file                                             | _autosave1                      | 0.17+          |
+| PRESET                | Map generation preset when GENERATE_NEW_SAVE is true                      |                                 | 0.17+          |
+| TOKEN                 | factorio.com token for mod updates (server listing uses settings JSON)    |                                 | 0.17+          |
+| UPDATE_MODS_ON_START  | If mods should be updated before starting the server                      |                                 | 0.17+          |
+| UPDATE_IGNORE         | Comma-separated list of mod names to skip during automatic updates        |                                 | 0.17+          |
+| USERNAME              | factorio.com username for mod updates (server listing uses settings JSON) |                                 | 0.17+          |
+| CONSOLE_LOG_LOCATION  | Saves the console log to the specifies location                           |                                 |                |
+| DLC_SPACE_AGE         | Enables or disables the mods for DLC Space Age in mod-list.json[^1]       | true                            | 2.0.8+         |
+| MODS                  | Mod directory to use                                                      | /factorio/mods                  | 2.0.8+         |
+| SERVER_SETTINGS_FILE  | Absolute path to server settings                                          | `$CONFIG/server-settings.json`  | New builds     |
+| SERVER_ID_FILE        | Absolute path to server identity                                          | `$CONFIG/server-id.json`        | New builds     |
+| SERVER_ADMINLIST_FILE | Absolute path to the server admin list                                    | `$CONFIG/server-adminlist.json` | New builds     |
+| SERVER_BANLIST_FILE   | Absolute path to the server ban list                                      | `$CONFIG/server-banlist.json`   | New builds     |
+| SERVER_WHITELIST_FILE | Absolute path to the server whitelist                                     | `$CONFIG/server-whitelist.json` | New builds     |
 
 **Note:** All environment variables are compared as strings. Quote YAML mapping values, for example `DLC_SPACE_AGE: "false"`. In list syntax, quote the whole item (`- "DLC_SPACE_AGE=elevated-rails"`), not only the value: `- DLC_SPACE_AGE="elevated-rails"` passes literal quotation marks to the container.
 
@@ -467,7 +467,7 @@ If your factorio host uses multiple IP addresses (very common with IPv6), you mi
 
 ### Rootless Podman networking
 
-For rootless Podman using **slirp4netns**, the reporter of #439 resolved incorrect address/port discovery with:
+For rootless Podman using **slirp4netns**, incorrect address or port discovery may be resolved by selecting the slirp4netns port handler:
 
 ```shell
 podman run --network=slirp4netns:port_handler=slirp4netns \
