@@ -1,4 +1,4 @@
-version: '2'
+# Developer source build. For normal deployment, use ../docker-compose.yml.
 services:
   factorio:
     build:
@@ -14,17 +14,13 @@ services:
       - "27015:27015/tcp"
     volumes:
       - /opt/factorio:/factorio
-      #    environment:
-      #      - PUID=1000
-      #      - PGID=1000
-      #      - UPDATE_MODS_ON_START=true
-      #      - UPDATE_IGNORE=mod1,mod2,mod3
-      #      - USERNAME=FactorioUsername
-      #      - TOKEN=FactorioToken
-      #      - PORT=34198
-      #      - PRESET=deathworld
-      #      - ADDR=::1
-#    # Uncomment the following line to enable the use of the host's network stack,
-#    # which may be necessary for some setups like NAS or when using some proxy service like firewall rules.
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
+    # environment:
+    #   PUID: "1000"
+    #   PGID: "1000"
+    #   UPDATE_MODS_ON_START: "true"
+    #   UPDATE_IGNORE: "mod1,mod2,mod3"
+    #   USERNAME: "FactorioUsername"
+    #   TOKEN: "FactorioToken"
+    #   PRESET: "death-world"
+    #   BIND: "::1"
+    # For Linux host networking, remove ports above and set network_mode: host.
