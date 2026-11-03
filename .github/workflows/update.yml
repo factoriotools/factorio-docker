@@ -8,39 +8,26 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
-    if: github.event_name != 'schedule' || (github.event_name == 'schedule' && github.repository == 'factoriotools/factorio-docker')
+    if: github.event_name != 'schedule' || github.repository == 'factoriotools/factorio-docker'
     outputs:
-      updated: ${{ steps.changes.outputs.updated }}
-      before_sha: ${{ steps.before.outputs.sha }}
-      head_sha: ${{ steps.changes.outputs.sha }}
+      sha: ${{ steps.update.outputs.sha }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Save current HEAD
-        id: before
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
       - name: Run update script
-        run: ./update.sh
-        shell: bash
-
-      - name: Check for changes
-        id: changes
+        id: update
         run: |
+          ./update.sh
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          if [ "$(git rev-parse HEAD)" != "${{ steps.before.outputs.sha }}" ]; then
-            echo "updated=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "updated=false" >> "$GITHUB_OUTPUT"
-          fi
 
+  # Pushes made with GITHUB_TOKEN do not trigger other workflows, so build explicitly.
   build:
     needs: check
-    if: needs.check.outputs.updated == 'true'
+    if: needs.check.outputs.sha != github.sha
     uses: ./.github/workflows/docker-build.yml
     with:
-      previous_sha: ${{ needs.check.outputs.before_sha }}
-      checkout_ref: ${{ needs.check.outputs.head_sha }}
+      previous_sha: ${{ github.sha }}
+      checkout_ref: ${{ needs.check.outputs.sha }}
     secrets: inherit
