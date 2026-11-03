@@ -42,6 +42,12 @@ EXEC=""
 # shellcheck disable=SC1091
 source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
+FLAGS=()
+# Factorio 0.16 lacks these flags; its admins belong in server-settings.json.
+if [[ ${VERSION:-} != 0.16.* ]]; then
+  FLAGS+=( --use-server-whitelist --server-adminlist "$SERVER_ADMINLIST_FILE" )
+fi
+
 exec $EXEC /opt/factorio/bin/x64/factorio \
   --port "$PORT" \
   --start-server-load-scenario "$SERVER_SCENARIO" \
@@ -52,8 +58,7 @@ exec $EXEC /opt/factorio/bin/x64/factorio \
   --server-settings "$SERVER_SETTINGS_FILE" \
   --server-banlist "$SERVER_BANLIST_FILE" \
   --server-whitelist "$SERVER_WHITELIST_FILE" \
-  --use-server-whitelist \
-  --server-adminlist "$SERVER_ADMINLIST_FILE" \
   --rcon-port "$RCON_PORT" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id "$SERVER_ID_FILE"
+  --server-id "$SERVER_ID_FILE" \
+  "${FLAGS[@]}"
