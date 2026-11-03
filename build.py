@@ -3,9 +3,6 @@
 import os
 import json
 import subprocess
-import shutil
-import sys
-import tempfile
 import argparse
 
 
@@ -61,8 +58,7 @@ def push_singlearch(tags):
 
 def build_and_push(sha256, version, tags, push, multiarch, dockerfile="Dockerfile", builder_suffix="",
                    sha256_arm64=None):
-    build_dir = tempfile.mktemp()
-    shutil.copytree("docker", build_dir)
+    build_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docker")
     build_args = ["-f", dockerfile, "--build-arg", f"VERSION={version}", "--build-arg", f"SHA256={sha256}"]
     if sha256_arm64:
         # Native ARM64 archive available: the arm64 image runs it instead of the x64 build under box64
@@ -126,9 +122,7 @@ def main():
     parser.add_argument('--multiarch', action='store_true', help='Build multi-architecture images')
     parser.add_argument('--rootless', action='store_true', help='Build only rootless images')
     parser.add_argument('--both', action='store_true', help='Build both regular and rootless images')
-    parser.add_argument('--only-stable-latest', action='store_true', 
-                        help='Build only stable and latest versions (for rootless by default)')
-    
+
     parser.add_argument('--changed-from', metavar='GIT_REF',
                         help='Build only versions with new archives or added tags since this ref')
     args = parser.parse_args()
@@ -147,17 +141,11 @@ def main():
         except (subprocess.CalledProcessError, OSError, ValueError) as error:
             parser.error(f"Cannot read previous release metadata: {error}")
 
-    # Filter versions if needed
-    versions_to_build = []
-    for version, buildinfo in sorted(builddata.items(), key=lambda item: item[0], reverse=True):
-        if previous is not None and not release_changed(version, buildinfo, previous):
-            continue
-        if args.only_stable_latest or (build_rootless and not build_regular):
-            # For rootless-only builds, default to stable/latest only
-            if "stable" in buildinfo["tags"] or "latest" in buildinfo["tags"]:
-                versions_to_build.append((version, buildinfo))
-        else:
-            versions_to_build.append((version, buildinfo))
+    versions_to_build = [
+        (version, buildinfo)
+        for version, buildinfo in sorted(builddata.items(), key=lambda item: item[0], reverse=True)
+        if previous is None or release_changed(version, buildinfo, previous)
+    ]
     
     if not versions_to_build:
         print("No changed releases to build.")
