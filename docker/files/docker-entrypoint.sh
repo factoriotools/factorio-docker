@@ -111,8 +111,8 @@ FLAGS=(\
   --mod-directory "$MODS" \
 )
 
-# Factorio 0.16 lacks these flags; its admins belong in server-settings.json.
-if [[ ${VERSION:-} != 0.16.* ]]; then
+# Factorio 0.15 and 0.16 lack these flags; their admins belong in server-settings.json.
+if [[ ${VERSION:-} != 0.1[56].* ]]; then
   FLAGS+=( --use-server-whitelist --server-adminlist "$SERVER_ADMINLIST_FILE" )
 fi
 

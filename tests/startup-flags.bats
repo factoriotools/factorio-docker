@@ -34,7 +34,7 @@ check_startup_flags() {
     [ "$status" -eq 0 ]
     grep -Fxq -- '--server-whitelist' "$ARGS_FILE"
     grep -Fxq -- "$CONFIG/server-whitelist.json" "$ARGS_FILE"
-    if [[ "$VERSION" == 0.16.* ]]; then
+    if [[ "$VERSION" == 0.1[56].* ]]; then
       run grep -Fx -- '--use-server-whitelist' "$ARGS_FILE"
       [ "$status" -eq 1 ]
       run grep -Fx -- '--server-adminlist' "$ARGS_FILE"
@@ -45,6 +45,11 @@ check_startup_flags() {
       grep -Fxq -- "$CONFIG/server-adminlist.json" "$ARGS_FILE"
     fi
   done
+}
+
+@test "0.15 entrypoints omit unsupported flags but retain the whitelist path" {
+  export VERSION=0.15.40
+  check_startup_flags
 }
 
 @test "0.16 entrypoints omit unsupported flags but retain the whitelist path" {
