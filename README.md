@@ -324,7 +324,7 @@ These are the environment variables which can be specified at container run time
 | SERVER_BANLIST_FILE   | Absolute path to the server ban list                                      | `$CONFIG/server-banlist.json`   | New builds     |
 | SERVER_WHITELIST_FILE | Absolute path to the server whitelist                                     | `$CONFIG/server-whitelist.json` | New builds     |
 
-**Note:** All environment variables are compared as strings. Quote YAML mapping values, for example `DLC_SPACE_AGE: "false"`. In list syntax, quote the whole item (`- "DLC_SPACE_AGE=elevated-rails"`), not only the value: `- DLC_SPACE_AGE="elevated-rails"` passes literal quotation marks to the container.
+**Note:** All environment variables are compared as strings.
 
 An explicit port in `BIND` overrides `PORT`, for example `127.0.0.1:34201` or `[::1]:34201`. A bare IPv6 address still uses `PORT`.
 
