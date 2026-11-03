@@ -1,4 +1,4 @@
-name: 'Linter'
+name: Lint
 
 on:
   pull_request:
@@ -7,26 +7,22 @@ on:
       - master
 
 jobs:
-  shellcheck:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: shellcheck
-        uses: reviewdog/action-shellcheck@v1
-        with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review
+      - name: ShellCheck
+        run: git ls-files -z '*.sh' '*.bats' | xargs -0 shellcheck --severity=warning
 
-  hadolint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: hadolint
-        uses: reviewdog/action-hadolint@v1
+      # hadolint 2.15 misreports [[ ]] in RUN despite SHELL bash; v3.3.0 bundles 2.14.0.
+      - name: Hadolint Dockerfile
+        uses: hadolint/hadolint-action@v3.3.0
         with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review
+          dockerfile: docker/Dockerfile
+
+      - name: Hadolint Dockerfile.rootless
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: docker/Dockerfile.rootless
