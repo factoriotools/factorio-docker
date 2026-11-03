@@ -1,14 +1,4 @@
 #!/bin/bash
-set -eou pipefail
-
-FACTORIO_VERSION=$1
-MOD_DIR=$2
-USERNAME=$3
-TOKEN=$4
-UPDATE_IGNORE=$5
-
-MOD_BASE_URL="https://mods.factorio.com"
-
 print_step()
 {
   echo "$1"
@@ -230,6 +220,19 @@ update_mod()
 
   return 0
 }
+
+# Sourcing exposes the functions without running updates or changing shell options.
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+  return
+fi
+
+set -eou pipefail
+FACTORIO_VERSION=$1
+MOD_DIR=$2
+USERNAME=$3
+TOKEN=$4
+UPDATE_IGNORE=$5
+MOD_BASE_URL="https://mods.factorio.com"
 
 # Process all enabled mods from mod-list.json, but skip built-in mods
 # The Space Age DLC includes built-in mods (elevated-rails, quality, space-age) that should not be downloaded
