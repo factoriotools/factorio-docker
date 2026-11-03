@@ -106,12 +106,15 @@ FLAGS=(\
   --server-banlist "$SERVER_BANLIST_FILE" \
   --rcon-port "$RCON_PORT" \
   --server-whitelist "$SERVER_WHITELIST_FILE" \
-  --use-server-whitelist \
-  --server-adminlist "$SERVER_ADMINLIST_FILE" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
   --server-id "$SERVER_ID_FILE" \
   --mod-directory "$MODS" \
 )
+
+# Factorio 0.16 lacks these flags; its admins belong in server-settings.json.
+if [[ ${VERSION:-} != 0.16.* ]]; then
+  FLAGS+=( --use-server-whitelist --server-adminlist "$SERVER_ADMINLIST_FILE" )
+fi
 
 if [ -n "$CONSOLE_LOG_LOCATION" ]; then
   FLAGS+=( --console-log "$CONSOLE_LOG_LOCATION" )
