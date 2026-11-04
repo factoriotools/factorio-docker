@@ -2,14 +2,16 @@
 set -e
 SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
 
-stable_online_version=$(curl 'https://factorio.com/api/latest-releases' | jq '.stable.headless' -r)
-experimental_online_version=$(curl 'https://factorio.com/api/latest-releases' | jq '.experimental.headless' -r)
+latest_releases=$(curl 'https://factorio.com/api/latest-releases')
+stable_online_version=$(jq -r '.stable.headless' <<< "$latest_releases")
+experimental_online_version=$(jq -r '.experimental.headless' <<< "$latest_releases")
 
-stable_sha256=$(curl "https://factorio.com/download/sha256sums/" | grep -E "(factorio_headless_x64_|factorio-headless_linux_)${stable_online_version}.tar.xz" | awk '{print $1}')
-experimental_sha256=$(curl "https://factorio.com/download/sha256sums/" | grep -E "(factorio_headless_x64_|factorio-headless_linux_)${experimental_online_version}.tar.xz" | awk '{print $1}')
+sha256sums=$(curl "https://factorio.com/download/sha256sums/")
+stable_sha256=$(grep -E "(factorio_headless_x64_|factorio-headless_linux_)${stable_online_version}.tar.xz" <<< "$sha256sums" | awk '{print $1}')
+experimental_sha256=$(grep -E "(factorio_headless_x64_|factorio-headless_linux_)${experimental_online_version}.tar.xz" <<< "$sha256sums" | awk '{print $1}')
 # Native ARM64 headless builds exist from 2.1 on; older versions have no arm64 archive and the value stays empty.
-stable_sha256_arm64=$(curl "https://factorio.com/download/sha256sums/" | grep -E "factorio-headless_linux-arm64_${stable_online_version}.tar.xz" | awk '{print $1}')
-experimental_sha256_arm64=$(curl "https://factorio.com/download/sha256sums/" | grep -E "factorio-headless_linux-arm64_${experimental_online_version}.tar.xz" | awk '{print $1}')
+stable_sha256_arm64=$(grep -E "factorio-headless_linux-arm64_${stable_online_version}.tar.xz" <<< "$sha256sums" | awk '{print $1}')
+experimental_sha256_arm64=$(grep -E "factorio-headless_linux-arm64_${experimental_online_version}.tar.xz" <<< "$sha256sums" | awk '{print $1}')
 
 stable_current_version=$(jq 'with_entries(select(.value.tags | index("stable"))) | keys | .[0]' buildinfo.json -r)
 latest_current_version=$(jq 'with_entries(select(.value.tags | index("latest"))) | keys | .[0]' buildinfo.json -r)
@@ -92,27 +94,8 @@ fi
 
 rm -f -- "$tmpfile"
 
-# Generate README tags with logical sorting and de-duplication
-# First, collect all unique tags with their versions
-# Tags contain dots and hyphens, so they must be string keys.
-declare -A tag_versions
-while IFS= read -r version; do
-  while IFS= read -r tag; do
-    # If this tag is already seen, compare versions to keep the latest
-    if [[ -n "${tag_versions[$tag]}" ]]; then
-      # Compare version strings - keep the higher one
-      if [[ "$version" > "${tag_versions[$tag]}" ]]; then
-        tag_versions[$tag]="$version"
-      fi
-    else
-      tag_versions[$tag]="$version"
-    fi
-  done < <(jq -r ".\"$version\".tags[]" buildinfo.json)
-done < <(jq -r 'keys[]' buildinfo.json | sort -V -r)
-
-# Build the tags list for README
+# Generate README tags for the current latest and stable releases.
 readme_tags=""
-# First add the current latest and stable tags
 latest_version=$(jq -r 'to_entries | map(select(.value.tags | contains(["latest"]))) | .[0].key' buildinfo.json)
 stable_version=$(jq -r 'to_entries | map(select(.value.tags | index("stable"))) | .[0].key' buildinfo.json)
 
@@ -125,30 +108,6 @@ if [[ -n "$stable_version" ]] && [[ "$stable_version" != "$latest_version" ]]; t
   stable_tags=$(jq -r ".\"$stable_version\".tags | sort | join(\", \")" buildinfo.json | sed 's/"/`/g')
   readme_tags="${readme_tags}\n* \`${stable_tags}\`"
 fi
-
-# Add major.minor tags (e.g., 2.0, 1.1) - only the latest version for each
-declare -A major_minor_seen
-while IFS= read -r version; do
-  if [[ "$version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-    major="${BASH_REMATCH[1]}"
-    minor="${BASH_REMATCH[2]}"
-    major_minor="$major.$minor"
-    
-    # Skip if this is the latest or stable version (already added above)
-    if [[ "$version" == "$latest_version" ]] || [[ "$version" == "$stable_version" ]]; then
-      continue
-    fi
-    
-    # Only add if we haven't seen this major.minor yet
-    if [[ -z "${major_minor_seen[$major_minor]}" ]]; then
-      major_minor_seen[$major_minor]=1
-      tags=$(jq -r ".\"$version\".tags | join(\", \")" buildinfo.json | sed 's/"/`/g')
-      if [[ -n "$tags" ]]; then
-        readme_tags="${readme_tags}\n* \`${tags}\`"
-      fi
-    fi
-  fi
-done < <(jq -r 'keys[]' buildinfo.json | sort -V -r)
 
 readme_tags="${readme_tags}\n"
 
