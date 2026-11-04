@@ -93,13 +93,14 @@ class BuildTests(unittest.TestCase):
             for dockerfile in ("Dockerfile", "Dockerfile.rootless"):
                 for arm_sha in (None, "a" * 64):
                     with self.subTest(multiarch=multiarch, dockerfile=dockerfile, arm_sha=arm_sha):
-                        with patch.object(self.build.shutil, "copytree"), \
-                             patch.object(self.build, "build_singlearch") as single, \
+                        with patch.object(self.build, "build_singlearch") as single, \
                              patch.object(self.build, "build_and_push_multiarch") as multi:
                             self.build.build_and_push("b" * 64, "2.1.24", ["test"], False,
                                                       multiarch, dockerfile=dockerfile,
                                                       sha256_arm64=arm_sha)
-                            args = (multi if multiarch else single).call_args.args[1]
+                            call = (multi if multiarch else single).call_args
+                            self.assertEqual(call.args[0], str(ROOT / "docker"))
+                            args = call.args[1]
                             self.assertEqual(args[:2], ["-f", dockerfile])
                             self.assertIn("SHA256=" + "b" * 64, args)
                             self.assertEqual("SHA256_ARM64=" + "a" * 64 in args, bool(arm_sha))
