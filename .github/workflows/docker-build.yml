@@ -6,7 +6,18 @@ on:
       - master
     paths:
       - buildinfo.json
+      - build.py
+      - 'docker/**'
   workflow_call:
+    inputs:
+      previous_sha:
+        type: string
+        required: false
+        default: ''
+      checkout_ref:
+        type: string
+        required: false
+        default: ''
   # workaround for #526
   workflow_dispatch:
 
@@ -18,15 +29,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.checkout_ref || github.sha }}
+          fetch-depth: 0
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
-      - name: build and push all images
+      - name: Build and push changed images
         if: ${{ env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != '' }}
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PREVIOUS_SHA: ${{ inputs.previous_sha || github.event.before }}
         run: |
-          ./build.py --push-tags --multiarch --both
+          args=(--push-tags --multiarch --both)
+          # Runtime/build changes and manual runs rebuild all current versions.
+          if [[ -n "$PREVIOUS_SHA" ]] && git cat-file -e "$PREVIOUS_SHA^{commit}" 2>/dev/null; then
+            if git diff --quiet "$PREVIOUS_SHA" HEAD -- docker build.py; then
+              args+=(--changed-from "$PREVIOUS_SHA")
+            fi
+          fi
+          ./build.py "${args[@]}"

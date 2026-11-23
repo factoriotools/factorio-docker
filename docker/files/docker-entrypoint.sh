@@ -14,6 +14,9 @@ mkdir -p "$SAVES"
 mkdir -p "$CONFIG"
 mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
+
+# shellcheck disable=SC1091
+source "${INSTALLED_DIRECTORY}/server-config.sh"
 mkdir -p "$SCRIPTOUTPUT"
 
 if [[ ! -f $CONFIG/rconpw ]]; then
@@ -21,9 +24,9 @@ if [[ ! -f $CONFIG/rconpw ]]; then
   pwgen 15 1 >"$CONFIG/rconpw"
 fi
 
-if [[ ! -f $CONFIG/server-settings.json ]]; then
+if [[ ! -f $SERVER_SETTINGS_FILE ]]; then
   # Copy default settings if server-settings.json doesn't exist
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
+  cp /opt/factorio/data/server-settings.example.json "$SERVER_SETTINGS_FILE"
 fi
 
 if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
@@ -53,8 +56,8 @@ if [[ $(id -u) == 0 ]]; then
   groupmod -o -g "$PGID" factorio
   # Take ownership of factorio data if running as root
   chown -R factorio:factorio "$FACTORIO_VOL"
-  # Drop to the factorio user
-  EXEC="runuser -u factorio -g factorio --"
+  # Replace the process when dropping privileges; runuser kills slow saves after SIGTERM.
+  EXEC="setpriv --reuid=factorio --regid=factorio --init-groups --"
 fi
 
 # Setup ARM64 emulation support
@@ -66,7 +69,13 @@ sed -i '/write-data=/c\write-data=\/factorio/' /opt/factorio/config/config.ini
 NRSAVES=$(find -L "$SAVES" -iname \*.zip -mindepth 1 | wc -l)
 if [[ $GENERATE_NEW_SAVE != true && $NRSAVES ==  0 ]]; then
     GENERATE_NEW_SAVE=true
-    SAVE_NAME=_autosave1
+    SAVE_NAME="${SAVE_NAME:-_autosave1}"
+fi
+
+if [[ "$SAVE_NAME" == /* ]]; then
+    SAVE_FILE="$SAVE_NAME"
+else
+    SAVE_FILE="$SAVES/${SAVE_NAME%.zip}.zip"
 fi
 
 if [[ $GENERATE_NEW_SAVE == true ]]; then
@@ -74,18 +83,18 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
         echo "If \$GENERATE_NEW_SAVE is true, you must specify \$SAVE_NAME"
         exit 1
     fi
-    if [[ -f "$SAVES/$SAVE_NAME.zip" ]]; then
-        echo "Map $SAVES/$SAVE_NAME.zip already exists, skipping map generation"
+    if [[ -f "$SAVE_FILE" ]]; then
+        echo "Map $SAVE_FILE already exists, skipping map generation"
     else
-        if [[ ! -z "$PRESET" ]]; then
+        if [[ -n "$PRESET" ]]; then
             $EXEC /opt/factorio/bin/x64/factorio \
-                --create "$SAVES/$SAVE_NAME.zip" \
+                --create "$SAVE_FILE" \
                 --preset "$PRESET" \
                 --map-gen-settings "$CONFIG/map-gen-settings.json" \
                 --map-settings "$CONFIG/map-settings.json"
         else
             $EXEC /opt/factorio/bin/x64/factorio \
-                --create "$SAVES/$SAVE_NAME.zip" \
+                --create "$SAVE_FILE" \
                 --map-gen-settings "$CONFIG/map-gen-settings.json" \
                 --map-settings "$CONFIG/map-settings.json"
         fi
@@ -93,17 +102,19 @@ if [[ $GENERATE_NEW_SAVE == true ]]; then
 fi
 
 FLAGS=(\
-  --port "$PORT" \
-  --server-settings "$CONFIG/server-settings.json" \
-  --server-banlist "$CONFIG/server-banlist.json" \
+  --server-settings "$SERVER_SETTINGS_FILE" \
+  --server-banlist "$SERVER_BANLIST_FILE" \
   --rcon-port "$RCON_PORT" \
-  --server-whitelist "$CONFIG/server-whitelist.json" \
-  --use-server-whitelist \
-  --server-adminlist "$CONFIG/server-adminlist.json" \
+  --server-whitelist "$SERVER_WHITELIST_FILE" \
   --rcon-password "$(cat "$CONFIG/rconpw")" \
-  --server-id /factorio/config/server-id.json \
+  --server-id "$SERVER_ID_FILE" \
   --mod-directory "$MODS" \
 )
+
+# Factorio 0.15 and 0.16 lack these flags; their admins belong in server-settings.json.
+if [[ ${VERSION:-} != 0.1[56].* ]]; then
+  FLAGS+=( --use-server-whitelist --server-adminlist "$SERVER_ADMINLIST_FILE" )
+fi
 
 if [ -n "$CONSOLE_LOG_LOCATION" ]; then
   FLAGS+=( --console-log "$CONSOLE_LOG_LOCATION" )
@@ -113,10 +124,19 @@ if [ -n "$BIND" ]; then
   FLAGS+=( --bind "$BIND" )
 fi
 
+# An explicit bind port wins; bare IPv6 addresses still use PORT.
+if [[ ! "$BIND" =~ ^[^:]+:[0-9]+$ && ! "$BIND" =~ ^\[[^]]+\]:[0-9]+$ ]]; then
+  FLAGS+=( --port "$PORT" )
+fi
+
 if [[ $LOAD_LATEST_SAVE == true ]]; then
     FLAGS+=( --start-server-load-latest )
 else
-    FLAGS+=( --start-server "$SAVE_NAME" )
+    if [[ -z "$SAVE_NAME" || ! -f "$SAVE_FILE" ]]; then
+        echo "Selected save does not exist: $SAVE_FILE. Set SAVE_NAME or GENERATE_NEW_SAVE=true." >&2
+        exit 1
+    fi
+    FLAGS+=( --start-server "$SAVE_FILE" )
 fi
 
 # shellcheck disable=SC2086

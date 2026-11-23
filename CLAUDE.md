@@ -73,8 +73,9 @@ docker-compose up -d
 ### Linting
 
 ```bash
-# Lint Dockerfiles
-./lint.sh
+# Lint shell scripts and Dockerfiles
+git ls-files -z '*.sh' '*.bats' | xargs -0 shellcheck --severity=warning
+hadolint docker/Dockerfile docker/Dockerfile.rootless
 ```
 
 ### Testing Updates
