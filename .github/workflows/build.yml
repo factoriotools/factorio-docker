@@ -2,7 +2,7 @@ name: Build Factorio Image
 
 on:
   push:
-    branches: [master, main]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -19,6 +19,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -32,9 +35,9 @@ jobs:
           context: ./docker
           file: ./docker/Dockerfile
           push: true
-          tags: |
-            ghcr.io/saucymanwich/factorio:2.0.77
-            ghcr.io/saucymanwich/factorio:latest
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/saucymanwich/factorio:2.1.24
           build-args: |
-            VERSION=2.0.77
-            SHA256=c4efc11529f74d37c96933e291e0db73fd9f5aa4738913d9301b24680b3e947f
+            VERSION=2.1.24
+            SHA256=c49b66cff90aceff87b30f2973af0df7f51712cb2ee3153e0169d9bed46a964f
+            SHA256_ARM64=141bd7aaa199fcf7e223dcaca8877aec1d6deaa9c4ac03b7a8c60ef37b6afb98

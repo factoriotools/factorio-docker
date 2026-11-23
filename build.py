@@ -3,9 +3,6 @@
 import os
 import json
 import subprocess
-import shutil
-import sys
-import tempfile
 import argparse
 
 
@@ -59,10 +56,14 @@ def push_singlearch(tags):
             exit(1)
 
 
-def build_and_push(sha256, version, tags, push, multiarch, dockerfile="Dockerfile", builder_suffix=""):
-    build_dir = tempfile.mktemp()
-    shutil.copytree("docker", build_dir)
-    build_args = ["-f", dockerfile, "--build-arg", f"VERSION={version}", "--build-arg", f"SHA256={sha256}", "."]
+def build_and_push(sha256, version, tags, push, multiarch, dockerfile="Dockerfile", builder_suffix="",
+                   sha256_arm64=None):
+    build_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docker")
+    build_args = ["-f", dockerfile, "--build-arg", f"VERSION={version}", "--build-arg", f"SHA256={sha256}"]
+    if sha256_arm64:
+        # Native ARM64 archive available: the arm64 image runs it instead of the x64 build under box64
+        build_args.extend(["--build-arg", f"SHA256_ARM64={sha256_arm64}"])
+    build_args.append(".")
     for tag in tags:
         build_args.extend(["-t", f"factoriotools/factorio:{tag}"])
     
@@ -94,15 +95,36 @@ def generate_rootless_tags(original_tags):
     return [f"{tag}-rootless" for tag in original_tags]
 
 
+def load_previous_buildinfo(ref):
+    """Read release metadata at a git ref without changing the checkout."""
+    contents = subprocess.check_output(
+        ["git", "show", "--end-of-options", f"{ref}:buildinfo.json"],
+        cwd=os.path.dirname(os.path.abspath(__file__)), text=True,
+    )
+    data = json.loads(contents)
+    if not isinstance(data, dict):
+        raise ValueError("Previous buildinfo.json must be an object")
+    return data
+
+
+def release_changed(version, info, previous):
+    old = previous.get(version)
+    if old is None:
+        return True
+    # Removing an alias needs no rebuild: the new owner will publish that tag.
+    return (any(info.get(key) != old.get(key) for key in ("sha256", "sha256_arm64"))
+            or bool(set(info["tags"]) - set(old["tags"])))
+
+
 def main():
     parser = argparse.ArgumentParser(description='Build Factorio Docker images')
     parser.add_argument('--push-tags', action='store_true', help='Push images to Docker Hub')
     parser.add_argument('--multiarch', action='store_true', help='Build multi-architecture images')
     parser.add_argument('--rootless', action='store_true', help='Build only rootless images')
     parser.add_argument('--both', action='store_true', help='Build both regular and rootless images')
-    parser.add_argument('--only-stable-latest', action='store_true', 
-                        help='Build only stable and latest versions (for rootless by default)')
-    
+
+    parser.add_argument('--changed-from', metavar='GIT_REF',
+                        help='Build only versions with new archives or added tags since this ref')
     args = parser.parse_args()
     
     # Default behavior: build regular images unless specified otherwise
@@ -112,45 +134,45 @@ def main():
     with open(os.path.join(os.path.dirname(__file__), "buildinfo.json")) as file_handle:
         builddata = json.load(file_handle)
 
+    previous = None
+    if args.changed_from:
+        try:
+            previous = load_previous_buildinfo(args.changed_from)
+        except (subprocess.CalledProcessError, OSError, ValueError) as error:
+            parser.error(f"Cannot read previous release metadata: {error}")
+
+    versions_to_build = [
+        (version, buildinfo)
+        for version, buildinfo in sorted(builddata.items(), key=lambda item: item[0], reverse=True)
+        if previous is None or release_changed(version, buildinfo, previous)
+    ]
+    
+    if not versions_to_build:
+        print("No changed releases to build.")
+        return
+
     if args.push_tags:
         login()
 
-    # Filter versions if needed
-    versions_to_build = []
-    for version, buildinfo in sorted(builddata.items(), key=lambda item: item[0], reverse=True):
-        if args.only_stable_latest or (build_rootless and not build_regular):
-            # For rootless-only builds, default to stable/latest only
-            if "stable" in buildinfo["tags"] or "latest" in buildinfo["tags"]:
-                versions_to_build.append((version, buildinfo))
-        else:
-            versions_to_build.append((version, buildinfo))
-    
     # Build regular images
     if build_regular:
         print("Building regular images...")
         for version, buildinfo in versions_to_build:
             sha256 = buildinfo["sha256"]
             tags = buildinfo["tags"]
-            build_and_push(sha256, version, tags, args.push_tags, args.multiarch)
+            build_and_push(sha256, version, tags, args.push_tags, args.multiarch,
+                           sha256_arm64=buildinfo.get("sha256_arm64"))
     
     # Build rootless images
     if build_rootless:
         print("Building rootless images...")
-        # For rootless, only build stable and latest unless building both
-        rootless_versions = []
-        if not build_regular or args.only_stable_latest:
-            for version, buildinfo in builddata.items():
-                if "stable" in buildinfo["tags"] or "latest" in buildinfo["tags"]:
-                    rootless_versions.append((version, buildinfo))
-        else:
-            rootless_versions = versions_to_build
-            
-        for version, buildinfo in rootless_versions:
+        for version, buildinfo in versions_to_build:
             sha256 = buildinfo["sha256"]
             original_tags = buildinfo["tags"]
             rootless_tags = generate_rootless_tags(original_tags)
             build_and_push(sha256, version, rootless_tags, args.push_tags, args.multiarch, 
-                         dockerfile="Dockerfile.rootless", builder_suffix="-rootless")
+                         dockerfile="Dockerfile.rootless", builder_suffix="-rootless",
+                         sha256_arm64=buildinfo.get("sha256_arm64"))
 
 
 if __name__ == '__main__':

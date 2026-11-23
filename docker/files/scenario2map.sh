@@ -12,8 +12,11 @@ mkdir -p "$CONFIG"
 mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 
-if [[ ! -f $CONFIG/server-settings.json ]]; then
-  cp /opt/factorio/data/server-settings.example.json "$CONFIG/server-settings.json"
+# shellcheck disable=SC1091
+source "${INSTALLED_DIRECTORY}/server-config.sh"
+
+if [[ ! -f $SERVER_SETTINGS_FILE ]]; then
+  cp /opt/factorio/data/server-settings.example.json "$SERVER_SETTINGS_FILE"
 fi
 
 if [[ ! -f $CONFIG/map-gen-settings.json ]]; then
@@ -24,10 +27,13 @@ if [[ ! -f $CONFIG/map-settings.json ]]; then
   cp /opt/factorio/data/map-settings.example.json "$CONFIG/map-settings.json"
 fi
 
+"${INSTALLED_DIRECTORY}"/docker-dlc.sh
+
 # Setup ARM64 emulation support
 EXEC=""
 # shellcheck disable=SC1091
 source "${INSTALLED_DIRECTORY}/setup-exec.sh"
 
 exec $EXEC /opt/factorio/bin/x64/factorio \
-  --scenario2map "$SERVER_SCENARIO"
+  --scenario2map "$SERVER_SCENARIO" \
+  --mod-directory "$MODS"
